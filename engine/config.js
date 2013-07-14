@@ -5,7 +5,7 @@ module.exports = {
         knight : 'knight',
         bishop : 'bishop',
         queen : 'queen',
-        king : 'king'
+        royal : 'king'
     },
     pieces : {
         pawn : require("./pieces/pawn.js"),

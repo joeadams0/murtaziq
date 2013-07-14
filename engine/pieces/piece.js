@@ -9,9 +9,8 @@ var utils = require("../utils.js");
 var _ = require("underscore");
 var vector = require("../vector.js");
 var moveschema = require("./configs/moveschema.js");
-var rules = require("../rules.js");
 var Space = require("../space.js");
-var move = require("../moves/simplemove.js");
+var Move = require("../moves/move.js");
 
 var lightTeam = 0;
 var darkTeam = 1;
@@ -24,6 +23,7 @@ module.exports ={
     getAbbr : getAbbr,
     getTeam : getTeam,
     getSchema : getSchema,
+    isRoyal : isRoyal,
     getMoves : getMoves,
     getMoveCount : getMoveCount,
     incrMoveCount : incrMoveCount,
@@ -31,26 +31,25 @@ module.exports ={
     canMove : canMove
 };
 
-function create(name, abbr, team, schema){
+function create(name, abbr, team, schema, isRoyal){
     if(team === lightTeam)
         return {
             name : name,
             abbr : abbr,
             team : team,
             moveCount : 0,
-            schema : schema
+            schema : schema,
+            isRoyal : utils.existy(isRoyal) ? isRoyal : false
         };
-    else{
-        var obj = {
+    else
+         return {
             name : name,
             abbr : abbr,
             team : team,
             moveCount : 0,
-            schema : moveschema.reflectSchema(schema)
+            schema : moveschema.reflectSchema(schema),
+            isRoyal : utils.existy(isRoyal) ? isRoyal : false
         };
-        
-        return obj;
-    }
 }
 
 function getName(piece){
@@ -69,8 +68,12 @@ function getSchema(piece){
     return piece.schema;
 }
 
-function getMoveCount(piece){c
+function getMoveCount(piece){
     return piece.moveCount;
+}
+
+function isRoyal(piece){
+    return piece.isRoyal;
 }
 
 function incrMoveCount(piece){
@@ -117,16 +120,19 @@ function schemaIterate(board, loc, piece){
 }
 
 function schemaEval(board, loc, schema, piece, moves, step){
+    var Chessboard = require("../chessboard.js");
     step = utils.existy(step) ? step : 0;
     moves = utils.existy(moves) ? moves : [];
     // Cant move any more
-    if(step >= schema.maxSteps || 
+    if(step >= moveschema.getMaxSteps(schema) ||  
+        !Chessboard.isOnBoard(board, vector.add(loc, vector.scale(moveschema.getVector(schema), step+1))) ||
         !canMove(
             board,
             loc,
             vector.add(loc, vector.scale(moveschema.getVector(schema), step+1)),
             schema,
-            piece
+            piece,
+            vector.add(loc, vector.scale(moveschema.getVector(schema), step))
         )
     )
         return moves;
@@ -137,24 +143,32 @@ function schemaEval(board, loc, schema, piece, moves, step){
             loc, 
             schema,
             piece,
-            utils.arrPush(moves, move.create(loc, moveschema.getVector(schema))),
+            utils.arrPush(moves, Move.create(
+                                        getTeam(piece), 
+                                        loc, 
+                                        vector.scale(moveschema.getVector(schema), step+1),
+                                        Chessboard.getPiece(board, vector.add(loc, vector.scale(moveschema.getVector(schema), step+1)))
+                                    )
+                        ),
             step + 1
         );
 }
 
 
-// TODO : check to see if they put the king in check
-function canMove(board, source, target, schema, piece){
+function canMove(board, source, target, schema, piece, previousStep){
     var chessboard = require("../chessboard.js");
     var canSimpleMove = moveschema.canMove(schema);
     var canAttack = moveschema.canAttack(schema);
     
-    // Cant move
-    if(!utils.existy(chessboard.getSpace(board, target)) || 
-        !rules.canMove(board, source, target, canAttack) || 
+    // Cant move, make sure the previous step did not contain a piece on the enemy team
+    if(!utils.existy(chessboard.getSpace(board, target)) ||
         (
-            utils.existy(moveschema.getCondition(piece)) && 
-            moveschema.getCondition(piece)(board, source, piece) 
+            utils.existy(moveschema.getCondition(schema)) && 
+            !moveschema.getCondition(schema)(board, source, piece) 
+        ) ||
+        ( 
+            utils.existy(chessboard.getPiece(board, previousStep)) &&
+            getTeam(chessboard.getPiece(board,previousStep)) != getTeam(chessboard.getPiece(board, source))
         )
     )
         return false;
@@ -163,8 +177,8 @@ function canMove(board, source, target, schema, piece){
     if(!utils.existy(Space.getPiece(chessboard.getSpace(board, target))))
         return canSimpleMove;
         
+    
     // If they are not on the same team
     return getTeam(Space.getPiece(chessboard.getSpace(board, source))) != getTeam(Space.getPiece(chessboard.getSpace(board, target))) &&
-        canAttack &&
-        rules.canMove(board, source, target);
+        canAttack ;
 }

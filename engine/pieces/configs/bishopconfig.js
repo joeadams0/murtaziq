@@ -1,5 +1,5 @@
 
-var schema = require("./moveschema");
+var schema = require("./moveschema.js");
 var vector = require("../../vector.js");
 module.exports = {
     name : 'bishop',

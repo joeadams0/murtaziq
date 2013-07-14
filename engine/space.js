@@ -1,10 +1,9 @@
-var utils = require("./utils.js");
-
 module.exports = {
     create : create,
     getLoc : getLoc,
     getPiece : getPiece,
-    setPiece : setPiece
+    setPiece : setPiece,
+    removePiece : removePiece
 };
 
 function create(vec){
@@ -18,11 +17,17 @@ function getLoc(space){
 }
 
 function getPiece(space){
-    if(utils.existy(space.piece))
-        return space.piece;
+    return space.piece;
 }
 
 function setPiece(space, piece){
     space.piece = piece;
+    
     return space;
+}
+
+function removePiece(space){
+    var piece = getPiece(space);
+    setPiece(space, undefined);
+    return piece;
 }

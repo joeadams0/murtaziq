@@ -38,7 +38,7 @@ function setVector(schema, vec){
 }
 
 function getMaxSteps(schema){
-    return schema.getMaxSteps;
+    return schema.maxSteps;
 }
 
 function canAttack(schema){
