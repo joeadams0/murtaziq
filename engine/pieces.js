@@ -5,12 +5,11 @@
  * 
  * @author Joe Adams
  **/
-var configs = require("./config.js");
 
 module.exports = {
     get : get
 };
 
-function get(pieceName){
+function get(configs, pieceName){
     return configs.pieces[pieceName];
 }

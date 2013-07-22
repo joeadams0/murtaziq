@@ -1,9 +1,8 @@
-var Piece = require("./pieces/piece.js");
+var configs = require("./config.js");
 var Chessboard = require("./chessboard.js");
 var _ = require("underscore");
 var utils = require("./utils.js");
 var Vector = require("./vector.js");
-var Move = require("./moves/move.js");
 
 module.exports = {
     create : create,
@@ -17,8 +16,8 @@ module.exports = {
 
 function create(lightSide, darkSide){
     return {
-      turn : Piece.lightTeam,
-      board : Chessboard.create(lightSide, darkSide),
+      turn : configs.lightTeam,
+      board : Chessboard.create(configs, lightSide, darkSide),
       history : []
     };
 }
@@ -49,7 +48,7 @@ function getBoard(match){
 function getMoves(match, vec, filter){
     filter = utils.existy(filter) ? filter : legalMovesFilter;  
     return _.filter(
-            Piece.getMoves(getBoard(match), Chessboard.getSpace(getBoard(match), vec)),
+            Chessboard.getMoves(getBoard(match), Chessboard.getSpace(getBoard(match), vec)),
             filter(match)
         );
 }
@@ -71,11 +70,11 @@ function move(match, loc1, loc2){
         var m = _.find(
                         getMoves(match, loc1, canMoveFilter),
                         function(move){
-                            return Vector.isEqual(loc2, Move.getEndLoc(move));
+                            return Vector.isEqual(loc2, move.getEndLoc());
                         }
                     );
         if(utils.existy(m)){
-            Move.perform(board, m);
+            m.perform(board);
             switchTurn(match);
             addMove(match, m);
         }
@@ -84,10 +83,10 @@ function move(match, loc1, loc2){
 }
 
 function switchTurn(match){
-    if(getTurn(match) === Piece.lightTeam)
-        setTurn(match, Piece.darkTeam);
+    if(getTurn(match) === configs.lightTeam)
+        setTurn(match, configs.darkTeam);
     else
-        setTurn(match, Piece.lightTeam);
+        setTurn(match, configs.lightTeam);
 }
 
 function canMoveFilter(match){

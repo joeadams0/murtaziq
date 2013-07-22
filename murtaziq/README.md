@@ -1,2 +1,0 @@
-# murtaziq
-### a Sails application

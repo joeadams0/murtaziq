@@ -1,9 +1,12 @@
+var Vector = require("./vector.js");
+
 module.exports = {
     create : create,
     getLoc : getLoc,
     getPiece : getPiece,
     setPiece : setPiece,
-    removePiece : removePiece
+    removePiece : removePiece,
+    isEqual : isEqual
 };
 
 function create(vec){
@@ -30,4 +33,8 @@ function removePiece(space){
     var piece = getPiece(space);
     setPiece(space, undefined);
     return piece;
+}
+
+function isEqual(space1, space2){
+    return Vector.isEqual(getLoc(space1), getLoc(space2));
 }

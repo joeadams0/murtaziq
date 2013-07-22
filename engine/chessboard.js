@@ -7,12 +7,10 @@
  **/
 var utils = require("./utils.js");
 var _ = require("underscore");
-var configs = require("./config.js");
+var configs;
 var pieces = require("./pieces.js");
 var vector = require("./vector.js");
-var Piece = require("./pieces/piece.js");
 var Space = require("./space.js");
-var Move = require("./moves/move.js");
 
 module.exports = {
     create : create,
@@ -26,13 +24,15 @@ module.exports = {
     getEnemySpaces : getEnemySpaces,
     getThreateningPieces : getThreateningPieces,
     getRoyalSpace : getRoyalSpace,
-    isOnBoard : isOnBoard
+    isOnBoard : isOnBoard,
+    getMoves : getMoves
 };
 
 
-function create(){
-    var lightSide = arguments[0] ? arguments[0] : this.getDefaultSide();
-    var darkSide = arguments[1] ? arguments[1] : this.getDefaultSide();
+function create(config){
+    configs = config;
+    var lightSide = arguments[1] ? arguments[1] : this.getDefaultSide();
+    var darkSide = arguments[2] ? arguments[2] : this.getDefaultSide();
     return setLightSide(lightSide, setDarkSide(darkSide, newBoard()));
 }
 
@@ -69,12 +69,12 @@ function removePiece(board, vec){
 
 function getDefaultSide(){
     return {
-            pawn : pieces.get(configs.defaultSide.pawn),
-            rook : pieces.get(configs.defaultSide.rook),
-            knight : pieces.get(configs.defaultSide.knight),
-            bishop : pieces.get(configs.defaultSide.bishop),
-            queen : pieces.get(configs.defaultSide.queen),
-            royal : pieces.get(configs.defaultSide.royal),
+            pawn : pieces.get(configs, configs.defaultSide.pawn),
+            rook : pieces.get(configs, configs.defaultSide.rook),
+            knight : pieces.get(configs, configs.defaultSide.knight),
+            bishop : pieces.get(configs, configs.defaultSide.bishop),
+            queen : pieces.get(configs, configs.defaultSide.queen),
+            royal : pieces.get(configs, configs.defaultSide.royal),
         };
 }
 
@@ -96,18 +96,18 @@ function newBoard(){
 
 function setLightSide(side, board){
     var baseRow = 0;
-    var lightTeam = Piece.lightTeam;
+    var lightTeam = configs.lightTeam;
     return setPawns(1, side.pawn, lightTeam,
                 setRooks(baseRow, side.rook, lightTeam,
                     setKnights(baseRow, side.knight,lightTeam,
                         setBishops(baseRow, side.bishop,lightTeam,
                             setQueen(baseRow, 0, side.queen, lightTeam,
-                                setRoyal(baseRow,0, side.royal, lightTeam, board))))));
+                                setRoyal(baseRow, 0, side.royal, lightTeam, board))))));
 }
 
 function setDarkSide(side, board){
     var baseRow = 7;
-    var darkTeam = Piece.darkTeam;
+    var darkTeam = configs.darkTeam;
     return setPawns(6, side.pawn, darkTeam,
                 setRooks(baseRow, side.rook, darkTeam,
                     setKnights(baseRow, side.knight, darkTeam,
@@ -116,9 +116,9 @@ function setDarkSide(side, board){
                                 setRoyal(baseRow, 1, side.royal, darkTeam, board))))));
 }
 
-function setPawns(rowIndex, pieceFac, team, board){
+function setPawns(rowIndex, piece, team, board){
     return createPiecesAt(
-        pieceFac,
+        piece,
         board,
         team,
         vector.create(0, rowIndex),
@@ -132,9 +132,9 @@ function setPawns(rowIndex, pieceFac, team, board){
     );
 }
 
-function setRooks(rowIndex, pieceFac, team, board){
+function setRooks(rowIndex, piece, team, board){
     return createPiecesAt(
-        pieceFac,
+        piece,
         board,
         team,
         vector.create(0, rowIndex),
@@ -142,9 +142,9 @@ function setRooks(rowIndex, pieceFac, team, board){
     );
 }
 
-function setKnights(rowIndex, pieceFac, team, board){
+function setKnights(rowIndex, piece, team, board){
     return createPiecesAt(
-        pieceFac,
+        piece,
         board,
         team,
         vector.create(1, rowIndex),
@@ -152,9 +152,9 @@ function setKnights(rowIndex, pieceFac, team, board){
     );
 }
 
-function setBishops(rowIndex, pieceFac, team, board){
+function setBishops(rowIndex, piece, team, board){
     return createPiecesAt(
-        pieceFac,
+        piece,
         board,
         team,
         vector.create(2, rowIndex),
@@ -162,40 +162,40 @@ function setBishops(rowIndex, pieceFac, team, board){
     );
 }
 
-function setQueen(rowIndex, offset, pieceFac, team, board){
+function setQueen(rowIndex, offset, piece, team, board){
     return createPiecesAt(
-        pieceFac,
+        piece,
         board,
         team,
-        vector.create( 4 + offset, rowIndex)
+        vector.create(3, rowIndex)
     );
 }
 
-function setRoyal(rowIndex, offset, pieceFac, team, board){
+function setRoyal(rowIndex, offset, piece, team, board){
     return createPiecesAt(
-        pieceFac,
+        piece,
         board,
         team,
         true,
-        vector.create(3 + offset, rowIndex)
+        vector.create(4, rowIndex)
     );
 }
 
 
-function createPiecesAt(pieceFac, board, team, isRoyal){
+function createPiecesAt(piece, board, team, isRoyal){
     var index = 3;
     if(_.isBoolean(isRoyal))
         index = 4;
     _.each(
         _.rest(arguments, index),
-        createPieceGen(pieceFac, board, team, isRoyal)
+        createPieceGen(piece, board, team, isRoyal)
     );
     return board;
 }
 
-function createPieceGen(pieceFac, board, team, isRoyal){
+function createPieceGen(piece, board, team, isRoyal){
     return function(vec){
-        Space.setPiece(getSpace(board, vec), pieceFac.create(team, isRoyal));
+        Space.setPiece(getSpace(board, vec), new piece(configs, team, isRoyal));
     };
 }
 
@@ -217,7 +217,7 @@ function spaceString(space, highlights){
     var highlight = getHighlight(space, highlights);
     var string = '[ ]';
     if(utils.existy(Space.getPiece(space)))
-        string = '[' + Piece.getAbbr(Space.getPiece(space)) + ']';
+        string = '[' + Space.getPiece(space).getAbbr() + ']';
     if(utils.existy(highlight))
         return string[highlight.color];
     else
@@ -239,11 +239,11 @@ function getHighlight(space, highlights){
 }
 
 function getEnemySpaces(board, space){
-    var team = Piece.getTeam(Space.getPiece(space));
+    var team = Space.getPiece(space).getTeam();
     return _.filter(_.flatten(board),
             function (space){
                 if(utils.existy(Space.getPiece(space)))
-                    return Piece.getTeam(Space.getPiece(space)) != team;
+                    return Space.getPiece(space).getTeam() != team;
             }
         );
 }
@@ -251,9 +251,9 @@ function getEnemySpaces(board, space){
 function getThreateningPieces(board, source){
     return _.filter(getEnemySpaces(board, source), 
             function(space){
-                return _.size(_.find(Piece.getMoves(board,space), 
+                return _.size(_.find(getMoves(board,space), 
                     function(move){
-                        return vector.isEqual(Move.getEndLoc(move), Space.getLoc(source));
+                        return vector.isEqual(move.getEndLoc(), Space.getLoc(source));
                     }
                 )) !== 0;
             }
@@ -264,8 +264,15 @@ function getRoyalSpace(board, team){
     return _.find(_.flatten(board),
             function(space){
                 return utils.existy(Space.getPiece(space)) && 
-                        Piece.getTeam(Space.getPiece(space)) == team &&
-                        Piece.isRoyal(Space.getPiece(space));
+                        Space.getPiece(space).getTeam() == team &&
+                        Space.getPiece(space).isRoyal();
             }
         );
+}
+
+function getMoves(board, space){
+    if(utils.existy(Space.getPiece(space))){
+        return Space.getPiece(space).getMoves(board, space);
+    }
+    return [];
 }

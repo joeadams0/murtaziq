@@ -12,106 +12,92 @@ var moveschema = require("./configs/moveschema.js");
 var Space = require("../space.js");
 var Move = require("../moves/move.js");
 
-var lightTeam = 0;
-var darkTeam = 1;
+var lightTeam;
+var darkTeam;
 
-module.exports ={
-    lightTeam : lightTeam,
-    darkTeam : darkTeam,
-    create : create,
-    getName : getName,
-    getAbbr : getAbbr,
-    getTeam : getTeam,
-    getSchema : getSchema,
-    isRoyal : isRoyal,
-    getMoves : getMoves,
-    getMoveCount : getMoveCount,
-    incrMoveCount : incrMoveCount,
-    decrMoveCount : decrMoveCount,
-    canMove : canMove
+module.exports = function(configs, name, abbr, team, schema, royalty){
+    lightTeam = configs.lightTeam;
+    darkTeam = configs.darkTeam;
+    
+    this.name = name;
+    this.abbr = abbr;
+    this.team = team;
+    this.moveCount = 0;
+    this.schema = team == lightTeam ? schema : moveschema.reflect(schema);
+    this.royalty = utils.existy(royalty) ? royalty : false;
+    this.lightTeam = lightTeam;
+    this.darkTeam = darkTeam;
+    
+    this.getName = getName;
+    this.getAbbr = getAbbr;
+    this.getTeam = getTeam;
+    this.getSchema = getSchema;
+    this.isRoyal = isRoyal;
+    this.getMoves = getMoves;
+    this.getMoveCount = getMoveCount;
+    this.incrMoveCount = incrMoveCount;
+    this.decrMoveCount = decrMoveCount;
+    this.setMoveCount = setMoveCount;
+    this.canMove = canMove;
 };
 
-function create(name, abbr, team, schema, isRoyal){
-    if(team === lightTeam)
-        return {
-            name : name,
-            abbr : abbr,
-            team : team,
-            moveCount : 0,
-            schema : schema,
-            isRoyal : utils.existy(isRoyal) ? isRoyal : false
-        };
-    else
-         return {
-            name : name,
-            abbr : abbr,
-            team : team,
-            moveCount : 0,
-            schema : moveschema.reflectSchema(schema),
-            isRoyal : utils.existy(isRoyal) ? isRoyal : false
-        };
+function getName(){
+    return this.name;
 }
 
-function getName(piece){
-    return piece.name;
+function getAbbr(){
+    return this.abbr;
 }
 
-function getAbbr(piece){
-    return piece.abbr;
+function getTeam() {
+    return this.team;
 }
 
-function getTeam(piece) {
-    return piece.team;
+function getSchema(){
+    return this.schema;
 }
 
-function getSchema(piece){
-    return piece.schema;
+function getMoveCount(){
+    return this.moveCount;
 }
 
-function getMoveCount(piece){
-    return piece.moveCount;
+function isRoyal(){
+    return this.royalty;
 }
 
-function isRoyal(piece){
-    return piece.isRoyal;
+function incrMoveCount(){
+    this.setMoveCount(this.getMoveCount() + 1);
 }
 
-function incrMoveCount(piece){
-    setMoveCount(piece, getMoveCount(piece) + 1);
+function decrMoveCount(){
+    this.setMoveCount(this.getMoveCount() - 1);
 }
 
-function decrMoveCount(piece){
-    setMoveCount(piece, getMoveCount(piece) - 1);
-}
-
-function setMoveCount(piece, num){
-    piece.moveCount = num;
+function setMoveCount(num){
+    this.moveCount = num;
 }
 
 function getMoves(board, space){
-    if(utils.existy(Space.getPiece(space)))
-        return leaperMoves(board, Space.getLoc(space), getSchema(Space.getPiece(space)), Space.getPiece(space));
-    else 
-        return [];
+    return leaperMoves.bind(this)(board, Space.getLoc(space), this.getSchema((Space.getPiece(space))));
 }
 
-function leaperMoves(board, loc, schema, piece){
+function leaperMoves(board, loc, schema){
     if(_.isArray(schema))
-            return schemaIterate(board, loc, piece);
+            return schemaIterate.bind(this)(board, loc);
     else
-        return schemaEval(
+        return schemaEval.bind(this)(
             board, 
             loc, 
-            schema,
-            piece
+            schema
         );
 }
 
-function schemaIterate(board, loc, piece){
+function schemaIterate(board, loc){
+    var self = this;
     return _.reduce(
-        getSchema(piece), 
+        this.getSchema(), 
         function(memo, singleSchema){
-            _.each(leaperMoves(board, loc, singleSchema, piece), function(el){
+            _.each(leaperMoves.bind(self)(board, loc, singleSchema), function(el){
                memo.push(el); 
             });
             return memo;
@@ -119,34 +105,33 @@ function schemaIterate(board, loc, piece){
         []);
 }
 
-function schemaEval(board, loc, schema, piece, moves, step){
+function schemaEval(board, loc, schema, moves, step){
     var Chessboard = require("../chessboard.js");
     step = utils.existy(step) ? step : 0;
     moves = utils.existy(moves) ? moves : [];
     // Cant move any more
     if(step >= moveschema.getMaxSteps(schema) ||  
         !Chessboard.isOnBoard(board, vector.add(loc, vector.scale(moveschema.getVector(schema), step+1))) ||
-        !canMove(
+        !canMove.bind(this)(
             board,
             loc,
             vector.add(loc, vector.scale(moveschema.getVector(schema), step+1)),
             schema,
-            piece,
             vector.add(loc, vector.scale(moveschema.getVector(schema), step))
         )
     )
         return moves;
     // Can move
     else
-        return schemaEval(
+        return schemaEval.bind(this)(
             board, 
             loc, 
             schema,
-            piece,
-            utils.arrPush(moves, Move.create(
-                                        getTeam(piece), 
+            utils.arrPush(moves, new Move(
+                                        this.getTeam(), 
                                         loc, 
-                                        vector.scale(moveschema.getVector(schema), step+1),
+                                        moveschema.getVector(schema),
+                                        step+1,
                                         Chessboard.getPiece(board, vector.add(loc, vector.scale(moveschema.getVector(schema), step+1)))
                                     )
                         ),
@@ -155,7 +140,7 @@ function schemaEval(board, loc, schema, piece, moves, step){
 }
 
 
-function canMove(board, source, target, schema, piece, previousStep){
+function canMove(board, source, target, schema, previousStep){
     var chessboard = require("../chessboard.js");
     var canSimpleMove = moveschema.canMove(schema);
     var canAttack = moveschema.canAttack(schema);
@@ -164,11 +149,12 @@ function canMove(board, source, target, schema, piece, previousStep){
     if(!utils.existy(chessboard.getSpace(board, target)) ||
         (
             utils.existy(moveschema.getCondition(schema)) && 
-            !moveschema.getCondition(schema)(board, source, piece) 
+            !moveschema.getCondition(schema)(board, source, this) 
         ) ||
         ( 
+            utils.existy(previousStep) &&
             utils.existy(chessboard.getPiece(board, previousStep)) &&
-            getTeam(chessboard.getPiece(board,previousStep)) != getTeam(chessboard.getPiece(board, source))
+            chessboard.getPiece(board,previousStep).getTeam() != this.getTeam()
         )
     )
         return false;
@@ -179,6 +165,6 @@ function canMove(board, source, target, schema, piece, previousStep){
         
     
     // If they are not on the same team
-    return getTeam(Space.getPiece(chessboard.getSpace(board, source))) != getTeam(Space.getPiece(chessboard.getSpace(board, target))) &&
+    return this.getTeam() != Space.getPiece(chessboard.getSpace(board, target)).getTeam() &&
         canAttack ;
 }

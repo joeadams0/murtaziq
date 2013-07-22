@@ -14,5 +14,7 @@ module.exports = {
         bishop : require("./pieces/bishop.js"),
         queen : require("./pieces/queen.js"),
         king : require("./pieces/king.js")
-    }  
+    },
+    lightTeam : 0,
+    darkTeam : 1
 };

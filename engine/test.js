@@ -1,8 +1,6 @@
 
-var piece = require("./pieces/piece.js");
 var vector = require("./vector.js");
 var colors = require("colors");
-var Move = require("./moves/move.js");
 var _ = require("underscore");
 var Match = require("./match.js");
 
@@ -10,24 +8,27 @@ var match = Match.create();
 
 module.exports = {
     match : match,
-    piece : piece,
     vector : vector,
     getMoves : getMoves,
     move : move
 };
 
 Match.printBoard(match);
-getMoves(0,1);
-move(2,1,2,3);
-move(2,6,2,4);
-move(3,1,3,3);
-move(3,6,3,4);
+
 move(4,1,4,3);
 move(4,6,4,4);
-move(4,0,0,4);
-move(7,6,7,5);
-move(0,4,0,3);
-getMoves(1,6);
+move(3,1,3,3);
+move(3,6,3,4);
+move(3,0,5,2);
+move(3,7,5,5); 
+move(2,0,4,2);
+move(2,7,4,5); 
+move(1,0,0,2);
+move(1,7,0,5);
+move(7,0,4,0);
+move(7,7,4,7);
+move(0,0,4,0);
+move(0,7,4,7);
 
 function getMoves(x, y){
     console.log("\nMoves at " + vector.toString(vector.create(x,y)));
@@ -36,7 +37,7 @@ function getMoves(x, y){
         match,
         {
             positions : _.map(moves, function(m){
-                return vector.add(Move.getLoc(m), Move.getStep(m));
+                return m.getEndLoc();
             }),
             color : 'green'
         },

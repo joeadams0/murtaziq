@@ -1,16 +1,6 @@
-var piece = require("./piece.js");
+var Piece = require("./piece.js");
 var config = require("./configs/pawnconfig.js");
-var Space = require("../space.js");
 
-var exports = {
-    create : create
+module.exports = function(configs, team){
+    this.__proto__ = new Piece(configs, config.name, config.abbr, team, config.schema);
 };
-
-exports.__proto__ = piece;
-
-module.exports = exports;
-
-function create(team){
-    return piece.create(config.name, config.abbr, team, config.schema);
-}
-

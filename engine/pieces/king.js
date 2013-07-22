@@ -1,15 +1,6 @@
-var piece = require("./piece.js");
+var Piece = require("./piece.js");
 var config = require("./configs/kingconfig.js");
 
-var exports = {
-    create : create
+module.exports = function(configs, team, isRoyal){
+    this.__proto__ = new Piece(configs, config.name, config.abbr, team, config.schema, isRoyal);
 };
-
-exports.__proto__ = piece;
-
-module.exports = exports;
-
-function create(team, isRoyal){
-    return piece.create(config.name, config.abbr, team, config.schema, isRoyal);
-}
-

@@ -1,69 +1,71 @@
 
 var Vector;
 var Chessboard;
-var Piece;
 var utils;
 
-module.exports = {
-    create : create,
-    getLoc : getLoc,
-    getStep : getStep,
-    perform : perform,
-    undo : undo,
-    getEndLoc : getEndLoc,
-    getTeam : getTeam
+module.exports = function(team, loc, vec, step, capturedPiece, type){
+    setRequires();
+    
+    this.team = team;
+    this.loc = loc;
+    this.vec = vec;
+    this.step = step;
+    this.capturedPiece = capturedPiece;
+    this.type = utils.existy(type) ? type : "normal";
+    
+    this.getLoc = getLoc;
+    this.getVec = getVec;
+    this.getStep = getStep;
+    this.perform = perform;
+    this.undo = undo;
+    this.getEndLoc = getEndLoc;
+    this.getTeam = getTeam;
+    this.getCapturedPiece = getCapturedPiece;
 };
 
-function create(team, loc, step, capturedPiece){
-    return {
-        team : team,
-        loc : loc,
-        step : step,
-        capturedPiece : capturedPiece
-    };
+function getLoc(){
+    return this.loc;
 }
 
-function getLoc(move){
-    return move.loc;
+function getVec(){
+    return this.vec;
 }
 
-function getStep(move){
-    return move.step;
+function getStep(){
+    return this.step;
 }
 
-function getTeam(move) {
-    return move.team;
+function getTeam() {
+    return this.team;
 }
 
-function getCapturedPiece(move){
-    return move.capturedPiece;
+function getCapturedPiece(){
+    return this.capturedPiece;
 }
 
-function perform(board, move){
+function perform(board){
+    setRequires();
+    Chessboard.getPiece(board, this.getLoc()).incrMoveCount();
+    return Chessboard.setPiece(board, this.getEndLoc(), Chessboard.removePiece(board, this.getLoc())); 
+}
+
+function undo(board){
     setRequires();
     
-    Piece.incrMoveCount(Chessboard.getPiece(board, getLoc(move)));
-    return Chessboard.setPiece(board, getEndLoc(move), Chessboard.removePiece(board, getLoc(move))); 
+    Chessboard.getPiece(board, this.getEndLoc()).decrMoveCount();
+    Chessboard.setPiece(board, this.getLoc(), Chessboard.removePiece(board, this.getEndLoc())); 
+    if(utils.existy(this.getCapturedPiece()))
+        Chessboard.setPiece(board, this.getEndLoc(), this.getCapturedPiece());
+    return board;
 }
 
-function undo(board, move){
+function getEndLoc(){
     setRequires();
-    
-    Piece.decrMoveCount(Chessboard.getPiece(board, getEndLoc(move)));
-    var piece = Chessboard.setPiece(board, getLoc(move), Chessboard.removePiece(board, getEndLoc(move))); 
-    if(utils.existy(getCapturedPiece(move)))
-        Chessboard.setPiece(board, getEndLoc(move), getCapturedPiece(move));
-    return piece;
-}
-
-function getEndLoc(move){
-    setRequires();
-    return Vector.add(getLoc(move), getStep(move));
+    return Vector.add(this.getLoc(), Vector.scale(this.getVec(), this.getStep()));
 }
 
 function setRequires(){
     Vector = require("../vector.js");
     Chessboard = require("../chessboard.js");
-    Piece = require("../pieces/piece.js");
     utils = require("../utils.js");
 }

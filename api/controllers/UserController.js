@@ -29,7 +29,11 @@ var UserController = {
                 var hasher = require("password-hash");
                 password = hasher.generate(password);
                  
-                User.create({username: username, password: password}).done(function(error, user) {
+                User.create({
+	                	username: username, 
+	                	password: password,
+	                	state: 'online'
+	                }).done(function(error, user) {
 	                if (error) {
 	                    res.send(500, {error: "DB Error"});
 	                } else {
@@ -52,6 +56,11 @@ var UserController = {
 	            if (user) {
 	                var hasher = require("password-hash");
 	                if (hasher.verify(password, user.password)) {
+	                	User.update({
+	                		username: username 
+	                		},{
+	                		state: 'online'
+	                	});
 	                	setSession(req, user);
 	                    var data = {url : '/'};
 	                    if(req.redirectTo){
@@ -69,6 +78,11 @@ var UserController = {
 	},
 
 	logout: function(req, res){
+		User.update({
+			username: getUser(req).username
+		},{
+			state: 'offline'
+		})
 		req.session.user = undefined;
 		res.redirect('back');
 	},
@@ -77,6 +91,10 @@ var UserController = {
   		res.json({user : req.session.user});
   	},
 };
+
+function getUser(req){
+	return req.session.user;
+}
 
 function setSession(req, user){	
     req.session.user = {

@@ -6,7 +6,8 @@ module.exports = {
 
 	 attributes  : {
         username: 'STRING',
-        password: 'STRING'
+        password: 'STRING',
+        state: 'STRING'
     }
 
 };

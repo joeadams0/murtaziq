@@ -15,7 +15,7 @@ module.exports = {
     getMaxSteps : getMaxSteps,
     canAttack : canAttack,
     canMove : canMove,
-    reflectSchema : reflectSchema,
+    reflect : reflect,
     getCondition : getCondition
 };
 
@@ -53,10 +53,10 @@ function getCondition(schema){
     return schema.condition;
 }
 
-function reflectSchema(schema){
+function reflect(schema){
     if(_.isArray(schema)){
         return _.map(schema, function(simpleschema){
-            return reflectSchema(simpleschema);
+            return reflect(simpleschema);
         });
     }
     else{
