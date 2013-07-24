@@ -36,7 +36,7 @@ function senderGen(url, username, password){
                     console.log(data);
                     window.location = data.url;
                 },
-                fail : function(res){
+                error : function(res){
                     alert("Error: " + res.getResponseHeader("error"));
                 }
             });

@@ -5,7 +5,18 @@
 var UserController = {
 
 	index: function (req,res) {
-		res.send(403, {error : "Invalid Request"});
+		User.find({
+			id : getUser(req).userId
+		}).done(function(err, user){
+			if (err) 
+                res.send(500, { error: "DB Error" });
+            else{
+				user.password = undefined;
+				user.values = undefined;
+
+		  		res.json(user);
+		  	}
+		});
 	},
 
 	login: function (req,res) {
@@ -59,8 +70,11 @@ var UserController = {
 	                	User.update({
 	                		username: username 
 	                		},{
-	                		state: 'online'
-	                	});
+	                			state: 'online'
+	                		},
+	                		function(err, users){
+	                			// Nothing yet
+	                		});
 	                	setSession(req, user);
 	                    var data = {url : '/'};
 	                    if(req.redirectTo){
@@ -82,14 +96,14 @@ var UserController = {
 			username: getUser(req).username
 		},{
 			state: 'offline'
-		})
+		},
+		function(err, users){
+			// Nothing yet
+		});
 		req.session.user = undefined;
 		res.redirect('back');
 	},
 
-  	user : function(req, res){
-  		res.json({user : req.session.user});
-  	},
 };
 
 function getUser(req){
