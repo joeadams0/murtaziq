@@ -1,23 +1,40 @@
-/*---------------------
-	:: User
-	-> model
----------------------*/
+/**
+ * User
+ *
+ * @module      :: Model
+ * @description :: A short summary of how this model works and what it represents.
+ *
+ */
+
 var hasher = require("password-hash");
+
 module.exports = {
 
-	 attributes  : {
-        username: {
-        	type : 'string',
-        	require : true,
-        	minLength : 2,
-
+    attributes: {
+      
+        username : {
+            type : 'STRING',
+            maxLength : 16,
+            minLength : 2,
+            required : true
         },
-        password: {
-        	type : 'string',
-        	require : true,
-        	maxLength : 5,
-      		columnName: 'encrypted_password'
+        
+        
+        password : {
+           type : 'STRING',
+           maxLength : 16,
+           minLength : 4,
+           required : true
         },
-        state: 'STRING'
+        
+        
+        state : 'STRING'
+    
+    },
+    
+    beforeCreate : function(values, next){
+        values.password = hasher.generate(values.password);
+        next();
     }
+
 };

@@ -1,4 +1,2 @@
-Murtaziq
-========
-
-JavaScript Chess Variant Web App
+# murtaziq
+### a Sails application

@@ -25,6 +25,20 @@ $("#register-button").click(function(){
     }  
 }); 
 
+$('.logout-link').click(function(event){
+    event.preventDefault();
+    $.ajax({
+        type : 'GET',
+        url : $(this).attr('href'),
+        success : function (data, textStatus, jqXHR) {
+            window.location.reload();
+        },
+        error : function(res){
+            alert("Error: " + res.getResponseHeader("error"));
+        }
+    });
+});
+
 function senderGen(url, username, password){
     if(username && password && url){
         return function(){
@@ -34,7 +48,7 @@ function senderGen(url, username, password){
                 data : {username: username, password:password},
                 success : function (data, textStatus, jqXHR) {
                     console.log(data);
-                    window.location = data.url;
+                    window.location.reload();
                 },
                 error : function(res){
                     alert("Error: " + res.getResponseHeader("error"));
