@@ -1,5 +1,6 @@
+
 require.config({ 
-	baseUrl : '/js/',
+	baseUrl : '/js/app/',
 
 	paths: {  
 		backbone: 'libs/backbone/backbone',
