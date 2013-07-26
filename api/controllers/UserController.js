@@ -5,10 +5,17 @@
  * @description	:: Contains logic for handling requests.
  */
 
+var UserHelper = require("../helpers/user-helper.js");
+
 module.exports = {
     
     index : function(req, res){
-      res.send(getUser(req));
+        UserHelper.getUser(req, function(err, user){
+            if(err)
+                res.send(err, 500);
+            else
+                res.send(user);
+        });
     },
   
     login : function(req, res){
@@ -16,27 +23,19 @@ module.exports = {
         var password = req.param("password");
         
         if(username && password)
-            User.findOne({
-                    username : username
-                }).done(function(err, user) {
-                if (err) {
-                    res.send(500, { error: err });
-                } else {
-                    if (user) {
-                        var hasher = require("password-hash");
-                        if (hasher.verify(password, user.password)) {
-                        
-                        	setSession(req, user);
-                            var data = getUser(req);
-                            res.send(data);
-                        } else {
-                            res.send(400, { error: "Wrong Username or Password" });
-                        }
-                    } else {
-                        res.send(404, { error: "Wrong Username or Password" });
+            UserHelper.validate(username, password, 
+                function(err){
+                    if(err)
+                        res.send(err , 500)
+                    else{
+                        UserHelper.setOnline(req, username, 
+                            function(){
+                                UserHelper.getUser(req, function(err, user){
+                                    res.send(user);
+                                }); 
+                            });
                     }
-                }
-            });  
+                });
         else
             res.view('user/login', {title : "Login Murtaziq"});
             
@@ -47,66 +46,33 @@ module.exports = {
         var password = req.param("password");
          
         if(username && password)
-            User.findOne({
-                    
-                    username : username
-                
-                }).done(function(err, user){
-                        
-                    if (err) {
-                        res.send(500, { error: err });
-                    } else if (user) {
-                        res.send(400, {error: "username already Taken"});
+            UserHelper.create(username, password, 
+                function(error, user){
+                    if (error) {
+                        res.send(error, 500);
                     } else {
-                         
-                        User.create({
-                            	username: username, 
-        	                	password: password,
-        	                	state: 'online'
-        	                }).done(function(error, user) {
-        	                if (error) {
-        	                    res.send(500, {error: error});
-        	                } else {
-        	                	setSession(req, user);
-                                res.send(getUser(req));
-        	                }
-                    	});
-                	}
-        	});
+                    	UserHelper.setOnline(req, user);
+                        res.send(UserHelper.getSession(req));
+                    }
+                }
+            );
             
         else
             res.view('user/register', {title : "Login Murtaziq"});
     },
     
     logout : function(req, res){
-        removeSession(req);
+        UserHelper.setOffline(req);
         res.send({});
+    },
+    
+    put : function(req, res){
+        var user = req.param("user");
+        if(UserHelper.getSession(req).id === user.id)
+            UserHelper.update(UserHelper.getSession(req), user, function(err, user){
+                res.send(user);
+            });
+        else
+            res.send(401)
     }
 };
-
-function getUser(req){
-    return req.session.user;
-}
-
-function setSession(req, user){	
-    User.update({
-    	username: user.username 
-    	},{
-    		state: 'online'
-    	},
-    	function(err, users){
-    		// Nothing yet
-    });
-    user.password = undefined;
-    req.session.user = user;
-}
-
-function removeSession(req){
-    var user = req.session.user;
-    
-    User.update({
-        id : user.id  
-    });
-    
-    req.session.user = undefined;
-}

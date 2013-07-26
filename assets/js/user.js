@@ -34,7 +34,7 @@ $('.logout-link').click(function(event){
             window.location.reload();
         },
         error : function(res){
-            alert("Error: " + res.getResponseHeader("error"));
+            alert("Error: " + res.responseText);
         }
     });
 });
@@ -51,7 +51,7 @@ function senderGen(url, username, password){
                     window.location.reload();
                 },
                 error : function(res){
-                    alert("Error: " + res.getResponseHeader("error"));
+                    alert("Error: " + res.responseText);
                 }
             });
         }

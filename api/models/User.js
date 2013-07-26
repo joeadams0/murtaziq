@@ -35,6 +35,12 @@ module.exports = {
     beforeCreate : function(values, next){
         values.password = hasher.generate(values.password);
         next();
+    },
+    
+    beforeUpdate : function(values, next){
+        if(values.password)
+            values.password = hasher.generate(values.password);
+        next();
     }
 
 };

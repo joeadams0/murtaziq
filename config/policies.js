@@ -19,7 +19,9 @@ module.exports.policies = {
         '*' : 'authenticated',
         login : 'notauthenticated',
         create : 'notauthenticated'
-  }
+  },
+  
+  play : 'authenticated'
 
   /*
 	// Here's an example of adding some policies to a controller

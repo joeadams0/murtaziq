@@ -1,10 +1,11 @@
 /**
  * Allow any not authenticated user.
  */
+var UserHelper = require("../helpers/user-helper.js");
 module.exports = function (req, res, ok) {
 
   // User is allowed, proceed to controller
-  if (!req.session.user) {
+  if (!UserHelper.getSession(req)) {
     return ok();
   }
 
