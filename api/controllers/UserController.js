@@ -13,8 +13,9 @@ module.exports = {
         UserHelper.getUser(req, function(err, user){
             if(err)
                 res.send(err, 500);
-            else
-                res.send(user);
+            else{
+                res.json(user);
+            }
         });
     },
   
@@ -26,12 +27,12 @@ module.exports = {
             UserHelper.validate(username, password, 
                 function(err){
                     if(err)
-                        res.send(err , 500)
+                        res.json(err , 500)
                     else{
                         UserHelper.setOnline(req, username, 
                             function(){
                                 UserHelper.getUser(req, function(err, user){
-                                    res.send(user);
+                                    res.json(user);
                                 }); 
                             });
                     }
@@ -49,10 +50,10 @@ module.exports = {
             UserHelper.create(username, password, 
                 function(error, user){
                     if (error) {
-                        res.send(error, 500);
+                        res.json(error, 500);
                     } else {
                     	UserHelper.setOnline(req, user);
-                        res.send(UserHelper.getSession(req));
+                        res.json(UserHelper.getSession(req));
                     }
                 }
             );
@@ -63,16 +64,19 @@ module.exports = {
     
     logout : function(req, res){
         UserHelper.setOffline(req);
-        res.send({});
+        res.json({});
     },
     
-    put : function(req, res){
+    update : function(req, res){
         var user = req.param("user");
         if(UserHelper.getSession(req).id === user.id)
             UserHelper.update(UserHelper.getSession(req), user, function(err, user){
-                res.send(user);
+                if(err)
+                    res.json(err, 500);
+                else
+                    res.json(user);
             });
         else
-            res.send(401)
+            res.json(401)
     }
 };

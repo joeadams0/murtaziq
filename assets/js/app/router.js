@@ -3,10 +3,11 @@
 define([ 
 
 	'backbone', 
-	'views/menus/main'
+	'views/menus/main',
+	'models/user'
 
 
-], function(B, MainMenu) { 
+], function(B, MainMenu, User) { 
 
 	var AppRouter = Backbone.Router.extend({ 
 
@@ -22,9 +23,16 @@ define([
 
 	var initialize = function(){ 
 		var appRouter = new AppRouter; 
-		appRouter.on('route:mainMenu', function(){ 
-			var mainMenu = new MainMenu(); 
-			mainMenu.render(); 
+		appRouter.on('route:mainMenu', function(){
+			var user = new User();
+			user.fetch({
+				success : function(){
+					var mainMenu = new MainMenu({
+						model : user
+					}); 
+					mainMenu.render(); 
+				}
+			})
 		});
 		
 		appRouter.on('defaultAction', function(actions){ 
@@ -36,7 +44,6 @@ define([
 
 		return appRouter; 
 	}; 
-
 	return { 
 		initialize: initialize 
 	}; 

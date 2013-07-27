@@ -58,15 +58,15 @@ module.exports = {
             
         if(newUser.state)
             newUser.state = this.mapState(newUser.state);
+
         User.update(cond,
             newUser
-            , function(err, user) {
+            , function(err, users) {
     
-                if (err) 
-                    cb(err, user);
-                
+                if (err)
+                    cb(err, undefined);
                 else 
-                    cb(err, self.sanitize(user));
+                    cb(err, self.sanitize(users[0]));
             });
     },
     
@@ -92,6 +92,7 @@ module.exports = {
     
     setOnline : function(req, username, cb){  
         var self = this;
+
         this.update({
         	username: username 
         	},{
@@ -134,8 +135,7 @@ module.exports = {
     },
     
     sanitize : function(user){
-        if(user.password)
-            user.password = undefined;
+        user.password = undefined;
         return user;
     },
     
