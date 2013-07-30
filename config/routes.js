@@ -43,7 +43,7 @@ module.exports.routes = {
   
   '/logout' : 'UserController.logout',
 
-  'put /user' : 'UserController.update'
+  'put /user' : 'UserController.update',
 
   /*
   // But what if you want your home page to display

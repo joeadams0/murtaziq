@@ -52,22 +52,7 @@ module.exports = {
     },
     
     update : function(cond, newUser, cb){
-        var self = this;
-        if(newUser.id)
-            delete newUser.id;
-            
-        if(newUser.state)
-            newUser.state = this.mapState(newUser.state);
-
-        User.update(cond,
-            newUser
-            , function(err, users) {
-    
-                if (err)
-                    cb(err, undefined);
-                else 
-                    cb(err, self.sanitize(users[0]));
-            });
+        User.update(cond, newUser, cb);
     },
     
     getSession : function(req){
@@ -75,19 +60,11 @@ module.exports = {
     },
     
     setSession : function(req, user){
-        req.session.user = {
-            id : user.id
-        };
+        req.session.user = user;
     },
     
     getUser : function(req, cb){
-        var self = this;
-        User.findOne(this.getSession(req), function(err, user){
-            if(err)
-                cb(err, user);
-            else
-                cb(err, self.sanitize(user));
-        });
+        User.findOne(this.getSession(req), cb);
     },
     
     setOnline : function(req, username, cb){  
@@ -98,14 +75,9 @@ module.exports = {
         	},{
         		state: states.online
         	},
-        	function(err, user){
-                self.getUsers({
-                    username : username
-                },
-                function(err, users){
-                    self.setSession(req, users[0]);
-                    cb();
-                });
+        	function(err, users){
+                self.setSession(req, {id : users[0].id});
+                cb();
         });
     },
     
@@ -120,18 +92,7 @@ module.exports = {
     },
     
     getUsers : function(cond, cb){
-        var self = this;
-        User.find(cond, function(err, users){
-            if(err)
-                cb(err, users);
-            else{
-                cb(err, _.map(users, 
-                    function(user){
-                        return self.sanitize(user);
-                    })
-                );
-            }
-        });
+        User.find(cond, cb);
     },
     
     sanitize : function(user){

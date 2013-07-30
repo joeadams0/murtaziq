@@ -7,6 +7,7 @@
  */
 
 var hasher = require("password-hash");
+var UserHelper = require("../helpers/user-helper.js");
 
 module.exports = {
 
@@ -28,7 +29,19 @@ module.exports = {
         },
         
         
-        state : 'STRING'
+        state : 'STRING',
+        
+        role : {
+            type : 'STRING',
+            defaultsTo : 'user'
+        },
+        
+        toJSON: function() {
+            var obj = this.toObject();
+            delete obj.password;
+            return obj;
+        }
+        
     
     },
     
@@ -40,6 +53,12 @@ module.exports = {
     beforeUpdate : function(values, next){
         if(values.password)
             values.password = hasher.generate(values.password);
+            
+        if(values.id)
+            delete values.id;
+            
+        if(values.state)
+            values.state = UserHelper.mapState(values.state);
         next();
     }
 

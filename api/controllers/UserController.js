@@ -6,6 +6,7 @@
  */
 
 var UserHelper = require("../helpers/user-helper.js");
+var utils = require("../../engine/utils.js");
 
 module.exports = {
     
@@ -49,11 +50,15 @@ module.exports = {
         if(username && password)
             UserHelper.create(username, password, 
                 function(error, user){
-                    if (error) {
+                    
+                    if (utils.existy(error)) {
                         res.json(error, 500);
                     } else {
-                    	UserHelper.setOnline(req, user);
-                        res.json(UserHelper.getSession(req));
+                    	UserHelper.setOnline(req, user.username, function(){
+                            UserHelper.getUser(req, function(err, user) {
+                                res.json("Ok", 200);
+                            });
+                    	});
                     }
                 }
             );
@@ -64,7 +69,7 @@ module.exports = {
     
     logout : function(req, res){
         UserHelper.setOffline(req);
-        res.json({});
+        res.send("Ok", 200);
     },
     
     update : function(req, res){
@@ -74,9 +79,9 @@ module.exports = {
                 if(err)
                     res.json(err, 500);
                 else
-                    res.json(user);
+                    res.json(200);
             });
         else
-            res.json(401)
+            res.json("Not Authorized", 401);
     }
 };

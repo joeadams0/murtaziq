@@ -12,18 +12,37 @@
 
 module.exports.policies = {
 
-  // Default policy for all controllers and actions
-  // (`true` allows public access) 
-  '*': true,
-  user : {
-        '*' : 'authenticated',
+    // Default policy for all controllers and actions
+    // (`true` allows public access) 
+    '*': true,
+    user : {
+        '*' : [
+            'authenticated',
+            'devrole'
+        ],
+        index : 'authenticated',
+        logout : 'authenticated',
+        update : 'authenticated',
         login : 'notauthenticated',
-        create : 'notauthenticated'
-  },
+        create : 'notauthenticated',
+        find : true
+    },
   
-  play : 'authenticated'
-
-  /*
+    play : {
+      '*' : [
+          'authenticated',
+          'devrole'
+        ]
+      index : 'authenticated'
+    },
+    
+    match : {
+        '*' : [
+            'authorized',
+            'devrole'
+        ]
+    }
+    /*
 	// Here's an example of adding some policies to a controller
 	RabbitController: {
 
