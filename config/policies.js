@@ -32,13 +32,13 @@ module.exports.policies = {
       '*' : [
           'authenticated',
           'devrole'
-        ]
+        ],
       index : 'authenticated'
     },
     
     match : {
         '*' : [
-            'authorized',
+            'authenticated',
             'devrole'
         ]
     }
