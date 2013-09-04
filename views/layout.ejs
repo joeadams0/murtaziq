@@ -6,33 +6,39 @@
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <%res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');%>
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
   </head>
 
-  <body>
+  <body class="container">
         <!-- Nav Bar -->
-            <div class="navbar">
-                <ul>
-                    <li><a href="/">Murtaziq</a></li>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/play#mainmenu">Play</a></li>
-                    <li><a href="/stats">Statistics</a></li>
-                </ul>
-                <ul>
-                    <li>
-                    <% 
-                        if(req.session.user){ %>
-                    		<a href="/logout" class='logout-link'>Logout</a> 
-                    	<% }
-                    	else{ %>
-                    		<a href="/login">Login</a> 
-                    	<% }
-                    %>
-                	</li>
-                </ul>
+            <div class="navbar navbar-default">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/">Murtaziq</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/play#mainmenu">Play</a></li>
+                        <li><a href="/stats">Statistics</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                        <% if(req.session.user){ %>
+                            <a href="/logout" class='logout-link'>Logout</a> 
+                        <% } else{ %>
+                            <a href="/login">Login</a> 
+                        <% } %>
+                      </li>
+                    </ul>
+                </div>
             </div>
-        <%- body %>
-        
+
+        <div class="jumbotron">
+            <%- body %>
+        </div>
+
         <!-- A few key dependencies, linked in order -->
+        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
         
         <!-- Bring in the socket.io client -->
         <script type="text/javascript" src="/js/socket.io.js"></script>
