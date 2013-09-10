@@ -1,18 +1,13 @@
 /**
  * MatchController
  *
- * @module		:: Controller
- * @description	:: Contains logic for handling requests.
+ * @module		:: Match Controller
+ * @description	:: Contains logic for handling requests about matches.
  */
 
 module.exports = {
 
-  /* e.g.
-  sayHello: function (req, res) {
-    res.send('hello world!');
-  }
-  */
-  
+ 
   /**
    * /match/find
    */ 

@@ -1,10 +1,12 @@
-
+var config = require("./config.js");
 var vector = require("./vector.js");
 var colors = require("colors");
 var _ = require("underscore");
 var Match = require("./match.js");
 
-var match = Match.create();
+console.log(config);
+console.log("here");
+var match = Match.create(config);
 
 module.exports = {
     match : match,

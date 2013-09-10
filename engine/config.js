@@ -1,4 +1,5 @@
 module.exports = {
+    version : '0.0.0',
     defaultSide : {
         pawn : 'pawn',
         rook : 'rook',
