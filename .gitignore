@@ -7,8 +7,8 @@ lib-cov
 *.pid
 *.gz
 
-*node_modules/*                                                                                                                                          
-                                                                                                                                         
+node_modules                                                                                                                                          
+.tmp                                                                                                                           
 
 pids
 logs
