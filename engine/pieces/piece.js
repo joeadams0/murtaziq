@@ -64,6 +64,7 @@ function constructorGenerator(pieceConfigs){
         this.setSchemas = setSchemas;
         this.getSchemaFiles = getSchemaFiles;
         this.toJSONObj = toJSONObj;
+        this.toClientJSONObj = toClientJSONObj;
 
         this.setSchemas(pieceConfigs.schemas);
     }
@@ -236,4 +237,15 @@ function toJSONObj () {
 function loadJSONObj(JSONObj, configs){
     var piece = constructorGenerator(JSONObj);
     return new piece(configs, JSONObj.team, JSONObj.royalty);
+}
+
+function toClientJSONObj () {
+    return {
+        name : this.getName(),
+        value : this.getValue(),
+        abbr : this.getAbbr(),
+        team : this.getTeam(),
+        moveCount : this.getMoveCount(),
+        royalty : this.isRoyal(),
+    }
 }

@@ -9,7 +9,8 @@ module.exports = {
     removePiece : removePiece,
     isEqual : isEqual,
     toJSONObj : toJSONObj,
-    loadJSONObj : loadJSONObj
+    loadJSONObj : loadJSONObj,
+    toClientJSONObj : toClientJSONObj,
 };
 
 function create(vec){
@@ -61,4 +62,14 @@ function loadJSONObj (JSONObj, configs) {
         space.piece = pieces.loadPiece(JSONObj.piece, configs);
 
     return space;
+}
+
+
+function toClientJSONObj (space) {
+    var JSONObj = {};
+
+    if(getPiece(space))
+        JSONObj.piece = getPiece(space).toClientJSONObj();
+
+    return JSONObj;
 }

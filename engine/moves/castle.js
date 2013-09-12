@@ -11,6 +11,7 @@ module.exports = function(params){
     this.undo = undo;
     this.getRoyalEndLoc = getRoyalEndLoc;
     this.getCastleEndLoc = getCastleEndLoc;
+    this.toClientJSONObj = toClientJSONObj;
 };
 
 
@@ -46,6 +47,28 @@ function getRoyalEndLoc(){
     return Vector.add(this.getLoc(), Vector.scale(this.getVec(), this.getStep()-2));
 }
 
+function getRoyalLoc(){
+    return Vector.add(this.getLoc(), Vector.scale(this.getVec(), this.getStep()+1));
+}
+
 function getCastleEndLoc(){
     return Vector.add(this.getLoc(), Vector.scale(this.getVec(), this.getStep()-1));
+}
+
+function toClientJSONObj () {
+    var JSONObj = [
+        {
+            source : this.getLoc(),
+            target : this.getCastleEndLoc(),
+            team : this.getTeam(),
+        },
+
+        {
+            source : this.getRoyalLoc(),
+            target : this.getRoyalEndLoc(),
+            team : this.getTeam(),
+        }
+    ];
+
+    return JSONObj;
 }

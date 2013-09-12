@@ -22,15 +22,9 @@ Match.create(config, function(m) {
     move(4,1,4,3);
     move(4,6,4,4);
     move(3,0,7,4);
+    move(3,7,7,3);
 
-    var json = Match.toJSON(match);
-
-    console.log('\nJSON: \n' + json);
-
-    Match.loadJSON(json, function(m) {
-        match = m;
-        move(3,7,7,3);
-    });
+    console.log('\nJSON:\n' + Match.toClientJSON(match));
 
 });
 

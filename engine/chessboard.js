@@ -29,7 +29,8 @@ module.exports = {
     isOnBoard : isOnBoard,
     getMoves : getMoves,
     toJSONObj : toJSONObj,
-    loadJSONObj :loadJSONObj
+    loadJSONObj :loadJSONObj,
+    toClientJSONObj : toClientJSONObj
 };
 
 /**
@@ -346,5 +347,13 @@ function loadJSONObj (JSONObj, configs, cb) {
                 return Space.loadJSONObj(space, configs);
             });
         }));
+    });
+}
+
+function toClientJSONObj (board) {
+    return _.map(board, function(row) {
+        return _.map(row, function(space) {
+            return Space.toClientJSONObj(space);
+        });
     });
 }

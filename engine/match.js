@@ -229,7 +229,15 @@ function toJSON(match){
  * @return {JSON}
  */
 function toClientJSON(match){
+    var JSONObj = {
+        isLightTurn : getTurn(match) == getConfigs(match).lightTeam,
+        board : Chessboard.toClientJSONObj(getBoard(match)),
+        history : _.map(getHistory(match), function(move) {
+            return move.toClientJSONObj();
+        })
+    }
 
+    return JSON.stringify(JSONObj);
 }
 
 /**

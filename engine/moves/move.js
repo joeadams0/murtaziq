@@ -25,6 +25,7 @@ module.exports = function(params){
     this.getTeam = getTeam;
     this.getCapturedPiece = getCapturedPiece;
     this.toJSONObj = toJSONObj;
+    this.toClientJSONObj = toClientJSONObj;
 };
 
 function getLoc(){
@@ -89,6 +90,19 @@ function toJSONObj () {
 
     if(this.getCapturedPiece())
         JSONObj.capturedPiece = this.getCapturedPiece().toJSONObj();
+
+    return JSONObj;
+}
+
+function toClientJSONObj () {
+    var JSONObj = [
+        {
+            source : this.getLoc(),
+            target : this.getEndLoc(),
+            team : this.getTeam(),
+            capturedPiece : utils.existy(this.getCapturedPiece()) ? this.getCapturedPiece().toClientJSONObj() : undefined
+        }
+    ];
 
     return JSONObj;
 }
