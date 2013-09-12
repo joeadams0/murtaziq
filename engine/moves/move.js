@@ -3,24 +3,28 @@ var Vector;
 var Chessboard;
 var utils;
 
-module.exports = function(team, loc, vec, step, capturedPiece, type){
+module.exports = function(params){
     setRequires();
     
-    this.team = team;
-    this.loc = loc;
-    this.vec = vec;
-    this.step = step;
-    this.capturedPiece = capturedPiece;
-    this.type = utils.existy(type) ? type : "normal";
+
+    this.team = params.team;
+    this.loc = params.loc;
+    this.vec = params.vec;
+    this.step = params.step;
+    this.capturedPiece = params.capturedPiece;
+    this.type = utils.existy(params.type) ? params.type : "move.js";
+
     
     this.getLoc = getLoc;
     this.getVec = getVec;
     this.getStep = getStep;
+    this.getType = getType;
     this.perform = perform;
     this.undo = undo;
     this.getEndLoc = getEndLoc;
     this.getTeam = getTeam;
     this.getCapturedPiece = getCapturedPiece;
+    this.toJSONObj = toJSONObj;
 };
 
 function getLoc(){
@@ -41,6 +45,10 @@ function getTeam() {
 
 function getCapturedPiece(){
     return this.capturedPiece;
+}
+
+function getType(){
+    return this.type;
 }
 
 function perform(board){
@@ -68,4 +76,19 @@ function setRequires(){
     Vector = require("../vector.js");
     Chessboard = require("../chessboard.js");
     utils = require("../utils.js");
+}
+
+function toJSONObj () {
+    var JSONObj = {
+        loc : this.getLoc(),
+        vec : this.getVec(),
+        step : this.getStep(),
+        team : this.getTeam(),
+        type : this.getType()
+    };
+
+    if(this.getCapturedPiece())
+        JSONObj.capturedPiece = this.getCapturedPiece().toJSONObj();
+
+    return JSONObj;
 }

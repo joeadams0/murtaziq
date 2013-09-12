@@ -4,7 +4,8 @@ module.exports = {
     fail : fail,
     warn : warn,
     note : note,
-    arrPush : arrPush
+    arrPush : arrPush,
+    appendPath : appendPath
 }
 
 function existy(x) { return x != null }
@@ -26,4 +27,8 @@ function note(thing) {
 function arrPush(arr, obj){
     arr.push(obj);
     return arr;
+}
+
+function appendPath(path, str){
+  return path + '/' + str;
 }
