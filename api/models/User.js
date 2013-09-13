@@ -2,7 +2,7 @@
  * User
  *
  * @module      :: Model
- * @description :: A short summary of how this model works and what it represents.
+ * @description :: This models users. They have typical fields like usernames, passwords, and roles (admin/user)
  *
  */
 
@@ -20,14 +20,12 @@ module.exports = {
             required : true
         },
         
-        
         password : {
            type : 'STRING',
            maxLength : 16,
            minLength : 4,
            required : true
         },
-        
         
         state : 'STRING',
         
@@ -41,8 +39,6 @@ module.exports = {
             delete obj.password;
             return obj;
         }
-        
-    
     },
     
     beforeCreate : function(values, next){
@@ -61,5 +57,4 @@ module.exports = {
             values.state = UserHelper.mapState(values.state);
         next();
     }
-
 };

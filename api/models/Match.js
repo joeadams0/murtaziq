@@ -2,7 +2,7 @@
  * Match
  *
  * @module      :: Model
- * @description :: A short summary of how this model works and what it represents.
+ * @description :: This model contains two userIds: lightId, and darkId, pairing them together to indicate that they are in a match together.
  *
  */
 
@@ -18,7 +18,5 @@ module.exports = {
             type : 'JSON',
             required : true
         }
-            
     }
-
 };
