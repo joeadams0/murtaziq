@@ -1,8 +1,13 @@
-var Match = require("../../engine/match.js");
 
-function main(){
-    Match.printBoard(Match.create());
-    console.log(JSON.stringify(Match.create()));    
-}
+/**
+ * 
+ * match-helper.js
+ * Controls all interaction between controllers, the database and the match objects
+ * 
+ * @author Joe Adams
+ **/
+var Match = require('../../engine/match.js');
 
-main();
+ module.exports = {
+
+ };

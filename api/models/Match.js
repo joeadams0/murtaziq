@@ -8,15 +8,17 @@
 
 module.exports = {
 
-    attributes: {
-    
-        lightId : 'INTEGER',
-        
-        darkId : 'INTEGER',
-        
-        match : {
-            type : 'JSON',
-            required : true
-        }
+  attributes: {
+  	
+    lightPlayer : 'integer',
+    darkPlayer : 'integer',
+    match : 'json',
+
+    toJSON : function(){
+      var obj = this.toObject();
+
+      return obj;
     }
+  }
+
 };

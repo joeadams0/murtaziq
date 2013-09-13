@@ -5,11 +5,13 @@ $("#login-button").click(function(){
         if (send) {
             send();
         } else {
-            alert("A username and password is required");
+            message("A username and password is required");
         }
     });
 
-$("#register-button").click(function(){
+$("#register-button").click(function(e){
+    e.stopPropagation();
+    
     var username = $("#register-username").val();
     var password = $("#register-password").val();
     var confirmPassword = $("#register-confirm-password").val();
@@ -18,10 +20,10 @@ $("#register-button").click(function(){
         if(send){
             send();
         } else {
-            alert("A username and a password is required");
+            message("A username and a password is required");
         }   
     } else {
-        alert("Passwords don't match");
+        message("Passwords don't match");
     }  
 }); 
 
@@ -34,7 +36,7 @@ $('.logout-link').click(function(event){
             window.location.reload();
         },
         error : function(res){
-            alert("Error: " + res.responseText);
+            message("Error: " + res.responseText);
         }
     });
 });
@@ -47,13 +49,16 @@ function senderGen(url, username, password){
                 url : url,
                 data : {username: username, password:password},
                 success : function (data, textStatus, jqXHR) {
-                    console.log(data);
                     window.location.reload();
                 },
                 error : function(res){
-                    alert("Error: " + res.responseText);
+                    message("Error: " + res.responseText);
                 }
             });
         }
     }
+}
+
+function message (mssg) {
+    alert(mssg);
 }

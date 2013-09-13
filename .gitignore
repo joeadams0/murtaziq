@@ -1,3 +1,15 @@
+
+########################
+# sails
+########################
+.sails
+.waterline
+.rigging
+.tmp/
+
+########################
+# node.js / npm
+########################
 lib-cov
 *.seed
 *.log
@@ -7,11 +19,26 @@ lib-cov
 *.pid
 *.gz
 
-/node_modules/*                                                                                                                                          
-                                                                                                                                         
-
 pids
 logs
 results
 
 npm-debug.log
+node_modules/
+
+########################
+# misc / editors
+########################
+*~
+*#
+.DS_STORE
+.netbeans
+nbproject
+.idea
+
+
+########################
+# local config
+########################
+config/local.js
+config/adapters.js

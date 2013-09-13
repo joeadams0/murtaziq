@@ -1,15 +1,21 @@
 var Piece = require("./piece.js");
-var config = require("./configs/rookconfig.js");
 var _ = require("underscore");
 var Space = require("../space.js");
 var Chessboard = require("../chessboard.js");
 var utils = require("../utils.js");
 var Vector = require("../vector.js");
-var CastleMove = require("../moves/castlemove.js");
+var CastleMove = require("../moves/castle.js");
 
-module.exports = function (configs, team){
-    this.__proto__ = new Piece(configs, config.name, config.abbr, team, config.schema);
-    this.getMoves = getMoves;
+module.exports = {
+    init : function (pieceConfigs){
+        var Base = Piece.init(pieceConfigs);
+        return function (configs, team, isRoyal){
+            this.__proto__ = new Base(configs, team, isRoyal);
+            this.getMoves = getMoves;
+        }
+    },
+
+    loadJSONObj : Piece.loadJSONObj
 };
 
 
@@ -20,7 +26,13 @@ function getMoves(board, space){
         var move = _.find(moves, adjacentMoveFilter(board, royalSpace));
         
         if(utils.existy(move)){
-            moves.push(new CastleMove(move));
+            moves.push(new CastleMove({
+                team : move.getTeam(), 
+                loc : move.getLoc(), 
+                vec : move.getVec(), 
+                step : move.getStep()+1, 
+                capturedPiece : move.getCapturedPiece()
+            }));
         }
     }
     return moves;

@@ -9,6 +9,8 @@ var utils = require("./utils.js");
 var _ = require("underscore");
 var configs;
 var pieces = require("./pieces.js");
+setTimeout(function () {
+}, 2000);
 var vector = require("./vector.js");
 var Space = require("./space.js");
 
@@ -25,17 +27,36 @@ module.exports = {
     getThreateningPieces : getThreateningPieces,
     getRoyalSpace : getRoyalSpace,
     isOnBoard : isOnBoard,
-    getMoves : getMoves
+    getMoves : getMoves,
+    toJSONObj : toJSONObj,
+    loadJSONObj :loadJSONObj,
+    toClientJSONObj : toClientJSONObj
 };
 
-
-function create(config){
+/**
+ * Creates a Chessboard
+ * @param  {[type]}   config The configurations for the board
+ * @param  {Function} cb     The call back function 
+ * @param  {Object} LightSide The light team's side (optional)
+ * @param  {Object} DarkSide The Dark team's side (optional)
+ */
+function create(config, cb){
     configs = config;
-    var lightSide = arguments[1] ? arguments[1] : this.getDefaultSide();
-    var darkSide = arguments[2] ? arguments[2] : this.getDefaultSide();
-    return setLightSide(lightSide, setDarkSide(darkSide, newBoard()));
+    var self = this;
+
+    pieces.init(function() {
+        var lightSide = arguments[2] ? arguments[2] : self.getDefaultSide();
+        var darkSide = arguments[3] ? arguments[3] : self.getDefaultSide();
+        cb(setLightSide(lightSide, setDarkSide(darkSide, newBoard())));
+    });
 }
 
+/**
+ * Gets the space on the board
+ * @param  {Object} board The board to look for the space in
+ * @param  {Object} vec   The location of the space
+ * @return {Object}       The space
+ */
 function getSpace(board, vec){
     if(isOnBoard(board, vec))
         return board[vector.getY(vec)][vector.getX(vec)];
@@ -43,10 +64,21 @@ function getSpace(board, vec){
         return {};
 }
 
+/**
+ * Checks if the location is on the given board
+ * @param  {Object}  board The board to look for the location on
+ * @param  {Object}  vec   The location
+ * @return {Boolean}       Returns true if the location is on the board
+ */
 function isOnBoard(board, vec){
     return vector.isBounded(vec, vector.create(0,0), getSize(board));
 }
 
+/**
+ * Gets the size of the board
+ * @param  {Object} board The board to get the size of.
+ * @return {Object}       An object containing the width and height of the board.
+ */
 function getSize(board){
     if(utils.existy(board[0]))
         return vector.create(_.size(board[0]), _.size(board));
@@ -54,10 +86,23 @@ function getSize(board){
         return vector.create(0, _.size(board));
 }
 
+/**
+ * Gets the piece at the location
+ * @param  {Object} board The board to get the piece from
+ * @param  {Object} vec   The location of the desired piece
+ * @return {Objcet}       The piece
+ */
 function getPiece(board, vec){
     return Space.getPiece(getSpace(board, vec));
 }
 
+/**
+ * Sets the piece at a given location
+ * @param {[type]} board The board to set the piece on
+ * @param {[type]} vec   The location to set the piece
+ * @param {Object} piece The piece to set
+ * @return {Object}      The new board
+ */
 function setPiece(board, vec, piece){
     Space.setPiece(getSpace(board, vec), piece);
     return board;
@@ -68,13 +113,15 @@ function removePiece(board, vec){
 }
 
 function getDefaultSide(){
+    var pawn, rook, knight, bishop, queen, royal;
+    
     return {
-            pawn : pieces.get(configs, configs.defaultSide.pawn),
-            rook : pieces.get(configs, configs.defaultSide.rook),
-            knight : pieces.get(configs, configs.defaultSide.knight),
-            bishop : pieces.get(configs, configs.defaultSide.bishop),
-            queen : pieces.get(configs, configs.defaultSide.queen),
-            royal : pieces.get(configs, configs.defaultSide.royal),
+            pawn : pieces.getConstructor(configs.defaultSide.pawn),
+            rook : pieces.getConstructor(configs.defaultSide.rook),
+            knight : pieces.getConstructor(configs.defaultSide.knight),
+            bishop : pieces.getConstructor(configs.defaultSide.bishop),
+            queen : pieces.getConstructor(configs.defaultSide.queen),
+            royal : pieces.getConstructor(configs.defaultSide.royal),
         };
 }
 
@@ -121,6 +168,7 @@ function setPawns(rowIndex, piece, team, board){
         piece,
         board,
         team,
+        false,
         vector.create(0, rowIndex),
         vector.create(1, rowIndex),
         vector.create(2, rowIndex),
@@ -137,6 +185,7 @@ function setRooks(rowIndex, piece, team, board){
         piece,
         board,
         team,
+        false,
         vector.create(0, rowIndex),
         vector.create(7, rowIndex)
     );
@@ -147,6 +196,7 @@ function setKnights(rowIndex, piece, team, board){
         piece,
         board,
         team,
+        false,
         vector.create(1, rowIndex),
         vector.create(6, rowIndex)
     );
@@ -157,6 +207,7 @@ function setBishops(rowIndex, piece, team, board){
         piece,
         board,
         team,
+        false,
         vector.create(2, rowIndex),
         vector.create(5, rowIndex)
     );
@@ -167,6 +218,7 @@ function setQueen(rowIndex, offset, piece, team, board){
         piece,
         board,
         team,
+        false,
         vector.create(3, rowIndex)
     );
 }
@@ -216,8 +268,9 @@ function printRow(highlights){
 function spaceString(space, highlights){
     var highlight = getHighlight(space, highlights);
     var string = '[ ]';
-    if(utils.existy(Space.getPiece(space)))
+    if(utils.existy(Space.getPiece(space))){
         string = '[' + Space.getPiece(space).getAbbr() + ']';
+    }
     if(utils.existy(highlight))
         return string[highlight.color];
     else
@@ -275,4 +328,32 @@ function getMoves(board, space){
         return Space.getPiece(space).getMoves(board, space);
     }
     return [];
+}
+
+function toJSONObj (board) {
+    return _.map(board, function(row) {
+        return _.map(row, function(space) {
+
+            return Space.toJSONObj(space);
+
+        });
+    });
+}
+
+function loadJSONObj (JSONObj, configs, cb) {
+    pieces.init(function() {
+        cb(_.map(JSONObj,function(row) {
+            return _.map(row, function(space) {
+                return Space.loadJSONObj(space, configs);
+            });
+        }));
+    });
+}
+
+function toClientJSONObj (board) {
+    return _.map(board, function(row) {
+        return _.map(row, function(space) {
+            return Space.toClientJSONObj(space);
+        });
+    });
 }

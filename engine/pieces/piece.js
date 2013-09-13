@@ -8,38 +8,68 @@
 var utils = require("../utils.js");
 var _ = require("underscore");
 var vector = require("../vector.js");
-var moveschema = require("./configs/moveschema.js");
+var moveschema;
 var Space = require("../space.js");
 var Move = require("../moves/move.js");
+
 
 var lightTeam;
 var darkTeam;
 
-module.exports = function(configs, name, abbr, team, schema, royalty){
-    lightTeam = configs.lightTeam;
-    darkTeam = configs.darkTeam;
-    
-    this.name = name;
-    this.abbr = abbr;
-    this.team = team;
-    this.moveCount = 0;
-    this.schema = team == lightTeam ? schema : moveschema.reflect(schema);
-    this.royalty = utils.existy(royalty) ? royalty : false;
-    this.lightTeam = lightTeam;
-    this.darkTeam = darkTeam;
-    
-    this.getName = getName;
-    this.getAbbr = getAbbr;
-    this.getTeam = getTeam;
-    this.getSchema = getSchema;
-    this.isRoyal = isRoyal;
-    this.getMoves = getMoves;
-    this.getMoveCount = getMoveCount;
-    this.incrMoveCount = incrMoveCount;
-    this.decrMoveCount = decrMoveCount;
-    this.setMoveCount = setMoveCount;
-    this.canMove = canMove;
+// Returns a function that makes a piece
+module.exports = {
+    init : function(pieceConfigs){
+        return constructorGenerator(pieceConfigs);
+    },
+    loadJSONObj : loadJSONObj
 };
+
+/**
+ * Creates a function that can create a specified piece 
+ * @param  {Object} pieceConfigs The piece to create
+ * @return {Function}            The piece generator
+ */
+function constructorGenerator(pieceConfigs){
+    
+    return function(configs, team, royalty){
+
+        moveschema = require(utils.appendPath(configs.schemaDir, "moveschema.js"));
+
+        lightTeam = configs.lightTeam;
+        darkTeam = configs.darkTeam;
+
+
+        this.name = pieceConfigs.name;
+        this.value = pieceConfigs.value;
+        this.abbr = pieceConfigs.abbr;
+        this.schemaDir = configs.schemaDir;
+        this.team = team;
+        this.moveCount = 0;
+        this.royalty = utils.existy(royalty) ? royalty : false;
+        this.lightTeam = lightTeam;
+        this.darkTeam = darkTeam;
+
+        this.getName = getName;
+        this.getAbbr = getAbbr;
+        this.getTeam = getTeam;
+        this.getValue = getValue;
+        this.getSchemas = getSchemas;
+        this.isRoyal = isRoyal;
+        this.getMoves = getMoves;
+        this.getMoveCount = getMoveCount;
+        this.incrMoveCount = incrMoveCount;
+        this.decrMoveCount = decrMoveCount;
+        this.setMoveCount = setMoveCount;
+        this.canMove = canMove;
+        this.setSchemas = setSchemas;
+        this.getSchemaFiles = getSchemaFiles;
+        this.toJSONObj = toJSONObj;
+        this.toClientJSONObj = toClientJSONObj;
+
+        this.setSchemas(pieceConfigs.schemas);
+    }
+
+}
 
 function getName(){
     return this.name;
@@ -53,8 +83,30 @@ function getTeam() {
     return this.team;
 }
 
-function getSchema(){
-    return this.schema;
+function getValue() {
+    return this.value;
+}
+
+function getSchemas(){
+    return this.schemas;
+}
+
+function setSchemas(arr){
+    this.schemaFiles = arr;
+
+    var self = this;
+    this.schemas = _.reduce(arr, function(memo, file) {
+        var schema = require(utils.appendPath(self.schemaDir, file));
+
+        if(self.getTeam() == self.darkTeam)
+            schema = moveschema.reflect(schema);
+
+        return _.union(memo, schema);
+    },[]);
+}
+
+function getSchemaFiles () {
+    return this.schemaFiles;
 }
 
 function getMoveCount(){
@@ -78,7 +130,7 @@ function setMoveCount(num){
 }
 
 function getMoves(board, space){
-    return leaperMoves.bind(this)(board, Space.getLoc(space), this.getSchema((Space.getPiece(space))));
+    return leaperMoves.bind(this)(board, Space.getLoc(space), this.getSchemas((Space.getPiece(space))));
 }
 
 function leaperMoves(board, loc, schema){
@@ -95,7 +147,7 @@ function leaperMoves(board, loc, schema){
 function schemaIterate(board, loc){
     var self = this;
     return _.reduce(
-        this.getSchema(), 
+        this.getSchemas(), 
         function(memo, singleSchema){
             _.each(leaperMoves.bind(self)(board, loc, singleSchema), function(el){
                memo.push(el); 
@@ -127,13 +179,13 @@ function schemaEval(board, loc, schema, moves, step){
             board, 
             loc, 
             schema,
-            utils.arrPush(moves, new Move(
-                                        this.getTeam(), 
-                                        loc, 
-                                        moveschema.getVector(schema),
-                                        step+1,
-                                        Chessboard.getPiece(board, vector.add(loc, vector.scale(moveschema.getVector(schema), step+1)))
-                                    )
+            utils.arrPush(moves, new Move({
+                                        team : this.getTeam(), 
+                                        loc : loc, 
+                                        vec : moveschema.getVector(schema),
+                                        step : step+1,
+                                        capturedPiece : Chessboard.getPiece(board, vector.add(loc, vector.scale(moveschema.getVector(schema), step+1)))
+                                    })
                         ),
             step + 1
         );
@@ -167,4 +219,33 @@ function canMove(board, source, target, schema, previousStep){
     // If they are not on the same team
     return this.getTeam() != Space.getPiece(chessboard.getSpace(board, target)).getTeam() &&
         canAttack ;
+}
+
+
+function toJSONObj () {
+    return {
+        name : this.getName(),
+        value : this.getValue(),
+        abbr : this.getAbbr(),
+        team : this.getTeam(),
+        moveCount : this.getMoveCount(),
+        royalty : this.isRoyal(),
+        schemas : this.schemaFiles,
+    }
+}
+
+function loadJSONObj(JSONObj, configs){
+    var piece = constructorGenerator(JSONObj);
+    return new piece(configs, JSONObj.team, JSONObj.royalty);
+}
+
+function toClientJSONObj () {
+    return {
+        name : this.getName(),
+        value : this.getValue(),
+        abbr : this.getAbbr(),
+        team : this.getTeam(),
+        moveCount : this.getMoveCount(),
+        royalty : this.isRoyal(),
+    }
 }
