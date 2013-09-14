@@ -54,12 +54,12 @@ function toJSONObj (space) {
     return JSONObj;
 }
 
-function loadJSONObj (JSONObj, configs) {
+function loadJSONObj (JSONObj) {
     var space = {
         vec : JSONObj.loc
     }
     if(JSONObj.piece)
-        space.piece = pieces.loadPiece(JSONObj.piece, configs);
+        space.piece = pieces.loadPiece(JSONObj.piece);
 
     return space;
 }

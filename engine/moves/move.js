@@ -12,7 +12,7 @@ module.exports = function(params){
     this.vec = params.vec;
     this.step = params.step;
     this.capturedPiece = params.capturedPiece;
-    this.type = utils.existy(params.type) ? params.type : "move.js";
+    this.type = utils.existy(params.type) ? params.type : "normal";
 
     
     this.getLoc = getLoc;
@@ -95,14 +95,13 @@ function toJSONObj () {
 }
 
 function toClientJSONObj () {
-    var JSONObj = [
-        {
+    var JSONObj = {
+            type : this.getType(),
             source : this.getLoc(),
             target : this.getEndLoc(),
             team : this.getTeam(),
             capturedPiece : utils.existy(this.getCapturedPiece()) ? this.getCapturedPiece().toClientJSONObj() : undefined
-        }
-    ];
+        };
 
     return JSONObj;
 }

@@ -6,13 +6,11 @@
  * @author Joe Adams
  **/
 var utils = require("./utils.js");
-var _ = require("underscore");
-var configs;
 var pieces = require("./pieces.js");
-setTimeout(function () {
-}, 2000);
 var vector = require("./vector.js");
 var Space = require("./space.js");
+var master;
+var _ = require("underscore");
 
 module.exports = {
     create : create,
@@ -35,20 +33,17 @@ module.exports = {
 
 /**
  * Creates a Chessboard
- * @param  {[type]}   config The configurations for the board
  * @param  {Function} cb     The call back function 
  * @param  {Object} LightSide The light team's side (optional)
  * @param  {Object} DarkSide The Dark team's side (optional)
  */
-function create(config, cb){
-    configs = config;
-    var self = this;
+function create(cb){
+    master  = require("./master.js");
 
-    pieces.init(function() {
-        var lightSide = arguments[2] ? arguments[2] : self.getDefaultSide();
-        var darkSide = arguments[3] ? arguments[3] : self.getDefaultSide();
-        cb(setLightSide(lightSide, setDarkSide(darkSide, newBoard())));
-    });
+    var self = this;
+    var lightSide = arguments[2] ? arguments[2] : self.getDefaultSide();
+    var darkSide = arguments[3] ? arguments[3] : self.getDefaultSide();
+    cb(setLightSide(lightSide, setDarkSide(darkSide, newBoard())));
 }
 
 /**
@@ -114,14 +109,13 @@ function removePiece(board, vec){
 
 function getDefaultSide(){
     var pawn, rook, knight, bishop, queen, royal;
-    
     return {
-            pawn : pieces.getConstructor(configs.defaultSide.pawn),
-            rook : pieces.getConstructor(configs.defaultSide.rook),
-            knight : pieces.getConstructor(configs.defaultSide.knight),
-            bishop : pieces.getConstructor(configs.defaultSide.bishop),
-            queen : pieces.getConstructor(configs.defaultSide.queen),
-            royal : pieces.getConstructor(configs.defaultSide.royal),
+            pawn : pieces.getConstructor(master.getConfigs().defaultSide.pawn),
+            rook : pieces.getConstructor(master.getConfigs().defaultSide.rook),
+            knight : pieces.getConstructor(master.getConfigs().defaultSide.knight),
+            bishop : pieces.getConstructor(master.getConfigs().defaultSide.bishop),
+            queen : pieces.getConstructor(master.getConfigs().defaultSide.queen),
+            royal : pieces.getConstructor(master.getConfigs().defaultSide.royal),
         };
 }
 
@@ -143,7 +137,7 @@ function newBoard(){
 
 function setLightSide(side, board){
     var baseRow = 0;
-    var lightTeam = configs.lightTeam;
+    var lightTeam = master.getConfigs().lightTeam;
     return setPawns(1, side.pawn, lightTeam,
                 setRooks(baseRow, side.rook, lightTeam,
                     setKnights(baseRow, side.knight,lightTeam,
@@ -154,7 +148,7 @@ function setLightSide(side, board){
 
 function setDarkSide(side, board){
     var baseRow = 7;
-    var darkTeam = configs.darkTeam;
+    var darkTeam = master.getConfigs().darkTeam;
     return setPawns(6, side.pawn, darkTeam,
                 setRooks(baseRow, side.rook, darkTeam,
                     setKnights(baseRow, side.knight, darkTeam,
@@ -247,7 +241,7 @@ function createPiecesAt(piece, board, team, isRoyal){
 
 function createPieceGen(piece, board, team, isRoyal){
     return function(vec){
-        Space.setPiece(getSpace(board, vec), new piece(configs, team, isRoyal));
+        Space.setPiece(getSpace(board, vec), new piece(team, isRoyal));
     };
 }
 
@@ -340,15 +334,14 @@ function toJSONObj (board) {
     });
 }
 
-function loadJSONObj (JSONObj, configs, cb) {
-    pieces.init(function() {
-        cb(_.map(JSONObj,function(row) {
-            return _.map(row, function(space) {
-                return Space.loadJSONObj(space, configs);
-            });
-        }));
+function loadJSONObj (JSONObj) {
+    return _.map(JSONObj,function(row) {
+        return _.map(row, function(space) {
+            return Space.loadJSONObj(space);
+        });
     });
 }
+
 
 function toClientJSONObj (board) {
     return _.map(board, function(row) {

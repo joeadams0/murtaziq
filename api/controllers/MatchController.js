@@ -7,7 +7,7 @@
 
 module.exports = {
 
- 
+ var matchapi = require('../helpers/matchapi.js');
   /**
    * /match/find
    */ 
@@ -24,11 +24,8 @@ module.exports = {
    * /match/create
    */ 
   create: function (req,res) {
-
-    // This will render the view: 
-    // /home/joe/Dropbox/Programs/murtaziq/views/match/create.ejs
-    res.view();
-
-  }
+      matchapi.create(function(match) {
+          res.json(match.toJSON());
+      });
 
 };
