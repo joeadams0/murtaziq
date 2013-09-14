@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+  <style>
+    rect {
+      stroke: black;
+      stroke-width: 1px;
+    }
+    .dark {
+      fill: #9E8B5D;
+    }
+    .light {
+      fill: #D6C8A7;
+    }
+  </style>
+</head>
+<body>
+  <input type="button" value="init" onclick="console.log(game.init.board())"/>
+  <input type="button" value="end" onclick="console.log(game.end.board())"/>
+  <script src="http://d3js.org/d3.v2.min.js?2.10.1"></script>
+  <script>
+    var game = {
+      draw: function(data){
+        
+      },
+      init: {
+        board: function(svg_container, dimension, duration){
+          var return_status = "board created";
+          if (svg_container == undefined) svg_container = "body";
+          if (dimension == undefined) dimension = 720;
+          if (duration == undefined) duration = 2000; // 2 seconds
+
+          if (d3.select("#game").node() != null) {
+            if (game.state.svg.attr("width") == dimension)
+              return "board already exists";
+            else {
+              return_status = "board modified";
+              game.state.svg.remove();
+            }
+          }
+
+          game.state.svg = d3.select(svg_container).append("svg")
+                             .attr("id", "game")
+                             .attr("width", 0)
+                             .attr("height", 0);
+          game.state.board = game.state.svg;
+          game.state.board.selectAll("rect")
+                          .data([1,0,1,0,1,0,1,0,
+                                 0,1,0,1,0,1,0,1,
+                                 1,0,1,0,1,0,1,0,
+                                 0,1,0,1,0,1,0,1,
+                                 1,0,1,0,1,0,1,0,
+                                 0,1,0,1,0,1,0,1,
+                                 1,0,1,0,1,0,1,0,
+                                 0,1,0,1,0,1,0,1])
+                          .enter().append("rect")
+                          .attr("x", function(d, i) {return (i % 8)*(dimension/8);})
+                          .attr("y", function(d, i) {return parseInt(i/8)*(dimension/8);})
+                          .attr("width", dimension/8)
+                          .attr("height", dimension/8)
+                          .attr("class", function(d) {return (d == 1) ? ("dark") : ("light");});
+          game.state.svg.transition().duration(duration)
+                          .attr("width", dimension)
+                          .attr("height", dimension);
+
+          return return_status;
+        }
+      },
+      end: {
+        board: function(duration){
+          if (duration == undefined) duration = 2000; // 2 seconds
+          game.state.svg.transition().duration(duration)
+                        .style("fill-opacity", 0)
+                        .style("stroke-opacity", 0)
+                        .attr("width", 0)
+                        .attr("height", 0)
+                        .remove();
+          game.state.board = {};
+          game.state.svg = {};
+
+          return "board removed";
+        }
+      },
+      state: {
+        svg: {},
+        board: {}
+      }
+    };
+
+  </script>
+</body>
+</html>
