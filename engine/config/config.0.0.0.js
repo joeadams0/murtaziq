@@ -1,5 +1,5 @@
 module.exports = {
-    name : 'config.0.0.0.js',
+    version : '0.0.0',
     defaultSide : {
         pawn : 'pawn',
         rook : 'rook',
@@ -10,8 +10,8 @@ module.exports = {
     },
     lightTeam : 0,
     darkTeam : 1,
-    pieceConfigDir : './pieces/configs',
-    pieceDir : './pieces',
-    schemaDir : './configs/moveschemas',
-    movesDir : './moves',
+    moves : {
+        'normal' : 'move.js',
+        'castle' : 'castle.js'
+    }
 };

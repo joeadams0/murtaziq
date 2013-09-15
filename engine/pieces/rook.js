@@ -1,25 +1,29 @@
+var master;
 var Piece = require("./piece.js");
-var _ = require("underscore");
 var Space = require("../space.js");
 var Chessboard = require("../chessboard.js");
 var utils = require("../utils.js");
 var Vector = require("../vector.js");
-var CastleMove = require("../moves/castle.js");
+
+var _ = require("underscore");
 
 module.exports = {
     init : function (pieceConfigs){
         var Base = Piece.init(pieceConfigs);
-        return function (configs, team, isRoyal){
-            this.__proto__ = new Base(configs, team, isRoyal);
+        return function (team, isRoyal){
+            master = require('../master.js');
+            this.__proto__ = new Base(team, isRoyal);
             this.getMoves = getMoves;
         }
-    },
+    }, 
 
     loadJSONObj : Piece.loadJSONObj
 };
 
 
 function getMoves(board, space){
+    var CastleMove = master.getMove('castle');
+
     var moves = this.__proto__.getMoves(board,space);
     var royalSpace = Chessboard.getRoyalSpace(board, this.getTeam(Space.getPiece(space)));
     if(this.getMoveCount(Space.getPiece(space)) === 0 && this.getMoveCount(Space.getPiece(space)) === 0){
@@ -30,7 +34,7 @@ function getMoves(board, space){
                 team : move.getTeam(), 
                 loc : move.getLoc(), 
                 vec : move.getVec(), 
-                step : move.getStep()+1, 
+                step : move.getStep(), 
                 capturedPiece : move.getCapturedPiece()
             }));
         }

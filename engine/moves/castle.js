@@ -1,10 +1,11 @@
-var Move = require("./move.js");
+var master = require('../master.js');
+var Move = master.getMove('normal');
 var Chessboard = require("../chessboard.js");
 var Vector = require("../vector.js");
 
 module.exports = function(params){
     params.step = params.step + 1;
-    params.type = 'castle.js';
+    params.type = 'castle';
     
     this.__proto__ = new Move(params);
     this.perform = perform;
@@ -56,7 +57,9 @@ function getCastleEndLoc(){
 }
 
 function toClientJSONObj () {
-    var JSONObj = [
+    var JSONObj = {
+        type : this.getType(),
+        moves : [
         {
             source : this.getLoc(),
             target : this.getCastleEndLoc(),
@@ -67,8 +70,8 @@ function toClientJSONObj () {
             source : this.getRoyalLoc(),
             target : this.getRoyalEndLoc(),
             team : this.getTeam(),
-        }
-    ];
+        }]
+    };
 
     return JSONObj;
 }

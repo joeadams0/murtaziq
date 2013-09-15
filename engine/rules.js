@@ -15,7 +15,8 @@ function canMove(match, move){
 function isLegalMove(board, move){
     setRequires();
     
-    move.perform(board);    var legal = _.size(Chessboard.getThreateningPieces(board, Chessboard.getRoyalSpace(board, move.getTeam()))) === 0;
+    move.perform(board);
+    var legal = _.size(Chessboard.getThreateningPieces(board, Chessboard.getRoyalSpace(board, move.getTeam()))) === 0;
     move.undo(board);
     return legal;
 }

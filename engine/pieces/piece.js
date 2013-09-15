@@ -5,12 +5,12 @@
  * 
  * @author Joe Adams
  **/
+var master;
 var utils = require("../utils.js");
 var _ = require("underscore");
 var vector = require("../vector.js");
-var moveschema;
 var Space = require("../space.js");
-var Move = require("../moves/move.js");
+var moveschema;
 
 
 var lightTeam;
@@ -31,9 +31,12 @@ module.exports = {
  */
 function constructorGenerator(pieceConfigs){
     
-    return function(configs, team, royalty){
+    return function(team, royalty){
+        master = require('../master.js');
 
-        moveschema = require(utils.appendPath(configs.schemaDir, "moveschema.js"));
+        var configs = master.getConfigs();
+
+        moveschema = master.getSchema("moveschema.js");
 
         lightTeam = configs.lightTeam;
         darkTeam = configs.darkTeam;
@@ -96,7 +99,7 @@ function setSchemas(arr){
 
     var self = this;
     this.schemas = _.reduce(arr, function(memo, file) {
-        var schema = require(utils.appendPath(self.schemaDir, file));
+        var schema = master.getSchema(file);
 
         if(self.getTeam() == self.darkTeam)
             schema = moveschema.reflect(schema);
@@ -159,6 +162,8 @@ function schemaIterate(board, loc){
 
 function schemaEval(board, loc, schema, moves, step){
     var Chessboard = require("../chessboard.js");
+    var Move = master.getMove('normal');
+    
     step = utils.existy(step) ? step : 0;
     moves = utils.existy(moves) ? moves : [];
     // Cant move any more

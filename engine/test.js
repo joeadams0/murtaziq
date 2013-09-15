@@ -1,4 +1,4 @@
-var config = require("./config.0.0.0.js");
+
 var vector = require("./vector.js");
 var colors = require("colors");
 var _ = require("underscore");
@@ -13,19 +13,30 @@ module.exports = {
 };
 
     
-Match.create(config, function(m) {
+Match.create(function(m) {
 
     match = m;
 
     move(3,1,3,3);
     move(3,6,3,4);
+    var json = Match.toClientJSON(match);
+
+    console.log('\nJSON:\n' + Match.toClientJSON(match)); 
     move(4,1,4,3);
     move(4,6,4,4);
-    move(3,0,7,4);
+    move(4,3,3,4);
     move(3,7,7,3);
 
-    console.log('\nJSON:\n' + Match.toClientJSON(match));
+    var json = Match.toClientJSON(match);
 
+    console.log('\nJSON:\n' + Match.toClientJSON(match)); 
+
+    move(1,1,1,2);
+    move(2,7,7,2);
+    move(0,1,0,2);
+    move(1,7,0,5);
+    move(2,1,2,2);
+    move(0,7,4,7);
 });
 
 

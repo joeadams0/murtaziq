@@ -5,10 +5,11 @@
  * 
  * @author Joe Adams
  **/
+var master = require('./master.js');
 var Chessboard = require("./chessboard.js");
-var _ = require("underscore");
 var utils = require("./utils.js");
 var Vector = require("./vector.js");
+var _ = require("underscore");
 
 module.exports = {
     create : create,
@@ -26,16 +27,14 @@ module.exports = {
 
 /**
  * Creates the match
- * @param {Object} configs The configurations for the match
  * @param  {Object} lightSide the lightside piece information
  * @param  {Object} darkSide  the darkside piece information
  * @return {Object} match     the match object
  */
-function create(configs, cb, lightSide, darkSide){
-    Chessboard.create(configs,function(board) {
+function create(cb, lightSide, darkSide){
+    Chessboard.create(function(board) {
         cb({
-            configs : configs,
-            turn : configs.lightTeam,
+            turn : master.getConfigs().lightTeam,
             board : board,
             history : []
         });
@@ -163,10 +162,10 @@ function move(match, loc1, loc2){
  * @param  {Object} match The match 
  */
 function switchTurn(match){
-    if(getTurn(match) === getConfigs(match).lightTeam)
-        setTurn(match, getConfigs(match).darkTeam);
+    if(getTurn(match) === getConfigs().lightTeam)
+        setTurn(match, getConfigs().darkTeam);
     else
-        setTurn(match, getConfigs(match).lightTeam);
+        setTurn(match, getConfigs().lightTeam);
 }
 
 /**
@@ -174,8 +173,8 @@ function switchTurn(match){
  * @param  {Object} match The match
  * @return {Object}       The configurations
  */
-function getConfigs(match){
-    return match.configs;
+function getConfigs(){
+    return master.getConfigs();
 }
 
 /**
@@ -210,7 +209,7 @@ function legalMovesFilter(match){
  */
 function toJSON(match){
     var JSONObj = {
-        configs : getConfigs(match).name,
+        version : getConfigs().version,
         turn : getTurn(match),
         board : Chessboard.toJSONObj(getBoard(match)),
         history : _.map(getHistory(match), function(move) {
@@ -230,7 +229,7 @@ function toJSON(match){
  */
 function toClientJSON(match){
     var JSONObj = {
-        isLightTurn : getTurn(match) == getConfigs(match).lightTeam,
+        isLightTurn : getTurn(match) == getConfigs().lightTeam,
         board : Chessboard.toClientJSONObj(getBoard(match)),
         history : _.map(getHistory(match), function(move) {
             return move.toClientJSONObj();
@@ -245,23 +244,21 @@ function toClientJSON(match){
  * @param  {JSON} json
  * @return {Object} The Match Object
  */
-function loadJSON(json, cb){
+function loadJSON(json){
     var JSONObj = eval('('+json+')');
 
-    var configs = require(utils.appendPath('./',JSONObj.configs));
+    var configs = getConfigs();
     
-    Chessboard.loadJSONObj(JSONObj.board, configs, function(board) {
-        var match = {
-            configs : configs,
-            turn : JSONObj.turn,
-            board : board,
-            history : _.map(JSONObj.history, function(m) {
-                var move = require(utils.appendPath(configs.movesDir, m.type));
+    var match = {
+        turn : JSONObj.turn,
+        board : Chessboard.loadJSONObj(JSONObj.board),
+        history : _.map(JSONObj.history, function(m) {
+            var move = master.getMove(m.type);
 
-                return new move(m);
-            })
-        }
+            return new move(m);
+        })
+    };
 
-        cb(match);
-    });
+     
+    return match;
 }

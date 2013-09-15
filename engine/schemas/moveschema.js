@@ -6,7 +6,7 @@
  * @author Joe Adams
  **/
  
-var vector = require("../../../vector.js");
+var vector = require("../vector.js");
 var _ = require("underscore");
 
 module.exports = {

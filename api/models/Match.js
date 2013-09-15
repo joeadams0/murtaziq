@@ -10,9 +10,19 @@ module.exports = {
 
   attributes: {
   	
-    lightPlayer : 'integer',
-    darkPlayer : 'integer',
-    match : 'json',
+    lightPlayer : {
+      type : 'integer',
+      defaultsTo : -1
+    }
+    darkPlayer : {
+      type : 'integer',
+      defaultsTo : -1
+    },
+
+    match : {
+      type : 'json',
+      required : true
+    },
 
     toJSON : function(){
       var obj = this.toObject();
