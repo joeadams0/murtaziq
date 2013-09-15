@@ -72,14 +72,22 @@ var game = {
         game.init.board();
       game.draw.fromBoardState(data);
     },
-    piece: function(piece){
-      piece = JSON.parse(piece);
-      var boardDimension = game.state.svg.attr("width");
-      game.state.svg.append("image")
-                    .attr("xlink:href", game.state.piecePath + piece.name +" "+(piece.team + 1)+".png")
-                    .attr("height", (boardDimension/8)+"px")
-                    .attr("width", (boardDimension/8)+"px");
-      return "piece drawn";
+    // only works for svg games
+    move: function(initialState, move){
+      if (isBoardCreated() && !boardIsText()){
+        game.draw.fromBoardState(initialState);
+        move = JSON.parse(move);
+        var boardDimension = game.state.svg.attr("width");
+
+        game.state.pieces.selectAll("image").select(function() {
+          return (this.x.baseVal.value/90 == move.source.x && this.y.baseVal.value/90 == move.source.y) ? this : null;
+        }).transition().duration(500)
+                       .attr("x", move.target.x * (boardDimension/8))
+                       .attr("y", move.target.y * (boardDimension/8));
+        return "piece drawn";
+      } else {
+        return "nope, you're dumb";
+      }
     }
   },
   init: {
