@@ -74,7 +74,7 @@ var game = {
     },
     // only works for svg games
     move: function(initialState, move){
-      if (isBoardCreated() && !boardIsText()){
+      if (game.state.isBoardCreated() && !game.state.boardIsText()){
         game.draw.fromBoardState(initialState);
         move = JSON.parse(move);
         var boardDimension = game.state.svg.attr("width");
