@@ -31,6 +31,8 @@ var game = {
             });
       }
     },
+    // straight re-draw of the board.
+    // gameState is simply the Array of Arrays of Objects of piece Objects
     fromBoardState: function(gameState){
       gameState = JSON.parse(gameState);
       var boardDimension = game.state.svg.attr("width");
@@ -41,12 +43,13 @@ var game = {
                          .data(function(d) {return d;})
                          .enter().append("image")
                          .attr("xlink:href", function(d){ return (d.piece == undefined) ? (""): (game.state.piecePath + d.piece.name +" "+(d.piece.team + 1)+".png");})
+                         .style("opacity", 0) // initially invisible
                          .attr("height", (boardDimension/8)+"px")
                          .attr("width", (boardDimension/8)+"px")
                          .attr("x", function(d, i) {return (i % 8)*(boardDimension/8);})
-                         .attr("y", function(d, i, j) {return j*(boardDimension/8);});
+                         .attr("y", function(d, i, j) {return j*(boardDimension/8);})
+                         .transition().duration(500).style("opacity", 1); // fade in
       } else {
-        console.log("here");
         var imgs = game.state.pieces.selectAll("g").data(gameState).selectAll("image").data(function(d) {return d;});
 
         // enter the new images, then update old images+new ones
@@ -67,8 +70,7 @@ var game = {
       //draw the board
       if (!game.state.isBoardCreated())
         game.init.board();
-    },
-    pieces: function(data){
+      game.draw.fromBoardState(data);
     },
     piece: function(piece){
       piece = JSON.parse(piece);
