@@ -4,11 +4,11 @@ var game = {
       gameState = JSON.parse(gameState);
       if (!game.state.isBoardCreated() || !game.state.boardIsText()) {
         game.init.board({text:true});
-        var tr = game.state.board.selectAll("tr")
-            .data(gameState)
-            .enter().append("tr");
+        game.state.textRows = game.state.board.selectAll("tr")
+                                  .data(gameState)
+                                  .enter().append("tr");
 
-        var td = tr.selectAll("td")
+        var td = game.state.textRows.selectAll("td")
             .data(function(d) { return d; })
             .enter().append("td")
             .text(function(d) { return (d.piece == undefined) ? ("") : (d.piece.name); })
@@ -19,18 +19,49 @@ var game = {
               return ((j+i)%2 == 0) ? ("#D6C8A7") : ("#9E8B5D");
             });
       } else {
-        var tr = game.state.board.selectAll("tr")
-            .data(gameState);
+        game.state.textRows = game.state.board.selectAll("tr")
+                                  .data(gameState);
 
-        var td = tr.selectAll("td")
+        var td = game.state.textRows.selectAll("td")
             .data(function(d) { return d; })
             .text(function(d) { return (d.piece == undefined) ? ("") : (d.piece.name); })
             .attr("class", function(d){ 
               if (d.piece == undefined) return "";
               return (d.piece.team == 1) ? ("black") : ("white");
             });
-        
       }
+    },
+    fromBoardState: function(gameState){
+      gameState = JSON.parse(gameState);
+      var boardDimension = game.state.svg.attr("width");
+      if (d3.select("#pieces").node() == null) {
+        game.state.pieces = game.state.svg.append("g").attr("id", "pieces");
+        game.state.piecesRows = game.state.pieces.selectAll("g");
+        game.state.piecesRows.data(gameState).enter().append("g").selectAll("image")
+                         .data(function(d) {return d;})
+                         .enter().append("image")
+                         .attr("xlink:href", function(d){ return (d.piece == undefined) ? (""): (game.state.piecePath + d.piece.name +" "+(d.piece.team + 1)+".png");})
+                         .attr("height", (boardDimension/8)+"px")
+                         .attr("width", (boardDimension/8)+"px")
+                         .attr("x", function(d, i) {return (i % 8)*(boardDimension/8);})
+                         .attr("y", function(d, i, j) {return j*(boardDimension/8);});
+      } else {
+        console.log("here");
+        var imgs = game.state.pieces.selectAll("g").data(gameState).selectAll("image").data(function(d) {return d;});
+
+        // enter the new images, then update old images+new ones
+        imgs.enter().append("image")
+             .attr("height", (boardDimension/8)+"px")
+             .attr("width", (boardDimension/8)+"px");
+        // enter + update
+        imgs.attr("xlink:href", function(d){ return (d.piece == undefined) ? (""): (game.state.piecePath + d.piece.name +" "+(d.piece.team + 1)+".png");})
+             .attr("x", function(d, i) {return (i % 8)*(boardDimension/8);})
+             .attr("y", function(d, i, j) {return j*(boardDimension/8);});
+        // exit the rest
+        imgs.exit().remove();
+      }
+      d3.selectAll("image").select(function(d) {return (d.piece == undefined) ? (this) : null ;}).remove();
+      return "drawn";
     },
     all: function(data){
       //draw the board
@@ -95,19 +126,21 @@ var game = {
                          .attr("opacity", 0)
                          .attr("width", 0)
                          .attr("height", 0);
-      game.state.board = game.state.svg;
-      game.state.board.selectAll("rect")
-                      .data([1,0,1,0,1,0,1,0,
-                             0,1,0,1,0,1,0,1,
-                             1,0,1,0,1,0,1,0,
-                             0,1,0,1,0,1,0,1,
-                             1,0,1,0,1,0,1,0,
-                             0,1,0,1,0,1,0,1,
-                             1,0,1,0,1,0,1,0,
-                             0,1,0,1,0,1,0,1])
+      game.state.board = game.state.svg.append("g").attr("id", "board");
+      game.state.board.selectAll("g")
+                      .data([[1,0,1,0,1,0,1,0],
+                             [0,1,0,1,0,1,0,1],
+                             [1,0,1,0,1,0,1,0],
+                             [0,1,0,1,0,1,0,1],
+                             [1,0,1,0,1,0,1,0],
+                             [0,1,0,1,0,1,0,1],
+                             [1,0,1,0,1,0,1,0],
+                             [0,1,0,1,0,1,0,1]])
+                      .enter().append("g")
+                      .selectAll("rect").data(function(d) {return d;})
                       .enter().append("rect")
                       .attr("x", function(d, i) {return (i % 8)*(options.dimension/8);})
-                      .attr("y", function(d, i) {return parseInt(i/8)*(options.dimension/8);})
+                      .attr("y", function(d, i, j) {return j*(options.dimension/8);})
                       .attr("width", options.dimension/8)
                       .attr("height", options.dimension/8)
                       .attr("class", function(d) {return (d == 1) ? ("dark") : ("light");});
