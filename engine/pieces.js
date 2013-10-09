@@ -12,7 +12,8 @@ var _ = require('underscore');
 
 module.exports = {
     getConstructor : getConstructor,
-    loadPiece : loadPiece
+    loadPiece : loadPiece,
+    getValue : getValue
 };
 
 /**
@@ -28,6 +29,11 @@ function getConstructor(pieceName){
 function loadPiece(pieceConfig){
 	master = require('./master.js');
 	return master.getPieces()[pieceConfig.name].loadJSONObj(pieceConfig);
+}
+
+function getValue(pieceName){
+	master = require('./master.js');
+	return master.getPieceConfigs()[pieceName].value;
 }
 
 

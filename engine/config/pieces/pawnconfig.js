@@ -1,5 +1,6 @@
 module.exports = {
     name : 'pawn',
     abbr : 'p',
-    schemas : ['pawnschema.js']
+    schemas : ['pawnschema.js'],
+    value : 10,
 };

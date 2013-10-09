@@ -7,7 +7,7 @@ module.exports = [
     schema.create(vector.create(-1,1), 1, false, true),
     schema.create(vector.create(0,2), 1, true, false, 
         function(board, loc, piece){
-            if(piece.getMoveCount(piece) === 0)
+            if(piece.getMoveCount() === 0)
                 return true;
             else
                 return false;

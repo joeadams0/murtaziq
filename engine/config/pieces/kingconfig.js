@@ -1,5 +1,6 @@
 module.exports = {
     name : 'king',
     abbr : 'k',
-    schemas : ['kingschema.js']
+    schemas : ['kingschema.js'],
+    value : 50
 };

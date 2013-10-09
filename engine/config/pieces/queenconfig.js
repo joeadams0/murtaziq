@@ -1,5 +1,6 @@
 module.exports = {
     name : 'queen',
     abbr : 'q',
-    schemas : ['queenschema.js']
+    schemas : ['queenschema.js'],
+    value : 80
 };

@@ -14,15 +14,19 @@ var _ = require("underscore");
 module.exports = {
     create : create,
     getTurn : getTurn,
+    setSide : setSide,
     getBoard : getBoard,
     getMoves : getMoves,
     printBoard : printBoard,
     getPiece : getPiece,
     move : move,
     getConfigs : getConfigs,
-    toJSON : toJSON,
-    toClientJSON : toClientJSON,
-    loadJSON : loadJSON
+    toJSONObj : toJSONObj,
+    toClientJSONObj : toClientJSONObj,
+    loadJSONObj : loadJSONObj,
+    getAllPieces : getAllPieces,
+    getMaxTeamValue : getMaxTeamValue,
+    getTeam : getTeam,
 };
 
 /**
@@ -32,14 +36,11 @@ module.exports = {
  * @return {Object} match     the match object
  */
 function create(cb, lightSide, darkSide){
-    Chessboard.create(function(board) {
-        cb({
-            turn : master.getConfigs().lightTeam,
-            board : board,
-            history : []
-        });
-    }, lightSide, darkSide);
-        
+   return {
+        turn : master.getConfigs().lightTeam,
+        board :  Chessboard.create(lightSide, darkSide),
+        history : []
+    };
 }
 
 /**
@@ -78,6 +79,10 @@ function removeMove(match){
     return getHistory(match.pop());
 }
 
+function setSide(match, isLightSide, side){
+    return Chessboard.setSide(isLightSide, side, getBoard(match));
+}
+
 /**
  * Sets the turn of the match
  * @param {Object} match The match to set the turn of
@@ -103,12 +108,20 @@ function getBoard(match){
  * @param  {Function} filter The function to filter the moves with
  * @return {Array}        The list of moves
  */
-function getMoves(match, vec, filter){
+function getMoves(match, vec, filter, returnArray){
     filter = utils.existy(filter) ? filter : legalMovesFilter;  
-    return _.filter(
+    var moves = _.filter(
             Chessboard.getMoves(getBoard(match), Chessboard.getSpace(getBoard(match), vec)),
             filter(match)
         );
+
+    if(returnArray)
+        return moves;
+    else
+        return _.map(moves, function(move) {
+            return move.toClientJSONObj();
+        });
+    
 }
 
 /**
@@ -136,25 +149,51 @@ function getPiece(match, loc){
  * @param  {Object} match The match
  * @param  {Object} loc1  The source of the move
  * @param  {Object} loc2  The destination of the move
- * @return {Object}       The Match
+ * @return {Object}       A response object 
  */
-function move(match, loc1, loc2){
+function move(match, loc1, loc2, team){
     var board = getBoard(match);
-    if(utils.existy(Chessboard.getPiece(getBoard(match), loc1))){
+    var success;
+    var data;
+    if(getTurn(match) != team)
+        return {
+            success : false,
+            data : 'It is not your turn.'
+        };
+    else if(utils.existy(Chessboard.getPiece(getBoard(match), loc1))){
         // Filter out the illgal moves, then find the move to the right location
         var m = _.find(
-                        getMoves(match, loc1, canMoveFilter),
+                        getMoves(match, loc1, canMoveFilter, true),
                         function(move){
                             return Vector.isEqual(loc2, move.getEndLoc());
                         }
                     );
-        if(utils.existy(m)){
+        if(utils.existy(m) && m.getTeam() === team){
             m.perform(board);
             switchTurn(match);
             addMove(match, m);
+            success = true;
+
+            data = match;
+        }
+
+        else{
+            success = false;
+            data = 'That is not a valid move.';
         }
     }
-    return match;
+    else{
+        success = false;
+        data = 'There is no piece to move.';
+    }
+    return makeResponse(success, data);
+}
+
+function getTeam (isLightSide) {
+    var team = getConfigs().lightTeam;
+    if(!isLightSide)
+        team = getConfigs().darkTeam;
+    return team;
 }
 
 /**
@@ -207,7 +246,7 @@ function legalMovesFilter(match){
  * @param  {Object} match
  * @return {JSON}
  */
-function toJSON(match){
+function toJSONObj(match){
     var JSONObj = {
         version : getConfigs().version,
         turn : getTurn(match),
@@ -217,7 +256,7 @@ function toJSON(match){
         })
     };
 
-    return JSON.stringify(JSONObj);
+    return JSONObj;
 }
 
 /**
@@ -227,7 +266,7 @@ function toJSON(match){
  * @param  {Object} match
  * @return {JSON}
  */
-function toClientJSON(match){
+function toClientJSONObj(match){
     var JSONObj = {
         isLightTurn : getTurn(match) == getConfigs().lightTeam,
         board : Chessboard.toClientJSONObj(getBoard(match)),
@@ -236,7 +275,7 @@ function toClientJSON(match){
         })
     }
 
-    return JSON.stringify(JSONObj);
+    return JSONObj;
 }
 
 /**
@@ -244,8 +283,7 @@ function toClientJSON(match){
  * @param  {JSON} json
  * @return {Object} The Match Object
  */
-function loadJSON(json){
-    var JSONObj = eval('('+json+')');
+function loadJSONObj(JSONObj){
 
     var configs = getConfigs();
     
@@ -261,4 +299,30 @@ function loadJSON(json){
 
      
     return match;
+}
+
+/**
+ * Creates a response object
+ * @param  {Boolean} success Whether the request was successful or not
+ * @param  {Object} data     The data for the response
+ * @return {Object}          The response object
+ */
+function makeResponse (success, data) {
+    return {
+        success : success,
+        data :data
+    };
+}
+
+function getAllPieces(){
+    var configs = master.getPieceConfigs();
+    return _.map(configs, function(piece) {
+        var obj = _.clone(piece);
+        delete obj.schemas;
+        return obj;
+    });
+}
+
+function getMaxTeamValue () {
+    return master.getConfigs().maxTeamValue;
 }

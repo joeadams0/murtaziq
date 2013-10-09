@@ -36,12 +36,7 @@ module.exports.policies = {
       index : 'authenticated'
     },
     
-    match : {
-        '*' : [
-            'authenticated',
-            'devrole'
-        ]
-    }
+    
     /*
 	// Here's an example of adding some policies to a controller
 	RabbitController: {

@@ -14,8 +14,9 @@ var _ = require("underscore");
 
 module.exports = {
     create : create,
-    getDefaultSide : getDefaultSide,
+    getSide : getSide,
     print : print,
+    setSide : setSide,
     getSpace : getSpace,
     getSize : getSize,
     getPiece : getPiece,
@@ -37,13 +38,62 @@ module.exports = {
  * @param  {Object} LightSide The light team's side (optional)
  * @param  {Object} DarkSide The Dark team's side (optional)
  */
-function create(cb){
-    master  = require("./master.js");
-
+function create(){
     var self = this;
-    var lightSide = arguments[2] ? arguments[2] : self.getDefaultSide();
-    var darkSide = arguments[3] ? arguments[3] : self.getDefaultSide();
-    cb(setLightSide(lightSide, setDarkSide(darkSide, newBoard())));
+    var lightSide = arguments[1] ? arguments[1] : getMaster().getConfigs().defaultSide;
+    var darkSide = arguments[2] ? arguments[2] : getMaster().getConfigs().defaultSide;
+    var board = newBoard();
+    setSide(true, lightSide, board);
+    setSide(false, darkSide, board);
+    return board;
+}
+
+function getMaster () {
+    if(!utils.existy(master))
+        master = require("./master.js");
+    return master;
+}
+
+function setSide (isLightSide, side, board) {    
+    var success, message;
+    var maxValue = getMaster().getConfigs().maxTeamValue;
+
+    var value = getSideValue(side);
+    if(validateSideValue(side)){
+        if(isLightSide)
+            setLightSide(getSide(side), board);
+        else
+            setDarkSide(getSide(side), board);
+        success = true;
+    }
+    else{
+        success = false;
+        message = "Your total piece value exceeds the total piece value maximum."
+    }
+
+    return {
+        success : success,
+        value : value,
+        message : message,
+        maxValue : maxValue
+    };
+}
+
+function validateSideValue(side){
+    return getSideValue(side) <= getMaster().getConfigs().maxTeamValue;
+}
+
+function getSideValue (side) {
+    var value = 0;
+
+    value = value + 8*pieces.getValue(side.pawn);
+    value = value + 2*pieces.getValue(side.rook);
+    value = value + 2*pieces.getValue(side.knight);
+    value = value + 2*pieces.getValue(side.bishop);
+    value = value + pieces.getValue(side.queen);
+    value = value + pieces.getValue(side.royal);
+
+    return value;
 }
 
 /**
@@ -103,22 +153,35 @@ function setPiece(board, vec, piece){
     return board;
 }
 
+/**
+ * Removes a piece from the board
+ * @param  {Object} board The chessboard
+ * @param  {Object} vec   The location of the piece to remove
+ * @return {Object}       The piece that was removed
+ */
 function removePiece(board, vec){
     return Space.removePiece(getSpace(board, vec));
 }
 
-function getDefaultSide(){
-    var pawn, rook, knight, bishop, queen, royal;
+/**
+ * Gets the default side
+ * @return {Object} The default side
+ */
+function getSide(side){
     return {
-            pawn : pieces.getConstructor(master.getConfigs().defaultSide.pawn),
-            rook : pieces.getConstructor(master.getConfigs().defaultSide.rook),
-            knight : pieces.getConstructor(master.getConfigs().defaultSide.knight),
-            bishop : pieces.getConstructor(master.getConfigs().defaultSide.bishop),
-            queen : pieces.getConstructor(master.getConfigs().defaultSide.queen),
-            royal : pieces.getConstructor(master.getConfigs().defaultSide.royal),
+            pawn : pieces.getConstructor(side.pawn),
+            rook : pieces.getConstructor(side.rook),
+            knight : pieces.getConstructor(side.knight),
+            bishop : pieces.getConstructor(side.bishop),
+            queen : pieces.getConstructor(side.queen),
+            royal : pieces.getConstructor(side.royal),
         };
 }
 
+/**
+ * Creates a new board
+ * @return {Object} The board
+ */
 function newBoard(){
     var size = utils.existy(arguments[0]) ? arguments[0] : 8;
     var array = arguments[1] ? arguments[1] : [];
@@ -137,7 +200,7 @@ function newBoard(){
 
 function setLightSide(side, board){
     var baseRow = 0;
-    var lightTeam = master.getConfigs().lightTeam;
+    var lightTeam = getMaster().getConfigs().lightTeam;
     return setPawns(1, side.pawn, lightTeam,
                 setRooks(baseRow, side.rook, lightTeam,
                     setKnights(baseRow, side.knight,lightTeam,
@@ -148,7 +211,7 @@ function setLightSide(side, board){
 
 function setDarkSide(side, board){
     var baseRow = 7;
-    var darkTeam = master.getConfigs().darkTeam;
+    var darkTeam = getMaster().getConfigs().darkTeam;
     return setPawns(6, side.pawn, darkTeam,
                 setRooks(baseRow, side.rook, darkTeam,
                     setKnights(baseRow, side.knight, darkTeam,

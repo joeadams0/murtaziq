@@ -13,6 +13,9 @@ module.exports = function(params){
     this.getRoyalEndLoc = getRoyalEndLoc;
     this.getCastleEndLoc = getCastleEndLoc;
     this.toClientJSONObj = toClientJSONObj;
+    this.getRoyalLoc = getRoyalLoc;
+    this.getRoyalEndLoc = getRoyalEndLoc;
+
 };
 
 

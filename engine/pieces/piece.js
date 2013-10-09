@@ -241,7 +241,7 @@ function toJSONObj () {
 
 function loadJSONObj(JSONObj, configs){
     var piece = constructorGenerator(JSONObj);
-    return new piece(configs, JSONObj.team, JSONObj.royalty);
+    return new piece(JSONObj.team, JSONObj.royalty);
 }
 
 function toClientJSONObj () {

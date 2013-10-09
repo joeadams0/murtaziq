@@ -18,6 +18,8 @@
 
   socket.on('connect', function socketConnected() {
 
+    
+
     // Listen for Comet messages from Sails
     socket.on('message', function messageReceived(message) {
 
@@ -44,6 +46,7 @@
         '{ console.log(response); })`'
     );
     ///////////////////////////////////////////////////////////
+    //
 
 
   });
