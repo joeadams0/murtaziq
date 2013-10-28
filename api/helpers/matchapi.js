@@ -36,11 +36,14 @@ var _ = require('underscore');
  * @param {Integer}  playerId2 (OPTIONAL) The ID of the dark side player.
  */
 function create (params, cb) {
-	Match.create(params).done(function(err, match){
+	Match.create({}).done(function(err, match){
             if(err)
                 cb(makeStatus(false, err));
-            else
+            else{
+                if(utils.existy(params.playerId))
+                    addPlayerHelper(match, params.playerId, cb);
                 cb(makeStatus(true, match.toJSON()));
+            }
         });
 }
 
@@ -61,44 +64,8 @@ function addPlayer (params, cb) {
     getMatch(params.matchId, function(err, match) {
         if(err)
             cb(makeStatus(false, err));
-        else if(match.state == match.getStates()['lobby']){
-            if(match.lightPlayer == params.playerId || match.darkPlayer == params.playerId || _.contains(match.observers, params.playerId)){
-                cb(makeStatus(false, "Player has already joined the match."));
-                return;
-            }
-            else if(match.lightPlayer < 0){
-                match.lightPlayer = params.playerId;
-                if(match.host < 0)
-                    match.host = params.playerId; 
-            }
-            else if(match.darkPlayer < 0)
-                match.darkPlayer = params.playerId;
-            else {
-                match.observers.push(params.playerId);
-            }
-            match.save(function(err) {
-                if(err)
-                    cb(makeStatus(false, err));
-                else{
-                    cb(makeStatus(true, match.toJSON()));
-                }
-            });
-        }
-        else if(match.state == match.getStates()['surrender']
-            || match.state == match.getStates()['checkmate']
-            || match.state == match.getStates()['stalemate'])
-            cb(makeStatus(false, "Cannot join the game when it is over"));
-        // If playing, add to observers
-        else{
-            match.observers.push(params.playerId);
-            match.save(function(err) {
-                if(err)
-                    cb(makeStatus(false, err));
-                else{
-                    cb(makeStatus(true, match.toJSON()));
-                }
-            });
-        }
+        else 
+            addPlayerHelper(match, params.playerId, cb);
     });
 }
 
@@ -512,6 +479,46 @@ function unsubscribeSocket(matchId, socket){
     Match.unsubscribe(socket, matchId);
 }
 
+function addPlayerHelper (match, playerId, cb) {
+    if(match.state == match.getStates()['lobby']){
+        if(match.lightPlayer == playerId || match.darkPlayer == playerId || _.contains(match.observers, playerId)){
+            cb(makeStatus(false, "Player has already joined the match."));
+            return;
+        }
+        else if(match.lightPlayer < 0){
+            match.lightPlayer = playerId;
+            if(match.host < 0)
+                match.host = playerId; 
+        }
+        else if(match.darkPlayer < 0)
+            match.darkPlayer = playerId;
+        else {
+            match.observers.push(playerId);
+        }
+        match.save(function(err) {
+            if(err)
+                cb(makeStatus(false, err));
+            else{
+                cb(makeStatus(true, match.toJSON()));
+            }
+        });
+    }
+    else if(match.state == match.getStates()['surrender']
+        || match.state == match.getStates()['checkmate']
+        || match.state == match.getStates()['stalemate'])
+        cb(makeStatus(false, "Cannot join the game when it is over"));
+    // If playing, add to observers
+    else{
+        match.observers.push(playerId);
+        match.save(function(err) {
+            if(err)
+                cb(makeStatus(false, err));
+            else{
+                cb(makeStatus(true, match.toJSON()));
+            }
+        });
+    }
+}
 
 /**
  * Makes a status object

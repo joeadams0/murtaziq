@@ -1,4 +1,49 @@
+
+var host = 'http://localhost:1337';
+
+var socket = io.connect(host);
+
+socket.on('connect', function() {
+
+  socket.on('message', function(message) {
+    console.log(message);
+    game.draw.fromBoardState(message.data);
+  });
+
+  window.createMApi(socket);
+
+
+});
+
 var game = {
+  createMatch : function(){
+    var playerId = $("#player-id").val();
+    window.mapi.createMatch({
+      playerId : Number(playerId)
+    }, function(status) {
+      if(status.success)
+        $("#main-menu").hide();
+        game.init.board(function() {
+          game.draw.fromBoardState(status.data);
+        });
+    });
+  },
+
+  joinMatch : function(){
+    var playerId = $("#player-id").val();
+    var matchId = $("#match-id").val();
+    window.mapi.joinMatch({
+      playerId : Number(playerId),
+      matchId : Number(matchId)
+    }, function(status) {
+      if(status.success)
+        $("#main-menu").hide();
+        game.init.board(function() {
+          game.draw.fromBoardState(status.data);
+        });
+    });
+  },
+
   draw: {
     textGame: function(gameState){
       gameState = JSON.parse(gameState);
@@ -34,12 +79,16 @@ var game = {
     // straight re-draw of the board.
     // gameState is simply the Array of Arrays of Objects of piece Objects
     fromBoardState: function(gameState){
-      gameState = JSON.parse(gameState);
       var boardDimension = game.state.svg.attr("width");
+
+      game.state.lightPlayer.html("Light Player: " + gameState.lightPlayer);
+      game.state.darkPlayer.html("Dark Player: " + gameState.darkPlayer);
+      game.state.matchId.html("Match Id: " + gameState.id);
+
       if (d3.select("#pieces").node() == null) {
         game.state.pieces = game.state.svg.append("g").attr("id", "pieces");
         game.state.piecesRows = game.state.pieces.selectAll("g");
-        game.state.piecesRows.data(gameState).enter().append("g").selectAll("image")
+        game.state.piecesRows.data(gameState.match.board).enter().append("g").selectAll("image")
                          .data(function(d) {return d;})
                          .enter().append("image")
                          .attr("xlink:href", function(d){ return (d.piece == undefined) ? (""): (game.state.piecePath + d.piece.name +" "+(d.piece.team + 1)+".png");})
@@ -50,7 +99,7 @@ var game = {
                          .attr("y", function(d, i, j) {return j*(boardDimension/8);})
                          .transition().duration(500).style("opacity", 1); // fade in
       } else {
-        var imgs = game.state.pieces.selectAll("g").data(gameState).selectAll("image").data(function(d) {return d;});
+        var imgs = game.state.pieces.selectAll("g").data(gameState.match.board).selectAll("image").data(function(d) {return d;});
 
         // enter the new images, then update old images+new ones
         imgs.enter().append("image")
@@ -99,7 +148,7 @@ var game = {
          text: boolean
        }
     */
-    board: function(options){
+    board: function(cb, options){
       var return_status = "board created";
       // parse options
       if (options == undefined){
@@ -136,6 +185,17 @@ var game = {
                          .attr("opacity", 0)
                          .attr("width", 0)
                          .attr("height", 0);
+
+      game.state.lightPlayer = d3.select(options.svg_container)
+                          .append("p");
+
+      game.state.darkPlayer = d3.select(options.svg_container)
+                          .append("p");
+
+      game.state.matchId = d3.select(options.svg_container)
+                          .append("p");
+
+
       game.state.board = game.state.svg.append("g").attr("id", "board");
       game.state.board.selectAll("g")
                       .data([[1,0,1,0,1,0,1,0],
@@ -164,12 +224,14 @@ var game = {
         game.state.svg.transition().duration(options.duration/3).delay(options.duration/3)
                       .attr("height", options.dimension);
         game.state.svg.transition().duration(options.duration/3).delay(2*options.duration/3)
-                      .attr("width", options.dimension);
+                      .attr("width", options.dimension)
+                      .each("end", cb);
       } else {
         game.state.svg.transition().duration(options.duration)
                       .style("opacity", 1)
                       .attr("width", options.dimension)
-                      .attr("height", options.dimension);
+                      .attr("height", options.dimension)
+                      .each("end", cb);
       }
 
       return return_status;
@@ -244,5 +306,6 @@ var game = {
     board: {},
     // boardOptions is not initialized, because 'undefined' has meaning.
     piecePath: "./images/pieces/"
-  }
+  },
+
 };

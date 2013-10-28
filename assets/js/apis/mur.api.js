@@ -1,17 +1,7 @@
 /**
  * Murtaziq API
  */
-
-var host = 'http://localhost:1337';
-
-var socket = io.connect(host);
-
-socket.on('connect', function() {
-
-	socket.on('message', function(message) {
-		console.log(message);
-	});
-
+window.createMApi = function(socket){
 	window.mapi = {
 
 		/**
@@ -49,8 +39,5 @@ socket.on('connect', function() {
 		},
 
 	};
-
-});
-
-
+}
 

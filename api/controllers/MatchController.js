@@ -17,6 +17,8 @@ module.exports = {
     delete req.body.id;
 
     matchapi.create(req.body, function(status) {
+        if(status.success)
+          matchapi.subscribeSocket(status.data.id, req.socket);
         res.json(status);
     });
   },
