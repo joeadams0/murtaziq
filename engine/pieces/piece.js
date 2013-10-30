@@ -241,7 +241,9 @@ function toJSONObj () {
 
 function loadJSONObj(JSONObj, configs){
     var piece = constructorGenerator(JSONObj);
-    return new piece(JSONObj.team, JSONObj.royalty);
+    piece = new piece(JSONObj.team, JSONObj.royalty);
+    piece.setMoveCount(JSONObj.moveCount);
+    return piece;
 }
 
 function toClientJSONObj () {

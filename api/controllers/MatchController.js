@@ -44,7 +44,7 @@ module.exports = {
 
     matchapi.setPlayer(req.body, function(status) {
       if(status.success){
-        Match.publishUpdate(status.data.id, status.data, req.socket);
+        Match.publishUpdate(status.data.id, status.data);
       }
       res.json(status);
     });
@@ -70,7 +70,7 @@ module.exports = {
 
     matchapi.setPieces(req.body, function(status) {
       if(status.success)
-        Match.publishUpdate(status.data.id, status.data, req.socket);
+        Match.publishUpdate(status.data.id, status.data);
 
       res.json(status); 
     });
@@ -91,7 +91,7 @@ module.exports = {
 
     matchapi.surrender(req.body, function(status) {
       if(status.success)
-        Match.publishUpdate(status.data.id, status.data, req.socket);
+        Match.publishUpdate(status.data.id, status.data);
       res.json(status);
     });
   },
@@ -105,7 +105,7 @@ module.exports = {
 
     matchapi.startMatch(id, function(status) {
       if(status.success)
-        Match.publishUpdate(status.data.id, status.data, req.socket);
+        Match.publishUpdate(status.data.id, status.data);
       res.json(status);
     });
   },
@@ -124,7 +124,7 @@ module.exports = {
 
     matchapi.performMove(req.body, function(status) {
       if(status.success)
-        Match.publishUpdate(status.data.id, status.data, req.socket);
+        Match.publishUpdate(status.data.id, status.data);
       res.json(status);
     });
   },
@@ -135,7 +135,7 @@ module.exports = {
 
     matchapi.setHost(req.body, function(status) {
       if(status.success)
-        Match.publishUpdate(status.data.id, status.data, req.socket);
+        Match.publishUpdate(status.data.id, status.data);
       res.json(status);
     });
   },

@@ -95,13 +95,19 @@ function toJSONObj () {
 }
 
 function toClientJSONObj () {
+    var configs = getConfigs();
+    
     var JSONObj = {
             type : this.getType(),
             source : this.getLoc(),
             target : this.getEndLoc(),
-            team : this.getTeam(),
+            isLightTeam : this.getTeam() == configs.lightTeam,
             capturedPiece : utils.existy(this.getCapturedPiece()) ? this.getCapturedPiece().toClientJSONObj() : undefined
         };
 
     return JSONObj;
+}
+
+function getConfigs () {
+    return require("../master.js").getConfigs();
 }

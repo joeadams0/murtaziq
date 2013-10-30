@@ -296,10 +296,10 @@ function getMoves (params, cb) {
         getMatch(params.matchId, function(err, match) {
             if(err)
                 cb(makeStatus(false, err));
-            else if(match.state != match.getState()['pieceSelection']
-                && match.state != match.getState()['playing'])
+            else if(match.state != match.getStates()['pieceSelection']
+                && match.state != match.getStates()['playing'])
                 cb(makeStatus(false, "Can only get moves during the match."))
-            else {
+            else {                
                 var moves = engine.getMoves(match.loadedMatch(), params.loc);
                 cb(makeStatus(true, {
                     loc : params.loc,
@@ -356,7 +356,7 @@ function performMove(params, cb){
                         });
                     }
                     else
-                        cb(makeStatus(true, status));
+                        cb(makeStatus(false, status.data));
                 }
             }
             else{
@@ -445,7 +445,7 @@ function startMatch (matchId, cb) {
             else if(match.state != match.getStates()['lobby'])
                 cb(makeStatus(false, "This match has already been started."))
             else{
-                match.state = match.getStates()['pieceSelection'];
+                match.state = match.getStates()['playing'];
 
                 match.save(function(err) {
                     cb(makeStatus(true, match.toJSON()));

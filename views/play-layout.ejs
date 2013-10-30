@@ -19,6 +19,18 @@
           fill: #D6C8A7;
           background-color:#D6C8A7;
         }
+        .friendly-highlight {
+          fill: green;
+        }
+        .enemy-highlight {
+          fill: red;
+        }
+        .neutral-highlight{
+          fill: yellow;
+        }
+        .selected-highlight {
+          fill: blue;
+        }
         .white {
           color: #fff;
         }
@@ -36,19 +48,21 @@
         <%- body %>
         
         <!-- A few key dependencies, linked in order -->
-        <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="/js/libs/jquery-1.10.2.min.js"></script>
         
         <!-- Bring in the socket.io client -->
-        <script type="text/javascript" src="/js/socket.io.js"></script>
+        <script type="text/javascript" src="/js/libs/socket.io.js"></script>
         
         <!-- then beef it up with some convenience logic for talking to Sails.js -->
-        <script type="text/javascript" src="/js/sails.io.js"></script>
+        <script type="text/javascript" src="/js/libs/sails.io.js"></script>
+
+        <script type="text/javascript" src="/js/libs/underscore-min.js"></script>
         
         <!-- listen on socket.io for incoming messages -->
         <script type="text/javascript" src="/js/apis/mur.api.js"></script>
         
 
-        <script src="http://d3js.org/d3.v2.min.js?2.10.1"></script>
-        <script src="./game.js"></script>
+        <script src="/js/libs/d3.v3.min.js"></script>
+        <script src="/js/app/game.js"></script>
     </body>
 </html>

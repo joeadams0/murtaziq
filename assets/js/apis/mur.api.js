@@ -38,6 +38,18 @@ window.createMApi = function(socket){
 			socket.request('/match/setPlayer', params, cb);
 		},
 
+		startMatch : function(params, cb) {
+			socket.request("/match/startMatch", params, cb);
+		},
+
+		getMoves : function(params, cb) {
+			socket.request("/match/getMoves", params, cb);
+		},
+
+		performMove : function(params, cb) {
+			socket.request("/match/performMove", params, cb);
+		},
+
 	};
 }
 

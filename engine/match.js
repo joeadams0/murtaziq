@@ -10,6 +10,7 @@ var Chessboard = require("./chessboard.js");
 var utils = require("./utils.js");
 var Vector = require("./vector.js");
 var _ = require("underscore");
+var pieces = require("./pieces.js");
 
 module.exports = {
     create : create,
@@ -255,7 +256,6 @@ function toJSONObj(match){
             return move.toJSONObj();
         })
     };
-
     return JSONObj;
 }
 
@@ -286,14 +286,16 @@ function toClientJSONObj(match){
 function loadJSONObj(JSONObj){
 
     var configs = getConfigs();
-    
     var match = {
         turn : JSONObj.turn,
         board : Chessboard.loadJSONObj(JSONObj.board),
         history : _.map(JSONObj.history, function(m) {
             var move = master.getMove(m.type);
-
-            return new move(m);
+            move = new move(m);
+            if(m.capturedPiece){
+                move.capturedPiece = pieces.loadPiece(m.capturedPiece);
+            }
+            return move;
         })
     };
 
