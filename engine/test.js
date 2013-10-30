@@ -15,22 +15,8 @@ module.exports = {
     
 match = Match.create();
 
-    move(3,1,3,3);
-    move(3,6,3,4);
 
-    
-    move(4,1,4,3);
-    move(4,6,4,4);
-    move(4,3,3,4);
-    move(3,7,7,3);
- 
-
-    move(1,1,1,2);
-    move(2,7,7,2);
-    move(0,1,0,2);
-    move(1,7,0,5);
-    move(2,1,2,2);
-    move(0,7,4,7);
+console.log(JSON.stringify(Match.getMoves(match, {x:0,y:1})));
 
 
 
