@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Code coverage report for All files</title>
+    <title>Code coverage report for engine/moves/castle.js</title>
     <meta charset="utf-8">
 
-    <link rel="stylesheet" href="prettify.css">
+    <link rel="stylesheet" href="../../prettify.css">
 
     <style>
         body, html {
@@ -179,141 +179,272 @@
     </style>
 </head>
 <body>
-<div class="header medium">
-    <h1>Code coverage report for <span class="entity">All files</span></h1>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">engine/moves/castle.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">79.06% <small>(536 / 678)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">34.38% <small>(11 / 32)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Branches: <span class="metric">60.32% <small>(76 / 126)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">100% <small>(0 / 0)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Functions: <span class="metric">68.11% <small>(126 / 185)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">0% <small>(0 / 7)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">79.14% <small>(535 / 676)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">34.38% <small>(11 / 32)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
     </h2>
-    <div class="path"></div>
+    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">engine/moves/</a> &#187; castle.js</div>
 </div>
 <div class="body">
-<div class="coverage-summary">
-<table>
-<thead>
-<tr>
-   <th data-col="file" data-fmt="html" data-html="true" class="file">File</th>
-   <th data-col="pic" data-type="number" data-fmt="html" data-html="true" class="pic"></th>
-   <th data-col="statements" data-type="number" data-fmt="pct" class="pct">Statements</th>
-   <th data-col="statements_raw" data-type="number" data-fmt="html" class="abs"></th>
-   <th data-col="branches" data-type="number" data-fmt="pct" class="pct">Branches</th>
-   <th data-col="branches_raw" data-type="number" data-fmt="html" class="abs"></th>
-   <th data-col="functions" data-type="number" data-fmt="pct" class="pct">Functions</th>
-   <th data-col="functions_raw" data-type="number" data-fmt="html" class="abs"></th>
-   <th data-col="lines" data-type="number" data-fmt="pct" class="pct">Lines</th>
-   <th data-col="lines_raw" data-type="number" data-fmt="html" class="abs"></th>
-</tr>
-</thead>
-<tbody><tr>
-	<td class="file medium" data-value="engine/"><a href="engine/index.html">engine/</a></td>
-	<td data-value="73.23" class="pic medium"><span class="cover-fill" style="width: 73px;"></span><span class="cover-empty" style="width:27px;"></span></td>
-	<td data-value="73.23" class="pct medium">73.23%</td>
-	<td data-value="396" class="abs medium">(290&nbsp;/&nbsp;396)</td>
-	<td data-value="53.16" class="pct medium">53.16%</td>
-	<td data-value="79" class="abs medium">(42&nbsp;/&nbsp;79)</td>
-	<td data-value="61.79" class="pct medium">61.79%</td>
-	<td data-value="123" class="abs medium">(76&nbsp;/&nbsp;123)</td>
-	<td data-value="73.35" class="pct medium">73.35%</td>
-	<td data-value="394" class="abs medium">(289&nbsp;/&nbsp;394)</td>
-	</tr>
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">var master = require('../master.js');
+var Move = master.getMove('normal');
+var Chessboard = require("../chessboard.js");
+var Vector = require("../vector.js");
+&nbsp;
+module.exports = <span class="fstat-no" title="function not covered" >function(params){</span>
+<span class="cstat-no" title="statement not covered" >    params.step = params.step + 1;</span>
+<span class="cstat-no" title="statement not covered" >    params.type = 'castle';</span>
+    
+<span class="cstat-no" title="statement not covered" >    this.__proto__ = new Move(params);</span>
+<span class="cstat-no" title="statement not covered" >    this.perform = perform;</span>
+<span class="cstat-no" title="statement not covered" >    this.undo = undo;</span>
+<span class="cstat-no" title="statement not covered" >    this.getRoyalEndLoc = getRoyalEndLoc;</span>
+<span class="cstat-no" title="statement not covered" >    this.getCastleEndLoc = getCastleEndLoc;</span>
+<span class="cstat-no" title="statement not covered" >    this.toClientJSONObj = toClientJSONObj;</span>
+<span class="cstat-no" title="statement not covered" >    this.getRoyalLoc = getRoyalLoc;</span>
+<span class="cstat-no" title="statement not covered" >    this.getRoyalEndLoc = getRoyalEndLoc;</span>
+&nbsp;
+};
+&nbsp;
+&nbsp;
+<span class="fstat-no" title="function not covered" >function perform(board){</span>
+<span class="cstat-no" title="statement not covered" >    Chessboard.getPiece(board,this.getEndLoc()).incrMoveCount();</span>
+<span class="cstat-no" title="statement not covered" >    Chessboard.getPiece(board,this.getLoc()).incrMoveCount();</span>
+<span class="cstat-no" title="statement not covered" >    return Chessboard.setPiece(</span>
+        Chessboard.setPiece(
+            board, 
+            this.getRoyalEndLoc(), 
+            Chessboard.removePiece(board, this.getEndLoc())
+        ),
+        this.getCastleEndLoc(),
+        Chessboard.removePiece(board, this.getLoc())
+    );
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >function undo(board){</span>
+<span class="cstat-no" title="statement not covered" >    Chessboard.getPiece(board,this.getRoyalEndLoc()).incrMoveCount();</span>
+<span class="cstat-no" title="statement not covered" >    Chessboard.getPiece(board,this.getCastleEndLoc()).incrMoveCount();</span>
+<span class="cstat-no" title="statement not covered" >    return Chessboard.setPiece(</span>
+        Chessboard.setPiece(
+            board, 
+            this.getLoc(), 
+            Chessboard.removePiece(board, this.getCastleEndLoc())
+        ),
+        this.getEndLoc(),
+        Chessboard.removePiece(board, this.getRoyalEndLoc())
+    );
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >function getRoyalEndLoc(){</span>
+<span class="cstat-no" title="statement not covered" >    return Vector.add(this.getLoc(), Vector.scale(this.getVec(), this.getStep()-2));</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >function getRoyalLoc(){</span>
+<span class="cstat-no" title="statement not covered" >    return Vector.add(this.getLoc(), Vector.scale(this.getVec(), this.getStep()+1));</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >function getCastleEndLoc(){</span>
+<span class="cstat-no" title="statement not covered" >    return Vector.add(this.getLoc(), Vector.scale(this.getVec(), this.getStep()-1));</span>
+}
+&nbsp;
+<span class="fstat-no" title="function not covered" >function toClientJSONObj () {</span>
+<span class="cstat-no" title="statement not covered" >    var JSONObj = {</span>
+        type : this.getType(),
+        moves : [
+        {
+            source : this.getLoc(),
+            target : this.getCastleEndLoc(),
+            team : this.getTeam(),
+        },
+&nbsp;
+        {
+            source : this.getRoyalLoc(),
+            target : this.getRoyalEndLoc(),
+            team : this.getTeam(),
+        }]
+    };
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return JSONObj;</span>
+}</pre></td></tr>
+</table></pre>
 
-<tr>
-	<td class="file high" data-value="engine/config/"><a href="engine/config/index.html">engine/config/</a></td>
-	<td data-value="100" class="pic high"><span class="cover-fill cover-full" style="width: 100px;"></span><span class="cover-empty" style="width:0px;"></span></td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="1" class="abs high">(1&nbsp;/&nbsp;1)</td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="0" class="abs high">(0&nbsp;/&nbsp;0)</td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="0" class="abs high">(0&nbsp;/&nbsp;0)</td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="1" class="abs high">(1&nbsp;/&nbsp;1)</td>
-	</tr>
-
-<tr>
-	<td class="file high" data-value="engine/config/pieces/"><a href="engine/config/pieces/index.html">engine/config/pieces/</a></td>
-	<td data-value="100" class="pic high"><span class="cover-fill cover-full" style="width: 100px;"></span><span class="cover-empty" style="width:0px;"></span></td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="6" class="abs high">(6&nbsp;/&nbsp;6)</td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="0" class="abs high">(0&nbsp;/&nbsp;0)</td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="0" class="abs high">(0&nbsp;/&nbsp;0)</td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="6" class="abs high">(6&nbsp;/&nbsp;6)</td>
-	</tr>
-
-<tr>
-	<td class="file medium" data-value="engine/moves/"><a href="engine/moves/index.html">engine/moves/</a></td>
-	<td data-value="72.63" class="pic medium"><span class="cover-fill" style="width: 72px;"></span><span class="cover-empty" style="width:28px;"></span></td>
-	<td data-value="72.63" class="pct medium">72.63%</td>
-	<td data-value="95" class="abs medium">(69&nbsp;/&nbsp;95)</td>
-	<td data-value="37.5" class="pct low">37.5%</td>
-	<td data-value="8" class="abs low">(3&nbsp;/&nbsp;8)</td>
-	<td data-value="61.9" class="pct medium">61.9%</td>
-	<td data-value="21" class="abs medium">(13&nbsp;/&nbsp;21)</td>
-	<td data-value="72.63" class="pct medium">72.63%</td>
-	<td data-value="95" class="abs medium">(69&nbsp;/&nbsp;95)</td>
-	</tr>
-
-<tr>
-	<td class="file high" data-value="engine/pieces/"><a href="engine/pieces/index.html">engine/pieces/</a></td>
-	<td data-value="93.38" class="pic high"><span class="cover-fill" style="width: 93px;"></span><span class="cover-empty" style="width:7px;"></span></td>
-	<td data-value="93.38" class="pct high">93.38%</td>
-	<td data-value="136" class="abs high">(127&nbsp;/&nbsp;136)</td>
-	<td data-value="80" class="pct high">80%</td>
-	<td data-value="35" class="abs high">(28&nbsp;/&nbsp;35)</td>
-	<td data-value="87.1" class="pct high">87.1%</td>
-	<td data-value="31" class="abs high">(27&nbsp;/&nbsp;31)</td>
-	<td data-value="93.38" class="pct high">93.38%</td>
-	<td data-value="136" class="abs high">(127&nbsp;/&nbsp;136)</td>
-	</tr>
-
-<tr>
-	<td class="file high" data-value="engine/schemas/"><a href="engine/schemas/index.html">engine/schemas/</a></td>
-	<td data-value="97.67" class="pic high"><span class="cover-fill" style="width: 97px;"></span><span class="cover-empty" style="width:3px;"></span></td>
-	<td data-value="97.67" class="pct high">97.67%</td>
-	<td data-value="43" class="abs high">(42&nbsp;/&nbsp;43)</td>
-	<td data-value="75" class="pct medium">75%</td>
-	<td data-value="4" class="abs medium">(3&nbsp;/&nbsp;4)</td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="10" class="abs high">(10&nbsp;/&nbsp;10)</td>
-	<td data-value="97.67" class="pct high">97.67%</td>
-	<td data-value="43" class="abs high">(42&nbsp;/&nbsp;43)</td>
-	</tr>
-
-<tr>
-	<td class="file high" data-value="testresults/"><a href="testresults/index.html">testresults/</a></td>
-	<td data-value="100" class="pic high"><span class="cover-fill cover-full" style="width: 100px;"></span><span class="cover-empty" style="width:0px;"></span></td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="1" class="abs high">(1&nbsp;/&nbsp;1)</td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="0" class="abs high">(0&nbsp;/&nbsp;0)</td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="0" class="abs high">(0&nbsp;/&nbsp;0)</td>
-	<td data-value="100" class="pct high">100%</td>
-	<td data-value="1" class="abs high">(1&nbsp;/&nbsp;1)</td>
-	</tr>
-
-</tbody>
-</table>
-</div>
 </div>
 <div class="footer">
     <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Oct 30 2013 15:55:00 GMT-0400 (EDT)</div>
 </div>
 
-<script src="prettify.js"></script>
+<script src="../../prettify.js"></script>
 
 <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
 <script>
