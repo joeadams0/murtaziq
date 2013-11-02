@@ -141,10 +141,7 @@ function setMoveCount(num){
 function getMoves(board, space){
 	//if (getPosition === "pawn")
 	//	return _.union(leaperMoves.bind(this)(board, Space.getLoc(space), this.getSchemas((Space.getPiece(space)))), );
-	//console.log(this);
-	console.log(this.getPosition());
 	if (this.getPosition() === "rook"){
-		//console.log(this.getPosition());
 		return this.getCastleMove(board, space, leaperMoves.bind(this)(board, Space.getLoc(space), this.getSchemas((Space.getPiece(space)))));
 		}
 	else
@@ -167,13 +164,10 @@ function leaperMoves(board, loc, schema){
 function getCastleMove(board, space, moves){
 	var Chessboard = require("../chessboard.js");
     var CastleMove = master.getMove('castle');
-	//console.log(this);
     var royalSpace = Chessboard.getRoyalSpace(board, this.getTeam(Space.getPiece(space)));
     if(this.getMoveCount(Space.getPiece(space)) === 0 && this.getMoveCount(Space.getPiece(space)) === 0){
         var move = _.find(moves, adjacentMoveFilter(board, royalSpace));
-        console.log("It got in this one");
           if(utils.existy(move)){
-		  console.log("YES IT DID");
             moves.push(new CastleMove({
                 team : move.getTeam(), 
                 loc : move.getLoc(), 
@@ -189,9 +183,7 @@ function getCastleMove(board, space, moves){
 //pulled from rook.js
 function adjacentMoveFilter(board, targetSpace){
 	var Chessboard = require("../chessboard.js");
-    console.log("reached this AJIHGRJAPIHPJ");
 	return function(move){
-        //console.log("reached here");
 		return  vector.isEqual(
                     Space.getLoc(Chessboard.getSpace(board, vector.subtract(Space.getLoc(targetSpace), vector.create(1,0)))), 
                     move.getEndLoc()
