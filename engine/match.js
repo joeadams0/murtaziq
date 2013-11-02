@@ -12,6 +12,13 @@ var Vector = require("./vector.js");
 var _ = require("underscore");
 var pieces = require("./pieces.js");
 
+var states = {
+    normal : "normal",
+    check : "check",
+    checkmate : "checkmate",
+    stalemate : "stalemate"
+};
+
 module.exports = {
     create : create,
     getTurn : getTurn,
@@ -369,9 +376,3 @@ function getMaxTeamValue () {
     return master.getConfigs().maxTeamValue;
 }
 
-var states = {
-    normal : "normal",
-    check : "check",
-    checkmate : "checkmate",
-    stalemate : "stalemate"
-}

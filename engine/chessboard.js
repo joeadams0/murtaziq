@@ -170,6 +170,7 @@ function removePiece(board, vec){
 function getDefaultSide(side){
     return {
             pawn : pieces.getConstructor(side.pawn),
+
             rook : pieces.getConstructor(side.rook),
             knight : pieces.getConstructor(side.knight),
             bishop : pieces.getConstructor(side.bishop),
@@ -363,6 +364,8 @@ function getEnemySpaces(board, space){
             }
         );
 }
+
+
 
 function getThreateningPieces(board, source){
     return _.filter(getEnemySpaces(board, source), 
