@@ -9,6 +9,7 @@ $(function() {
   cfg.pieceInfoClass = ".pieceInfo";
   cfg.teamListClass = ".myTeamView";
   cfg.connectorClass = ".connector";
+  cfg.submitId = "#setAsTeam";
   // variables for internal use
   cfg.info = {};
   cfg.info.removeInfoBlock = function(e){
@@ -18,6 +19,11 @@ $(function() {
   cfg.info.dragging = false;
 
   // set up listeners
+  act.listenToSubmit = function(){
+    $( cfg.submitId ).click(function(e){
+      sel.setTeam();
+    });
+  };
   // DISPLAY PIECE INFO
   act.handleShowingInfo = function(){ 
     // Start dragging
@@ -95,11 +101,14 @@ $(function() {
 
         // DATA MANIPULATOR
         sel.pieces[pos] = name;
+        sel.updateCost(name, pos);
 
         // remove the piece from it's old spot in the army
         _.each( sel.pieces, function( val, key, list){
-          if ( val == name && key != pos)
+          if ( val == name && key != pos){
+            sel.updateCost(val, key, -1);
             sel.pieces[key] = undefined;
+          }
         });
       }
     });
@@ -121,8 +130,10 @@ $(function() {
         
         // remove the piece from it's old spot in the army
         _.each( sel.pieces, function( val, key, list){
-          if ( val == name)
+          if ( val == name){
+            sel.updateCost(val, key, -1);
             sel.pieces[key] = undefined;
+          }
         });
       }
     });
@@ -130,6 +141,7 @@ $(function() {
 
 
   // Actually do things
+  act.listenToSubmit();
   act.things();
   act.allowDropping();
 });
@@ -138,13 +150,68 @@ $(function() {
 // ABSTRACT LOGIC FOR PIECE SELECTION
 window.sel = {};
 
+sel.cfg = {};
+
 sel.initialized = false;
-sel.init = function(){
+// config MUST contain 'matchId' and 'playerId' or this don't work
+sel.init = function(config){
+  sel.cfg = _.defaults(config, {
+    maxCostId: "#maxCost",
+    currentCostId: "#currentCost"
+  });
+
   mapi.getMaxTeamValue(function(val){
     sel.maxTeamValue = val;
+    $(sel.cfg.maxCostId).text(""+sel.maxTeamValue);
+  });
+
+  mapi.getAllPieces(function(arr){
+    sel.pieceVals = arr;
   });
 
   sel.initialized = true;
 };
 
+sel.cost = 0;
+
 sel.pieces = {};
+
+// set mult to -1 to reduce cost and 1 or undefined to increase cost
+sel.updateCost = function(name, pos, mult){
+  if(mult == undefined){mult = 1;}
+  switch(pos){
+    case "king-spot":
+      sel.cost = sel.cost + (mult*(1)*(_.where(sel.pieceVals, {name: name})[0].value));
+      break;
+    case "queen-spot":
+      sel.cost = sel.cost + (mult*(1)*(_.where(sel.pieceVals, {name: name})[0].value));
+      break;
+    case "rook-spot":
+      sel.cost = sel.cost + (mult*(2)*(_.where(sel.pieceVals, {name: name})[0].value));
+      break;
+    case "knight-spot":
+      sel.cost = sel.cost + (mult*(2)*(_.where(sel.pieceVals, {name: name})[0].value));
+      break;
+    case "bishop-spot":
+      sel.cost = sel.cost + (mult*(2)*(_.where(sel.pieceVals, {name: name})[0].value));
+      break;
+    case "pawn-spot":
+    default:
+      sel.cost = sel.cost + (mult*(8)*(_.where(sel.pieceVals, {name: name})[0].value));
+      break;
+  }
+
+  $(sel.cfg.currentCostId).text(""+sel.cost);
+};
+
+
+sel.setTeam = function(){
+  if (sel.cost > sel.maxTeamValue)
+    alert("nope. Army too big, buddy.");
+  else
+    mapi.setPieces({
+      matchId: sel.cfg.matchId,
+      playerId: sel.cfg.playerId,
+      pieces: sel.pieces
+    }, function(res){console.log(res);});
+};

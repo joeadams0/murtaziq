@@ -7,6 +7,9 @@
  **/
  var Match;
 var Chessboard;
+var Move;
+var Master;
+var Space;
 var _ = require("underscore");
 
 module.exports = {
@@ -55,6 +58,9 @@ function isLegalMove(board, move){
 function setRequires(){
     Chessboard = require("./chessboard.js");
     Match = require("./match.js");
+	Move = require("./moves/move.js");
+	Master = require("./master.js");
+	Space = require("./space.js");
 }
 
 
@@ -70,5 +76,45 @@ function setRequires(){
  * Stalemate: True if the player does not have a legal move and no piece is able to attack his royal
  */
 function updateState (match) {
-    
+	setRequires();
+    /** Check if there are any legal moves from other team to current team's royal space*/
+	
+	var currentTeam=Match.getTurn(match);
+	var otherTeam;
+	
+	if (currentTeam==Master.getConfigs().lightTeam)
+		otherTeam=Master.getConfigs().darkTeam;
+	else
+		otherTeam=Master.getConfigs().lightTeam;	
+		
+	
+	
+	var currentSpaceArray = Chessboard.getEnemySpaces(Match.getBoard(match), Chessboard.getRoyalSpace(Match.getBoard(match), otherTeam));
+	var legalMovesAvailable=false;
+	//var legalMovesArray={};
+	
+	
+	var move = _.find(currentSpaceArray, function(space){
+		return Match.getMoves(match, Space.getLoc(space), null,true).length>0
+	});
+	/*for (var i = 0; i < currentSpaceArray.length; i++) {
+		if (Match.getMoves(match, currentSpaceArray[i], null,true).length>0)
+			legalMovesAvailable=true;
+	}*/
+	legalMovesAvailable = move != undefined;
+	//changes state of the match if player who just moved is able to attack royal
+	if (Chessboard.getThreateningPieces(Match.getBoard(match), Chessboard.getRoyalSpace(Match.getBoard(match), currentTeam)).length>0 && legalMovesAvailable==true){
+		match.state=Match.states.check;
+		}
+	else if (Chessboard.getThreateningPieces(Match.getBoard(match), Chessboard.getRoyalSpace(Match.getBoard(match), currentTeam)).length>0 && legalMovesAvailable==false){
+		match.state=Match.states.checkmate;
+		}
+	else if (Chessboard.getThreateningPieces(Match.getBoard(match), Chessboard.getRoyalSpace(Match.getBoard(match), currentTeam)).length==0 && legalMovesAvailable==false){
+		match.state=Match.states.stalemate;
+		}
+	else
+		{
+		match.state=Match.states.normal;
+		}
+	console.log("State: " +match.state);
 }

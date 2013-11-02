@@ -52,7 +52,7 @@ function constructorGenerator(pieceConfigs){
         this.royalty = utils.existy(royalty) ? royalty : false;
         this.lightTeam = lightTeam;
         this.darkTeam = darkTeam;
-
+		this.getPosition=getPosition;
         this.getName = getName;
         this.getAbbr = getAbbr;
         this.getTeam = getTeam;
@@ -71,6 +71,7 @@ function constructorGenerator(pieceConfigs){
         this.toClientJSONObj = toClientJSONObj;
 
         this.setSchemas(pieceConfigs.schemas);
+		this.getCastleMove = getCastleMove;
     }
 
 }
@@ -89,6 +90,10 @@ function getTeam() {
 
 function getValue() {
     return this.value;
+}
+
+function getPosition(){
+	return this.position;
 }
 
 function getSchemas(){
@@ -132,9 +137,18 @@ function decrMoveCount(){
 function setMoveCount(num){
     this.moveCount = num;
 }
-
+//WORKING ON
 function getMoves(board, space){
-    return leaperMoves.bind(this)(board, Space.getLoc(space), this.getSchemas((Space.getPiece(space))));
+	//if (getPosition === "pawn")
+	//	return _.union(leaperMoves.bind(this)(board, Space.getLoc(space), this.getSchemas((Space.getPiece(space)))), );
+	//console.log(this);
+	console.log(this.getPosition());
+	if (this.getPosition() === "rook"){
+		//console.log(this.getPosition());
+		return this.getCastleMove(board, space, leaperMoves.bind(this)(board, Space.getLoc(space), this.getSchemas((Space.getPiece(space)))));
+		}
+	else
+		return leaperMoves.bind(this)(board, Space.getLoc(space), this.getSchemas((Space.getPiece(space))));
 }
 
 function leaperMoves(board, loc, schema){
@@ -147,6 +161,57 @@ function leaperMoves(board, loc, schema){
             schema
         );
 }
+
+
+//pulled from rook.js
+function getCastleMove(board, space, moves){
+	var Chessboard = require("../chessboard.js");
+    var CastleMove = master.getMove('castle');
+	//console.log(this);
+    var royalSpace = Chessboard.getRoyalSpace(board, this.getTeam(Space.getPiece(space)));
+    if(this.getMoveCount(Space.getPiece(space)) === 0 && this.getMoveCount(Space.getPiece(space)) === 0){
+        var move = _.find(moves, adjacentMoveFilter(board, royalSpace));
+        console.log("It got in this one");
+          if(utils.existy(move)){
+		  console.log("YES IT DID");
+            moves.push(new CastleMove({
+                team : move.getTeam(), 
+                loc : move.getLoc(), 
+                vec : move.getVec(), 
+                step : move.getStep(), 
+                capturedPiece : move.getCapturedPiece()
+            }));
+        }
+    }
+	
+    return moves;
+}
+//pulled from rook.js
+function adjacentMoveFilter(board, targetSpace){
+	var Chessboard = require("../chessboard.js");
+    console.log("reached this AJIHGRJAPIHPJ");
+	return function(move){
+        //console.log("reached here");
+		return  vector.isEqual(
+                    Space.getLoc(Chessboard.getSpace(board, vector.subtract(Space.getLoc(targetSpace), vector.create(1,0)))), 
+                    move.getEndLoc()
+                ) ||
+                vector.isEqual(
+                    Space.getLoc(Chessboard.getSpace(board, vector.add(Space.getLoc(targetSpace), vector.create(1,0)))), 
+                    move.getEndLoc()
+                );
+    }  ; 
+}
+
+
+
+
+
+
+
+
+
+
 
 function schemaIterate(board, loc){
     var self = this;
