@@ -20,32 +20,101 @@ window.createMApi = function(socket){
 		 * Finds one match that matches the ID
 		 * @param  {Integer}   id The ID of the match
 		 * @param  {Function} cb The callback. Passed the match object
-		 * @return {[type]}      [description]
 		 */
 		findOneMatch : function(id, cb) {
 			socket.request('/match/find/'+id, {}, cb);
 		},
 
+		/**
+		 * Creates a match 
+		 * @param  {Object}   params The parameters
+		 * @param  {Function} cb     The callback, passes in the server status response
+		 *
+		 * params : {
+		 * 		playerId : INTEGER, --> OPTIONAL
+		 * }
+		 */
 		createMatch : function(params, cb) {
 			socket.request('/match/create', params, cb);
 		},
 
+		/**
+		 * Joins a match 
+		 * @param  {Object}   params The parameters
+		 * @param  {Function} cb     The callback, passes in the server status response
+		 *
+		 * params : {
+		 * 		matchId : INTEGER,
+		 * 		playerId : INTEGER
+		 * }
+		 */
 		joinMatch : function(params, cb) {
 			socket.request('/match/addPlayer', params, cb);
 		},
 
-		setSide : function(params, cb) {
+		/**
+		 * Sets the player in the match
+		 * @param {Object}   params The Parameters
+		 * @param {Function} cb     The callback, passes in the server status response
+		 *
+		 * params : {
+		 * 		matchId : INTEGER,
+		 * 		playerId : INTEGER,
+		 * 		isLightSide : BOOLEAN --> OPTIONAL
+		 * }
+		 */	
+		setPlayer : function(params, cb) {
 			socket.request('/match/setPlayer', params, cb);
 		},
 
+		/**
+		 * Puts the given match into the lobby state
+		 * @param  {Object}   params The parameters
+		 * @param  {Function} cb     The callback, passes in the server status response
+		 *
+		 * params : {
+		 * 		matchId : INTEGER
+		 * }
+		 */
 		startMatch : function(params, cb) {
 			socket.request("/match/startMatch", params, cb);
 		},
 
+		/**
+		 * Gets the move for a piece
+		 * @param  {Object}   params The parameters
+		 * @param  {Function} cb     The callback, passes in the server status response
+		 *
+		 * params : {
+		 * 		matchId : INTEGER,
+		 * 		loc : {
+		 * 			x : INTEGER,
+		 * 			y : INTEGER
+		 * 		}
+		 * }
+		 */
 		getMoves : function(params, cb) {
 			socket.request("/match/getMoves", params, cb);
 		},
 
+		/**
+		 * Performs a move
+		 * @param  {Object}   params The Parameters
+		 * @param  {Function} cb     The callback, passes in the server status response
+		 *
+		 * params : {
+		 * 		matchId : INTEGER,
+		 * 		playerId : INTEGER,
+		 * 		source : {
+		 * 			x : INTEGER,
+		 * 			y : INTEGER,
+		 * 		},
+		 * 		target : {
+		 * 			x : INTEGER,
+		 * 			y : INTEGER
+		 * 		}
+		 * }
+		 */
 		performMove : function(params, cb) {
 			socket.request("/match/performMove", params, cb);
 		},
