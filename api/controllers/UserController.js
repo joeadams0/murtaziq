@@ -11,12 +11,39 @@ var utils = require("../../engine/utils.js");
 module.exports = {
     
     index : function(req, res){
-        UserHelper.getUser(req, function(err, user){
+	var user_id = req.param("id");
+	var request = {id : user_id};
+        UserHelper.getUser(request, function(err, user){
+            if(err)
+                res.send(err, 500);
+            /*else if(format == 'json'){
+                res.json(user);
+            }*/
+
+		res.view('user/profile', {currentUser : user});
+
+        });
+    },
+
+    currentuserjson : function(req, res){
+        UserHelper.getCurrentUser(req, function(err, user){
             if(err)
                 res.send(err, 500);
             else{
                 res.json(user);
             }
+        });
+    },
+
+    userjson : function(req, res){
+	var user_id = req.param("id");
+        var request = {id : user_id};
+        UserHelper.getUser(request, function(err, user){
+            if(err)
+                res.send(err, 500);
+	    else{
+	        res.json(user);
+	    }
         });
     },
   
@@ -83,5 +110,17 @@ module.exports = {
             });
         else
             res.json("Not Authorized", 401);
+    },
+
+    userlist : function(req, res){
+	User.find({}).limit(10).sort('name ASC').done(function(err, users) {
+		  // Error handling
+		  if (err) {
+		    return console.log(err);
+		  // Found multiple users!
+		  } else {
+		res.view('user/index', { list : users } )  
+		}
+		});
     }
 };
