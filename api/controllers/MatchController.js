@@ -23,6 +23,21 @@ module.exports = {
     });
   },
 
+  /**
+   * Adds a player to the specified match, then publishes match to all subscribers
+   * Adds it to the next open position with the following precidence:
+   *   1) Light Player
+   *   2) Dark Player
+   *   3) Observer
+   * @param {Object} req request
+   * @param {Object} res response
+   *
+   * Note: message body must contain the following fields:
+   * {
+   *   matchId : INTEGER,
+   *   playerId : INTEGER,
+   * }
+   */
   addPlayer : function(req, res) {
     if(req.param('id'))
       req.body.matchId = req.param('id');
@@ -38,6 +53,18 @@ module.exports = {
     });
   },
 
+  /**
+   * Sets the player to the specified role in the match
+   * @param {Object} req request
+   * @param {Object} res response
+   *
+   * Note: message body must contain the following fields:
+   * {
+   *   matchId : INTEGER,
+   *   playerId : INTEGER,
+   *   side : INTEGER 
+   * }
+   */
   setPlayer : function(req, res) {
     if(req.param('id'))
       req.body.matchId = req.param('id');   

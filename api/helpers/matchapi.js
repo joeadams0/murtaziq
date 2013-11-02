@@ -78,10 +78,6 @@ function setPlayer (params, cb) {
         cb(makeStatus(false, "No params.playerId specified."));
         return;
     }
-    if(!utils.existy(params.side)){
-        cb(makeStatus(false, "No params.side specified"));
-        return;
-    }
 
     getMatch(params.matchId, function(err, match) {
         if(err)
@@ -108,12 +104,12 @@ function setPlayer (params, cb) {
             }
 
             // Set player
-            if(params.side == 0){
+            if(params.isLightSide){
                 replacedPlayer = match.lightPlayer;
                 match.lightPlayer = params.playerId;
             }
 
-            else if(params.side == 1){
+            else if(params.isLightSide === false){
                 replacedPlayer = match.darkPlayer;
                 match.darkPlayer = params.playerId;
             }
@@ -445,7 +441,7 @@ function startMatch (matchId, cb) {
             else if(match.state != match.getStates()['lobby'])
                 cb(makeStatus(false, "This match has already been started."))
             else{
-                match.state = match.getStates()['playing'];
+                match.state = match.getStates()['pieceSelection'];
 
                 match.save(function(err) {
                     cb(makeStatus(true, match.toJSON()));

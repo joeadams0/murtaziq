@@ -31,7 +31,7 @@ module.exports = {
  */
 function constructorGenerator(pieceConfigs){
     
-    return function(team, royalty){
+    return function(team, position, royalty){
         master = require('../master.js');
 
         var configs = master.getConfigs();
@@ -46,6 +46,7 @@ function constructorGenerator(pieceConfigs){
         this.value = pieceConfigs.value;
         this.abbr = pieceConfigs.abbr;
         this.schemaDir = configs.schemaDir;
+        this.position = position;
         this.team = team;
         this.moveCount = 0;
         this.royalty = utils.existy(royalty) ? royalty : false;
