@@ -46,8 +46,10 @@ module.exports.routes = {
   'put /user' : 'UserController.update',
 
   '/user/:id' : 'UserController.index',
+
+  '/userjson' : 'UserController.currentuserjson',
   
-  '/user/userjson/:id' : 'UserController.userjson',
+  '/userjson/:id' : 'UserController.userjson',
 
   '/userlist' : 'UserController.userlist',
 
