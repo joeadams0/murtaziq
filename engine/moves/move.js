@@ -28,36 +28,70 @@ module.exports = function(params){
     this.toClientJSONObj = toClientJSONObj;
 };
 
+/**
+ * Gets the starting location of the move
+ * @return {Object} The location
+ */
 function getLoc(){
     return this.loc;
 }
 
+/**
+ * Gets the vector that describes this move
+ * @return {Object} The Vector
+ */
 function getVec(){
     return this.vec;
 }
 
+/**
+ * Gets the number of steps to take with the vector for this move
+ * @return {Integer} The number of steps
+ */
 function getStep(){
     return this.step;
 }
 
+/**
+ * Gets the team that is making this move
+ * @return {Integer} The team that is making this move
+ */
 function getTeam() {
     return this.team;
 }
 
+/**
+ * Gets the piece that was captured, if any
+ * @return {Object} The piece that was captured
+ */
 function getCapturedPiece(){
     return this.capturedPiece;
 }
 
+/**
+ * Gets the type of move
+ * @return {String} The type of the move
+ */
 function getType(){
     return this.type;
 }
 
+/**
+ * Performs the move
+ * @param  {Object} board The board to perform the move on
+ * @return {Object}       The new board
+ */
 function perform(board){
     setRequires();
     Chessboard.getPiece(board, this.getLoc()).incrMoveCount();
     return Chessboard.setPiece(board, this.getEndLoc(), Chessboard.removePiece(board, this.getLoc())); 
 }
 
+/**
+ * Undos the move
+ * @param  {Object} board The board to undo the move on
+ * @return {Object}       The new board
+ */
 function undo(board){
     setRequires();
     
@@ -68,6 +102,10 @@ function undo(board){
     return board;
 }
 
+/**
+ * Calculates the end location of the move
+ * @return {Object} The end location
+ */
 function getEndLoc(){
     setRequires();
     return Vector.add(this.getLoc(), Vector.scale(this.getVec(), this.getStep()));

@@ -15,8 +15,8 @@ module.exports = {
     
 match = Match.create();
 
-
-console.log(JSON.stringify(Match.getMoves(match, {x:0,y:1})));
+move(0,1,0,3);
+move(0,6,0,4);
 
 
 
@@ -48,5 +48,5 @@ function getMoves(x, y){
 
 function move(x1, y1, x2, y2){
     console.log("\nMove: " + vector.toString(vector.create(x1,y1)) + " -> " + vector.toString(vector.create(x2,y2)));
-    Match.printBoard(Match.move(match, vector.create(x1, y1), vector.create(x2,y2), false).data);
+    Match.printBoard(Match.move(match, vector.create(x1, y1), vector.create(x2,y2), match.turn).data);
 }

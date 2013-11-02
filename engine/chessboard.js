@@ -14,7 +14,7 @@ var _ = require("underscore");
 
 module.exports = {
     create : create,
-    getSide : getSide,
+    getDefaultSide : getDefaultSide,
     print : print,
     setSide : setSide,
     getSpace : getSpace,
@@ -58,12 +58,12 @@ function setSide (isLightSide, side, board) {
     var success, message;
     var maxValue = getMaster().getConfigs().maxTeamValue;
 
-    var value = getSideValue(side);
+    var value = getDefaultSideValue(side);
     if(validateSideValue(side)){
         if(isLightSide)
-            setLightSide(getSide(side), board);
+            setLightSide(getDefaultSide(side), board);
         else
-            setDarkSide(getSide(side), board);
+            setDarkSide(getDefaultSide(side), board);
         success = true;
     }
     else{
@@ -80,10 +80,10 @@ function setSide (isLightSide, side, board) {
 }
 
 function validateSideValue(side){
-    return getSideValue(side) <= getMaster().getConfigs().maxTeamValue;
+    return getDefaultSideValue(side) <= getMaster().getConfigs().maxTeamValue;
 }
 
-function getSideValue (side) {
+function getDefaultSideValue (side) {
     var value = 0;
 
     value = value + 8*pieces.getValue(side.pawn);
@@ -167,7 +167,7 @@ function removePiece(board, vec){
  * Gets the default side
  * @return {Object} The default side
  */
-function getSide(side){
+function getDefaultSide(side){
     return {
             pawn : pieces.getConstructor(side.pawn),
             rook : pieces.getConstructor(side.rook),
@@ -225,6 +225,7 @@ function setPawns(rowIndex, piece, team, board){
         piece,
         board,
         team,
+        "pawn",
         false,
         vector.create(0, rowIndex),
         vector.create(1, rowIndex),
@@ -242,6 +243,7 @@ function setRooks(rowIndex, piece, team, board){
         piece,
         board,
         team,
+        "rook",
         false,
         vector.create(0, rowIndex),
         vector.create(7, rowIndex)
@@ -253,6 +255,7 @@ function setKnights(rowIndex, piece, team, board){
         piece,
         board,
         team,
+        "knight",
         false,
         vector.create(1, rowIndex),
         vector.create(6, rowIndex)
@@ -264,6 +267,7 @@ function setBishops(rowIndex, piece, team, board){
         piece,
         board,
         team,
+        "bishop",
         false,
         vector.create(2, rowIndex),
         vector.create(5, rowIndex)
@@ -275,6 +279,7 @@ function setQueen(rowIndex, offset, piece, team, board){
         piece,
         board,
         team,
+        "queen",
         false,
         vector.create(3, rowIndex)
     );
@@ -285,26 +290,27 @@ function setRoyal(rowIndex, offset, piece, team, board){
         piece,
         board,
         team,
+        "royal",
         true,
         vector.create(4, rowIndex)
     );
 }
 
 
-function createPiecesAt(piece, board, team, isRoyal){
+function createPiecesAt(piece, board, team, position, isRoyal){
     var index = 3;
     if(_.isBoolean(isRoyal))
         index = 4;
     _.each(
         _.rest(arguments, index),
-        createPieceGen(piece, board, team, isRoyal)
+        createPieceGen(piece, board, team, position,isRoyal)
     );
     return board;
 }
 
-function createPieceGen(piece, board, team, isRoyal){
+function createPieceGen(piece, board, team, position, isRoyal){
     return function(vec){
-        Space.setPiece(getSpace(board, vec), new piece(team, isRoyal));
+        Space.setPiece(getSpace(board, vec), new piece(team, position, isRoyal));
     };
 }
 
