@@ -1,6 +1,6 @@
 module.exports = {
     name : 'rook',
-    file : 'rook.js',
+    //file : 'rook.js',
     abbr : 'r',
     schemas : ['rookschema.js'],
     value : 50
