@@ -119,6 +119,86 @@ window.createMApi = function(socket){
 			socket.request("/match/performMove", params, cb);
 		},
 
+		/**
+		 * Removes the player from the match
+		 * @param  {Object}   params The parameters
+		 * @param  {Function} cb     The callback, passes in the server status response
+		 *
+		 * params : {
+		 * 		matchId : INTEGER,
+		 * 		playerId : INTEGER
+		 * }
+		 */
+		removePlayer : function(params, cb) {
+			socket.request("/match/removePlayer", params, cb);
+		},
+
+		/**
+		 * Sets the pieces for a side
+		 * @param {Object}   params The parameters 
+		 * @param {Function} cb     The callback, passes in the server status response
+		 *
+		 * params : {
+		 * 		matchId : INTEGER,
+		 * 		playerId : INTEGER,
+		 * 		pieces : {
+		 * 			pawn : PAWN NAME,
+		 * 			rook : ROOK NAME,
+		 * 			knight : KNIGHT NAME,
+		 * 			bishop : BISHOP NAME,
+		 * 			queen : QUEEN NAME,
+		 * 			king : KING NAME
+		 * 		}
+		 * }
+		 */
+		setPieces : function(params, cb) {
+			socket.request("/match/setPieces", params, cb);
+		},
+
+		/**
+		 * Surrenders the match
+		 * @param  {Object}   params The parameters
+		 * @param  {Function} cb     The callback, passes in the server status response
+		 *
+		 * params : {
+		 * 		matchId : INTEGER,
+		 * 		playerId : INTEGER
+		 * }
+		 */
+		surrender : function(params, cb) {
+			socket.request("/match/surrender", params, cb);
+		},
+
+		/**
+		 * Gets all the possible pieces
+		 * @param  {Function} cb The callback
+		 */
+		getAllPieces : function(cb) {
+			socket.request("/match/getAllPieces", {}, cb);
+		},
+
+		/**
+		 * Gets the max value for pieces on a team
+		 * @param  {Function} cb The callback
+		 */
+		getMaxTeamValue : function(cb) {
+			socket.request("/match/getMaxTeamValue", {}, cb);
+		},
+
+		/**
+		 * Sets the host for the match
+		 * @param {Object}   params The parameters
+		 * @param {Function} cb     The callback
+		 *
+		 * params : {
+		 * 		matchId : INTEGER,
+		 * 		playerId : INTEGER
+		 * }
+		 */
+		setHost : function(params, cb) {
+			socket.request("/match/setHost", params, cb);
+		},
+
 	};
 }
 
