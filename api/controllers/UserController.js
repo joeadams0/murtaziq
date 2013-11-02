@@ -30,6 +30,7 @@ module.exports = {
             if(err)
                 res.send(err, 500);
             else{
+                console.log(user);
                 res.json(user);
             }
         });
@@ -59,7 +60,7 @@ module.exports = {
                     else{
                         UserHelper.setOnline(req, username, 
                             function(){
-                                UserHelper.getUser(req, function(err, user){
+                                UserHelper.getUser({username : username}, function(err, user){                                    
                                     res.json(user);
                                 }); 
                             });

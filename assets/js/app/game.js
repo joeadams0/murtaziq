@@ -15,17 +15,22 @@ game.state = {};
 game.init = function(cb) {
 	if(!cb)
 		cb = function() {};
-	require([game.config], function(config) {
-		game.config = config;
 
-		// Get all the states
-		require(_.values(game.config.states), function() {
-			game.states = _.object(_.keys(game.config.states), arguments);
+	mapi.getCurrentUser(function(user) {
+		game.state.user = user;
+		
+		require([game.config], function(config) {
+			game.config = config;
 
-			if(game.config.startingState)
-				game.loadState(game.config.startingState, {}, cb);
-			else
-				cb();
+			// Get all the states
+			require(_.values(game.config.states), function() {
+				game.states = _.object(_.keys(game.config.states), arguments);
+
+				if(game.config.startingState)
+					game.loadState(game.config.startingState, {}, cb);
+				else
+					cb();
+			});
 		});
 	});
 };
@@ -60,19 +65,7 @@ game.loadState = function(stateName, data, cb) {
 	if(!cb)
 		cb = function() {};
 	game.state.currentState = game.states[stateName];
-	game.state.currentState.load(data, function() {
-		game.render(cb);
-	});
-};
-
-/**
- * Renders the current state
- * @param  {Function} cb The callback
- */
-game.render = function(cb) {
-	if(!cb)
-		cb = function() {};
-	game.state.currentState.render(cb);
+	game.state.currentState.load(data, cb);
 };
 
 /**

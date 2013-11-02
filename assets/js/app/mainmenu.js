@@ -5,7 +5,7 @@ define(["text!templates/mainmenu.ejs"], function(template) {
 	mainmenu.state = {};
 
 	mainmenu.load = function(data, cb) {
-		mainmenu.state.$el = $(new EJS({text : template}).render({baller : "hey"}));
+		mainmenu.state.$el = $(new EJS({text : template}).render(data));
 		mainmenu.state.$el.appendTo("#" + game.config.container);
 		mainmenu.bind();
 		cb();
@@ -25,11 +25,14 @@ define(["text!templates/mainmenu.ejs"], function(template) {
 
 	mainmenu.createMatch = function() {
 		window.mapi.createMatch({
-	      playerId : game.user.id
+	      playerId : game.state.user.id
 	    }, function(status) {
 	      if(status.success){
-	        match.state.model.thisPlayer = Number(playerId);
-	        match.events.newMatch(status.data);
+	        if(status.success){
+	        	game.switchState("lobby", status.data);
+	        }
+	        else
+	        	alert(status.data);
 	      }
 	    });
 	};

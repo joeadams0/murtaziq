@@ -199,6 +199,13 @@ window.createMApi = function(socket){
 			socket.request("/match/setHost", params, cb);
 		},
 
+		getCurrentUser : function(cb) {
+			socket.request("/user/userjson", {}, cb);
+		},
+
+		getUser : function(id, cd) {
+			socket.request("/user/userjson/"+id, {}, cb);
+		},
 	};
 }
 
