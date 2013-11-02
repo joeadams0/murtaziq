@@ -11,7 +11,9 @@ var utils = require("../../engine/utils.js");
 module.exports = {
     
     index : function(req, res){
-        UserHelper.getUser(req, function(err, user){
+	var user_id = req.param("id");
+	var request = {id : user_id};
+        UserHelper.getUser(request, function(err, user){
             if(err)
                 res.send(err, 500);
             /*else if(format == 'json'){
@@ -23,12 +25,23 @@ module.exports = {
         });
     },
 
+    currentuserjson : function(req, res){
+        UserHelper.getCurrentUser(req, function(err, user){
+            if(err)
+                res.send(err, 500);
+            else{
+                res.json(user);
+            }
+        });
+    },
+
     userjson : function(req, res){
-	UserHelper.getUser(req, function(err, user){
+	var user_id = req.param("id");
+        var request = {id : user_id};
+        UserHelper.getUser(request, function(err, user){
             if(err)
                 res.send(err, 500);
 	    else{
-	        console.log("made it!");
 	        res.json(user);
 	    }
         });

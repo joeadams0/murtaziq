@@ -21,7 +21,8 @@ module.exports.policies = {
             'devrole'
         ],
 	userlist : 'authenticated',
-	userjson : 'authenticated',
+	currentuserjson : 'authenticated',
+	userjson : true,
         index : 'authenticated',
         logout : 'authenticated',
         update : 'authenticated',
