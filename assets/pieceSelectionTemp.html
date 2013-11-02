@@ -36,20 +36,24 @@
 
   <body>
     <ul class="pieceList connector">
-    <!-- an each-type list here would work. --!>
-      <li class="piece" data-name="amazon">
-        <img class="pieceImage" src="/images/pieces/amazon 1.png" height="100"/>
+      <li class="piece" data-name="rook">
+        <img class="pieceImage" src="/images/pieces/rook 1.png" height="100"/>
         <!-- Hidden until mouseover --!>
         <div class="pieceInfo">
-          <h3>The Amazon</h3>
+          <h3>The Rook</h3>
           <ul>
             <li><strong>Cost:</strong>#</li>
-            <li><strong>Moveset:</strong>Like a Rook and a pawn</li>
+            <li><strong>Moveset:</strong>Like a Rook</li>
             <li><a href="#">more info</a>#</li>
           </ul>
         </div>
       </li>
     </ul>
+
+    <div>
+      <span id="currentCost"></span> /
+      <span id="maxCost"></span>
+    </div>
 
     <ul class="myTeamView connector">
       <ul class="board-row">
@@ -74,6 +78,8 @@
         <li data-pos="rook-spot" class="spot"></li>
       </ul>
     </ul>
+
+    <button id="setAsTeam">Set Team</button>
 
     <!-- A few key dependencies, linked in order -->
     <script type="text/javascript" src="/js/libs/jquery-1.10.2.min.js"></script>
