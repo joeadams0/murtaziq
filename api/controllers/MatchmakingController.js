@@ -6,13 +6,15 @@
  */
 
 var UserHelper = require("../helpers/user-helper.js");
+var utils = require("../../engine/utils.js");
 
 module.exports = {
     
     index : function(req, res){
-     
-		res.view('play/matchmaking', {currentUser : 1});
-
-    },
-    
+	
+		User.findOne({id: UserHelper.getSession(req).id}).done(function(err, user) {
+		
+			res.view('play/matchmaking', {currentUser : user.username});
+		})
+	}
 };

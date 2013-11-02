@@ -27,8 +27,6 @@ module.exports = {
            required : true
         },
         
-        state : 'STRING',
-        
         role : {
             type : 'STRING',
             defaultsTo : 'user'
