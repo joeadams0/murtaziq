@@ -1,12 +1,12 @@
 <ul class="pieceList connector">
-  <% for(var i = 0; i < pieceList.length; i++;){ %>
+  <% for(var i = 0; i < pieceList.length; i++){ %>
     <li class="piece" data-name="<%= pieceList[i].name %>">
       <img class="pieceImage" src="/images/pieces/<%= pieceList[i].name %> 1.png" height="100"/>
       <!-- Hidden until mouseover --!>
       <div class="pieceInfo">
         <h3>The <%= pieceList[i].name %></h3>
         <ul>
-          <li><strong>Cost:</strong><%= pieceList[i].name %></li>
+          <li><strong>Cost:</strong><%= pieceList[i].value %></li>
           <li><strong>Moveset:</strong>TODO</li>
           <li><a href="/wiki/<%= pieceList[i].name %>">more info</a></li>
         </ul>

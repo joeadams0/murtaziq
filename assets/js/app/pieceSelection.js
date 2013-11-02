@@ -6,7 +6,7 @@ define(["text!templates/pieceSelection.ejs"], function(template){
     // set up the data
     sel.init({
       matchId: data.id,
-      playerId: game.stat.user.id
+      playerId: game.state.user.id
     }, function(){  // put this stuff in a callback, so that we can be sure that things are initialized first.
       // render the view
       sel.$template = $(new EJS({text : template}).render({pieceList: sel.pieceVals}));
@@ -254,4 +254,6 @@ define(["text!templates/pieceSelection.ejs"], function(template){
       act.allowDropping();
     });
   };
+
+  return sel;
 });
