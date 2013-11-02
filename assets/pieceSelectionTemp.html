@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <title>Pick your damn pieces</title>
+    <style>
+      .pieceList{
+        border: 1px solid black;
+        min-height:100px;
+      }
+      .piece{
+        display: inline-block;
+        border: 1px solid black;
+      }
+      .pieceImage{}
+      .pieceInfo{
+        display: none;
+        border: 1px solid black;
+        background-color: #ddd;
+      }
+      .myTeamView{
+        min-height: 200px;
+        border: 1px solid black;
+      }
+      .spot {
+        list-style-type: none;
+        height: 100px;
+        width: 100px;
+        padding: 1px;
+        display: inline-block;
+        background-color: #ddd;
+      }
+      .dark {
+        background-color: #888;
+      }
+    </style>
+  </head>
+
+  <body>
+    <ul class="pieceList connector">
+    <!-- an each-type list here would work. --!>
+      <li class="piece" data-name="amazon">
+        <img class="pieceImage" src="/images/pieces/amazon 1.png" height="100"/>
+        <!-- Hidden until mouseover --!>
+        <div class="pieceInfo">
+          <h3>The Amazon</h3>
+          <ul>
+            <li><strong>Cost:</strong>#</li>
+            <li><strong>Moveset:</strong>Like a Rook and a pawn</li>
+            <li><a href="#">more info</a>#</li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+
+    <ul class="myTeamView connector">
+      <ul class="board-row">
+        <li data-pos="pawn-spot" class="spot"></li>
+        <li data-pos="pawn-spot" class="spot dark"></li>
+        <li data-pos="pawn-spot" class="spot"></li>
+        <li data-pos="pawn-spot" class="spot dark"></li>
+        <li data-pos="pawn-spot" class="spot"></li>
+        <li data-pos="pawn-spot" class="spot dark"></li>
+        <li data-pos="pawn-spot" class="spot"></li>
+        <li data-pos="pawn-spot" class="spot dark"></li>
+      </ul>
+
+      <ul class="board-row">
+        <li data-pos="rook-spot" class="spot dark"></li>
+        <li data-pos="knight-spot" class="spot"></li>
+        <li data-pos="bishop-spot" class="spot dark"></li>
+        <li data-pos="king-spot" class="spot"></li>
+        <li data-pos="queen-spot" class="spot dark"></li>
+        <li data-pos="bishop-spot" class="spot"></li>
+        <li data-pos="knight-spot" class="spot dark"></li>
+        <li data-pos="rook-spot" class="spot"></li>
+      </ul>
+    </ul>
+
+    <!-- A few key dependencies, linked in order -->
+    <script type="text/javascript" src="/js/libs/jquery-1.10.2.min.js"></script>
+    <script src="/js/libs/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+    <!-- Bring in the socket.io client -->
+    <script type="text/javascript" src="/js/libs/socket.io.js"></script>
+    <!-- then beef it up with some convenience logic for talking to Sails.js -->
+    <script type="text/javascript" src="/js/libs/sails.io.js"></script>
+    <script type="text/javascript" src="/js/libs/underscore-min.js"></script>
+    <!-- listen on socket.io for incoming messages -->
+    <script type="text/javascript" src="/js/apis/mur.api.js"></script>
+    <script src="/js/libs/d3.v3.min.js"></script>
+    <script src="/js/app/game.js"></script>
+    <script src="/js/app/pieceSelection.js"></script>
+  </body>
+</html>

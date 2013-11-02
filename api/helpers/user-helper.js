@@ -62,8 +62,10 @@ module.exports = {
     setSession : function(req, user){
         req.session.user = user;
     },
-    
-    getUser : function(req, cb){
+    getUser: function(req, cb){
+        User.findOne(req, cb);
+    },
+    getCurrentUser : function(req, cb){
         User.findOne(this.getSession(req), cb);
     },
     
