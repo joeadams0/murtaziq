@@ -2,19 +2,6 @@ define([], function() {
 
   var match = {};
 
-  match.createMatch = function(){
-    var playerId = $("#player-id").val();
-    window.mapi.createMatch({
-      playerId : Number(playerId)
-    }, function(status) {
-      if(status.success){
-        $("#main-menu").hide();
-        match.state.model.thisPlayer = Number(playerId);
-        match.events.newMatch(status.data);
-      }
-    });
-  };
-
   match.load = function(data, cb){
     if(!cb)
       cb = function() {};
@@ -23,21 +10,6 @@ define([], function() {
 
   match.unload = function() {
     $(match.state.view.boardOptions.svg_container).hide();
-  };
-
-  match.joinMatch = function(){
-    var playerId = $("#player-id").val();
-    var matchId = $("#match-id").val();
-    window.mapi.joinMatch({
-      playerId : Number(playerId),
-      matchId : Number(matchId)
-    }, function(status) {
-      if(status.success){
-        $("#main-menu").hide();
-        match.state.model.thisPlayer = Number(playerId);
-        match.events.newMatch(status.data);
-      }
-    });
   };
 
     // straight re-draw of the board.

@@ -30,7 +30,6 @@ module.exports = {
             if(err)
                 res.send(err, 500);
             else{
-                console.log(user);
                 res.json(user);
             }
         });

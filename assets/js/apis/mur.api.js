@@ -200,7 +200,7 @@ window.createMApi = function(socket){
 		},
 
 		getCurrentUser : function(cb) {
-			socket.request("/user/userjson", {}, cb);
+			socket.request("/userjson", {}, cb);
 		},
 
 		getUser : function(id, cd) {

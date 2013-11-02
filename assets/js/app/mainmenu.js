@@ -21,6 +21,7 @@ define(["text!templates/mainmenu.ejs"], function(template) {
 
 	mainmenu.bind = function() {
 		$("#create-match").on("click", mainmenu.createMatch);
+		$("#join-match").on("click", mainmenu.joinMatch);
 	};
 
 	mainmenu.createMatch = function() {
@@ -36,6 +37,20 @@ define(["text!templates/mainmenu.ejs"], function(template) {
 	      }
 	    });
 	};
+
+	mainmenu.joinMatch = function(){
+	    var matchId = $("#match-id").val();
+
+	    window.mapi.joinMatch({
+	      playerId : game.state.user.id,
+	      matchId : Number(matchId)
+	    }, function(status) {
+	      if(status.success)
+	        game.switchState("lobby", status.data);
+	      else
+	      	alert(status.data);
+	    });
+  	};
 
 	return mainmenu;
 });
