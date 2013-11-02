@@ -14,9 +14,23 @@ module.exports = {
         UserHelper.getUser(req, function(err, user){
             if(err)
                 res.send(err, 500);
-            else{
+            /*else if(format == 'json'){
                 res.json(user);
-            }
+            }*/
+
+		res.view('user/profile', {currentUser : user});
+
+        });
+    },
+
+    userjson : function(req, res){
+	UserHelper.getUser(req, function(err, user){
+            if(err)
+                res.send(err, 500);
+	    else{
+	        console.log("made it!");
+	        res.json(user);
+	    }
         });
     },
   
@@ -83,5 +97,17 @@ module.exports = {
             });
         else
             res.json("Not Authorized", 401);
+    },
+
+    userlist : function(req, res){
+	User.find({}).limit(10).sort('name ASC').done(function(err, users) {
+		  // Error handling
+		  if (err) {
+		    return console.log(err);
+		  // Found multiple users!
+		  } else {
+		res.view('user/index', { list : users } )  
+		}
+		});
     }
 };

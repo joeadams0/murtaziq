@@ -1,0 +1,16 @@
+USERS:
+<table>
+<tr>
+<td>Username</td>
+<td>State</td>
+<td>User ID</td>
+</tr>
+<% _.each( list, function(el){ %>
+<tr>
+<td align='center'><a href=<%=util.format("/user/%s",el.id)%>><%= el.username %></a></td>
+<td align='center'><%= el.state %></td>
+<td align='center'><%= el.id %></td>
+</tr>
+
+<% }) %>
+</table>

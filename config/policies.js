@@ -20,6 +20,8 @@ module.exports.policies = {
             'authenticated',
             'devrole'
         ],
+	userlist : 'authenticated',
+	userjson : 'authenticated',
         index : 'authenticated',
         logout : 'authenticated',
         update : 'authenticated',
