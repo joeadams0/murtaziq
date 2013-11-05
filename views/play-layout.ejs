@@ -7,69 +7,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <%res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');%>
         <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-        .pieceList{
-          border: 1px solid black;
-          min-height:100px;
-        }
-        .piece{
-          display: inline-block;
-          border: 1px solid black;
-        }
-        .pieceImage{}
-        .pieceInfo{
-          display: none;
-          border: 1px solid black;
-          background-color: #ddd;
-          z-index: 1000;
-        }
-        .myTeamView{
-          min-height: 200px;
-          border: 1px solid black;
-        }
-        .spot {
-          list-style-type: none;
-          height: 100px;
-          width: 100px;
-          padding: 1px;
-          display: inline-block;
-          background-color: #ddd;
-        }
-        rect {
-          stroke: black;
-          stroke-width: 1px;
-        }
-        .dark {
-          fill: #9E8B5D;
-          background-color:#9E8B5D;
-        }
-        .light {
-          fill: #D6C8A7;
-          background-color:#D6C8A7;
-        }
-        .friendly-highlight {
-          fill: green;
-        }
-        .enemy-highlight {
-          fill: red;
-        }
-        .neutral-highlight{
-          fill: yellow;
-        }
-        .selected-highlight {
-          fill: blue;
-        }
-        .white {
-          color: #fff;
-        }
-        .black {
-          color: #000;
-        }
-        td {
-          background-color: #999;
-          height:21px;
-        }
-       </style>
+        <link href="/styles/game.css" rel="stylesheet">
   </head>
 
   <body class="container">

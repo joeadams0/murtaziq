@@ -1,46 +1,48 @@
-<ul class="pieceList connector">
-  <% for(var i = 0; i < pieceList.length; i++){ %>
-    <li class="piece" data-name="<%= pieceList[i].name %>">
-      <img class="pieceImage" src="/images/pieces/<%= pieceList[i].name %> 1.png" height="100"/>
-      <!-- Hidden until mouseover --!>
-      <div class="pieceInfo">
-        <h3>The <%= pieceList[i].name %></h3>
-        <ul>
-          <li><strong>Cost:</strong><%= pieceList[i].value %></li>
-          <li><strong>Moveset:</strong>TODO</li>
-          <li><a href="/wiki/<%= pieceList[i].name %>" target="_blank">more info</a></li>
-        </ul>
-      </div>
-    </li>
-  <% } %>
-</ul>
+<div id="piece-selection">
+  <ul class="pieceList connector">
+    <% for(var i = 0; i < pieceList.length; i++){ %>
+      <li class="piece" data-name="<%= pieceList[i].name %>">
+        <img class="pieceImage" src="/images/pieces/<%= pieceList[i].name %> 1.png" height="100"/>
+        <!-- Hidden until mouseover --!>
+        <div class="pieceInfo">
+          <h3>The <%= pieceList[i].name %></h3>
+          <ul>
+            <li><strong>Cost:</strong><%= pieceList[i].value %></li>
+            <li><strong>Moveset:</strong>TODO</li>
+            <li><a href="/wiki/<%= pieceList[i].name %>" target="_blank">more info</a></li>
+          </ul>
+        </div>
+      </li>
+    <% } %>
+  </ul>
 
-<div>
-  <span id="currentCost"></span> / <span id="maxCost"></span>
-</div>
-
-<div class="myTeamView connector">
-  <div class="board-row">
-    <div data-pos="pawn-spot" class="spot"></div>
-    <div data-pos="pawn-spot" class="spot dark"></div>
-    <div data-pos="pawn-spot" class="spot"></div>
-    <div data-pos="pawn-spot" class="spot dark"></div>
-    <div data-pos="pawn-spot" class="spot"></div>
-    <div data-pos="pawn-spot" class="spot dark"></div>
-    <div data-pos="pawn-spot" class="spot"></div>
-    <div data-pos="pawn-spot" class="spot dark"></div>
+  <div>
+    <span id="currentCost"></span> / <span id="maxCost"></span>
   </div>
 
-  <div class="board-row">
-    <div data-pos="rook-spot" class="spot dark"></div>
-    <div data-pos="knight-spot" class="spot"></div>
-    <div data-pos="bishop-spot" class="spot dark"></div>
-    <div data-pos="king-spot" class="spot"></div>
-    <div data-pos="queen-spot" class="spot dark"></div>
-    <div data-pos="bishop-spot" class="spot"></div>
-    <div data-pos="knight-spot" class="spot dark"></div>
-    <div data-pos="rook-spot" class="spot"></div>
-  </div>
-</div>
+  <div class="myTeamView connector">
+    <div class="board-row">
+      <div data-pos="pawn-spot" class="spot"></div>
+      <div data-pos="pawn-spot" class="spot dark"></div>
+      <div data-pos="pawn-spot" class="spot"></div>
+      <div data-pos="pawn-spot" class="spot dark"></div>
+      <div data-pos="pawn-spot" class="spot"></div>
+      <div data-pos="pawn-spot" class="spot dark"></div>
+      <div data-pos="pawn-spot" class="spot"></div>
+      <div data-pos="pawn-spot" class="spot dark"></div>
+    </div>
 
-<button class="btn btn-primary btn-large" id="setAsTeam">Set Team</button>
+    <div class="board-row">
+      <div data-pos="rook-spot" class="spot dark"></div>
+      <div data-pos="knight-spot" class="spot"></div>
+      <div data-pos="bishop-spot" class="spot dark"></div>
+      <div data-pos="king-spot" class="spot"></div>
+      <div data-pos="queen-spot" class="spot dark"></div>
+      <div data-pos="bishop-spot" class="spot"></div>
+      <div data-pos="knight-spot" class="spot dark"></div>
+      <div data-pos="rook-spot" class="spot"></div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-large" id="setAsTeam">Set Team</button>
+</div>
