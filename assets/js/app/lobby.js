@@ -41,13 +41,12 @@ define(["text!templates/lobby/lobby.ejs",
 		    "click #lobby-start-button" : "startGame",
 		},
 
-		startGame : function() {			
+		startGame : function() {
+			$("#lobby-start-button").attr('disabled', 'disabled');			
 			mapi.startMatch({
 				id : this.model.get('id')
 			}, function(status) {
-				if(status.success)
-					lobby.loadPieceSelection();
-				else 
+				if(!status.success)
 					alert(status.data);
 			});
 		},
