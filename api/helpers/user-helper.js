@@ -78,7 +78,6 @@ module.exports = {
     
     setOnline : function(req, username, cb){  
         var self = this;
-
         this.update({
         	username: username 
         	},{

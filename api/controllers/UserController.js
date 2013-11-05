@@ -11,7 +11,7 @@ var utils = require("../../engine/utils.js");
 module.exports = {
     
     index : function(req, res){
-    	var user_id = req.param("id");
+    	var user_id = req.param("id") ? req.param("id") : UserHelper.getSession(req).id;
     	var request = {id : user_id};
         UserHelper.getUser(request, function(err, user){
             if(err)
@@ -94,7 +94,7 @@ module.exports = {
 	User.find({}).limit(10).sort('name ASC').done(function(err, users) {
 		  // Error handling
 		  if (err) {
-		    return console.log(err);
+		    return res.json(err);
 		  // Found multiple users!
 		  } else {
 		res.view('user/index', { list : users } )  

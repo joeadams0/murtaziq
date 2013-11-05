@@ -100,9 +100,7 @@ $(document).ready(function() {
 
 		window.createMApi(socket);
 		  game.init();
-		  mapi.registerSocket(function(status) {
-		  	console.log(status);
-		  });
+		  mapi.registerSocket(function(status) {});
 		});
 
 	  socket.on('message', function(message) {

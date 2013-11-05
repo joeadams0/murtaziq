@@ -88,7 +88,11 @@ define(["text!templates/lobby/lobby.ejs",
 			if(this.model.get('lightPlayer') < 0 || this.model.get('darkPlayer') < 0)
 				$el.attr("disabled", "disabled");
 
-			this.$startButtonEl.html($el[0].outerHTML);
+			if(this.model.get('host') === game.state.user.id)
+				this.$startButtonEl.html($el[0].outerHTML);
+			else
+				this.$startButtonEl.html("");
+
 			return this;
 		},
 
@@ -109,8 +113,7 @@ define(["text!templates/lobby/lobby.ejs",
 		cb();
 	};
 
-	lobby.loadPieceSelection = function() {
-		console.log("herer");
+	lobby.loadPieceSelection = function() {		
 		game.switchState("pieceSelection", lobby.model.attributes);
 	};
 
