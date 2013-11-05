@@ -119,6 +119,7 @@ define(["text!templates/pieceSelection.ejs"], function(template){
       cfg.connectorClass = ".connector";
       cfg.submitId = "#setAsTeam";
       // variables for internal use
+      cfg.enterTimer = 0;
       cfg.info = {};
       cfg.info.removeInfoBlock = function(e){
         var $info = $(e.currentTarget).find(cfg.pieceInfoClass); // the div to display information
@@ -144,16 +145,20 @@ define(["text!templates/pieceSelection.ejs"], function(template){
           });
         });
         // show the info-block
+        $(cfg.pieceContainerClass).mouseenter(function(e){
+          cfg.enterTimer = new Date().getTime();
+        });
         $(cfg.pieceContainerClass).mousemove(function(e){
           if(cfg.info.dragging){return;}
           var $info = $(e.currentTarget).find(cfg.pieceInfoClass); // the div to display information
           if($info.data("stuck") != "true"){
-            $info.css({
-                   top: e.pageY,
-                   left: e.pageX,
-                   position: "fixed"
-                 })
-                 .fadeIn(250);
+            if (new Date().getTime() - cfg.enterTimer > 500)
+              $info.css({
+                     top: e.pageY,
+                     left: e.pageX,
+                     position: "fixed"
+                   })
+                   .fadeIn(250);
           }
         });
         // hide the info-block
