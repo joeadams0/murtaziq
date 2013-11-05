@@ -47,13 +47,13 @@ module.exports.routes = {
 
   '/user/:id' : 'UserController.index',
 
-  '/userjson' : 'UserController.currentuserjson',
-  
-  '/userjson/:id' : 'UserController.userjson',
-
   '/userlist' : 'UserController.userlist',
 
   '/matchmaking' : 'MatchmakingController.index',
+
+  '/registersocket' : 'User.registersocket',
+
+  '/deregistersocket' : 'User.deregistersocket'
   
   /*
   // But what if you want your home page to display

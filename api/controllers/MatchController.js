@@ -6,6 +6,7 @@
  */
 
 var matchapi = require('../helpers/matchapi.js');
+var UserHelper = require('../helpers/user-helper.js');
 
 module.exports = {
 
@@ -164,6 +165,20 @@ module.exports = {
       if(status.success)
         Match.publishUpdate(status.data.id, status.data);
       res.json(status);
+    });
+  },
+
+  registerSocket : function(req, res) {
+    if(!req.socket)
+      res.json("Need to have a socket to register.");
+    matchapi.registerSocket(UserHelper.getSession(req), req.socket, function(status) {
+      req.json(status);
+    });
+  },
+
+  deregisterSocket : function(req, res) {
+    match.deregisterSocket(UserHelper.getSession(req), function(status) {
+      req.json(status);
     });
   },
 };

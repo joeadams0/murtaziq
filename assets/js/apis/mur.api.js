@@ -200,12 +200,20 @@ window.createMApi = function(socket){
 		},
 
 		getCurrentUser : function(cb) {
-			socket.request("/userjson", {}, cb);
+			socket.request("/user", {}, cb);
 		},
 
 		getUser : function(id, cd) {
-			socket.request("/user/userjson/"+id, {}, cb);
+			socket.request("/user/"+id, {}, cb);
 		},
+
+		registerSocket : function(cb) {
+			socket.request("/registersocket", {}, cb);
+		},
+
+		deregisterSocket : function(cb) {
+			socket.request("/deregistersocket", {}, cb);
+		}
 	};
 }
 

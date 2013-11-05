@@ -12,6 +12,7 @@ define(["text!templates/lobby/lobby.ejs",
 	var LobbyModel = Backbone.Model.extend({
 
 		initialize : function() {
+			this.bind("change:state", lobby.loadPieceSelection);
 		},
 
 	});
@@ -40,12 +41,12 @@ define(["text!templates/lobby/lobby.ejs",
 		    "click #lobby-start-button" : "startGame",
 		},
 
-		startGame : function() {
+		startGame : function() {			
 			mapi.startMatch({
 				id : this.model.get('id')
 			}, function(status) {
 				if(status.success)
-					game.switchState("pieceSelection", this.model.attributes);
+					lobby.loadPieceSelection();
 				else 
 					alert(status.data);
 			});
@@ -80,8 +81,6 @@ define(["text!templates/lobby/lobby.ejs",
 		},
 
 		renderStartButton : function() {
-			console.log(this.model.get('host'));
-			console.log(game.state.user);
 			var $el = $(new EJS({text:this.startbuttontemp}).render({
 				dispButton : this.model.get('host') === game.state.user.id,
 			}));
@@ -108,6 +107,11 @@ define(["text!templates/lobby/lobby.ejs",
 		lobby.view = new LobbyView({model : lobby.model});
 
 		cb();
+	};
+
+	lobby.loadPieceSelection = function() {
+		console.log("herer");
+		game.switchState("pieceSelection", lobby.model.attributes);
 	};
 
 	lobby.unload = function() {

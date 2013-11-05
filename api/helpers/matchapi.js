@@ -26,7 +26,7 @@ var _ = require('underscore');
     setHost : setHost,
     subscribeSocket : subscribeSocket,
     unsubscribeSocket : unsubscribeSocket,
-    removePlayer : removePlayer, 
+    removePlayer : removePlayer,
  };
 
 /**

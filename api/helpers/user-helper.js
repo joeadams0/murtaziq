@@ -6,6 +6,9 @@
 
 var hasher = require("password-hash");
 var _ = require("underscore");
+
+var sockets = {};
+
 module.exports = {
     
     states : states,
@@ -40,7 +43,11 @@ module.exports = {
                 } else {
                     if (user) {
                         if (hasher.verify(pass, user.password)) {
-                            done();    
+                            if(!sockets[user.id]){
+                                done();
+                            }
+                            else
+                                done("User is already logged on");    
                         } else {
                             done("Wrong Username or Password");
                         }
@@ -117,8 +124,30 @@ module.exports = {
                 return states.online;
                 
         }
+    },
+
+    registerSocket : function (id, socket, cb) {
+        sockets[id] = socket;
+        cb(makeStatus(true, ""));
+    },
+
+    deregisterSocket : function (id, cb) {        
+        sockets[id] = undefined;
+        cb(makeStatus(true, ""));
+    },
+
+    getSocket : function (id) {
+        return sockets[id];
+    },
+        
+};
+
+
+function makeStatus (success, data) {
+    return {
+        success : success,
+        data : data
     }
-    
 }
 
 var states = {

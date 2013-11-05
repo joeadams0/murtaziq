@@ -11,39 +11,17 @@ var utils = require("../../engine/utils.js");
 module.exports = {
     
     index : function(req, res){
-	var user_id = req.param("id");
-	var request = {id : user_id};
+    	var user_id = req.param("id");
+    	var request = {id : user_id};
         UserHelper.getUser(request, function(err, user){
             if(err)
                 res.send(err, 500);
-            /*else if(format == 'json'){
-                res.json(user);
-            }*/
-
-		res.view('user/profile', {currentUser : user});
-
-        });
-    },
-
-    currentuserjson : function(req, res){
-        UserHelper.getCurrentUser(req, function(err, user){
-            if(err)
-                res.send(err, 500);
-            else{
+            else if(req.wantsJSON){
                 res.json(user);
             }
-        });
-    },
+            else
+                res.view('user/profile', {currentUser : user});
 
-    userjson : function(req, res){
-	var user_id = req.param("id");
-        var request = {id : user_id};
-        UserHelper.getUser(request, function(err, user){
-            if(err)
-                res.send(err, 500);
-	    else{
-	        res.json(user);
-	    }
         });
     },
   
@@ -122,5 +100,20 @@ module.exports = {
 		res.view('user/index', { list : users } )  
 		}
 		});
-    }
+    },
+
+    registersocket : function(req, res) {
+        if(!req.socket)
+          res.json("Need to have a socket to register.");
+
+        UserHelper.registerSocket(UserHelper.getSession(req).id, req.socket, function(status) {
+          res.json(status);
+        });
+    },
+
+    deregistersocket : function(req, res) {
+        UserHelper.deregisterSocket(UserHelper.getSession(req).id, function(status) {
+          res.json(status);
+        });
+    },
 };

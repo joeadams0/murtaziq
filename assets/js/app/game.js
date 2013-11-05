@@ -93,15 +93,25 @@ $(document).ready(function() {
 
 	var socket = io.connect(host);
 
+
 	socket.on('connect', function() {
 
+		window.game.socket = socket;
+
+		window.createMApi(socket);
+		  game.init();
+		  mapi.registerSocket(function(status) {
+		  	console.log(status);
+		  });
+		});
+
 	  socket.on('message', function(message) {
-	    console.log(message);
+	    //console.log(message);
 	    game.recieveMessage(message);
 	  });
 
-	  window.createMApi(socket);
-	  game.init();
-	});
+	window.onbeforeunload = function(e) {
+	  mapi.deregisterSocket();
+	};
 });
 
