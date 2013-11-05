@@ -13,6 +13,22 @@ define(["text!templates/lobby/lobby.ejs",
 
 		initialize : function() {
 			this.bind("change:state", lobby.loadPieceSelection);
+			this.cache = {};
+			this.cache.users = {};
+		},
+
+		getUser : function(id, cb) {
+			var self = this;
+			if(id <= 0)
+				cb(undefined);
+			if(this.cache.users[id])
+				cb(this.cache.users[id]);
+			else{
+				mapi.getUser(id, function(user) {
+					self.cache.users[id] = user;
+					cb(user);
+				});
+			}
 		},
 
 	});
@@ -52,26 +68,38 @@ define(["text!templates/lobby/lobby.ejs",
 		},
 
 		renderLightPlayer : function() {
-			this.$lightPlayerEl.html(new EJS({text : this.playertemp}).render({
-				title: "Light Player: ", 
-				player : this.model.get('lightPlayer')
-			}));
+			var self = this;
+			this.model.getUser(this.model.get('lightPlayer'), function(player) {
+				self.$lightPlayerEl.html(new EJS({text : self.playertemp}).render({
+					title: "Light Player", 
+					player : player,
+					image : "images/pieces/pawn 1.png"
+				}));
+			})
 			return this;
 		},
 
 		renderDarkPlayer : function() {
-			this.$darkPlayerEl.html(new EJS({text : this.playertemp}).render({
-				title : "Dark Player: ",
-				player : this.model.get('darkPlayer')
-			}));
+			var self = this;
+			this.model.getUser(this.model.get('darkPlayer'), function(player) {
+				self.$darkPlayerEl.html(new EJS({text : self.playertemp}).render({
+					title : "Dark Player",
+					player : player,
+					image : "images/pieces/pawn 2.png"
+				}));
+			});
 			return this;
 		},
 
 		renderHost : function() {
-			this.$hostEl.html(new EJS({text : this.playertemp}).render({
-				title : "Host : ",
-				player :this.model.get('host')
-			}));
+			var self = this;
+			this.model.getUser(this.model.get('host'), function(player) {
+				self.$hostEl.html(new EJS({text : self.playertemp}).render({
+					title : "Host : ",
+					player : player,
+					image : undefined
+				}));
+			});
 			return this;
 		},
 

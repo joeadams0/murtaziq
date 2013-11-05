@@ -1,1 +1,10 @@
-<p><%= title %> <%= player%></p>
+<div class='player'>
+	<span class='player-role'> <%= title %> </span> 
+	<%if(image) {%>
+		<img src="<%=image%>">
+	<%} if(player){%>
+		<span class='player-username'><%= player.username%></span>
+	<%} else {%>
+		<span>None</span>
+	<%}%>
+</div>

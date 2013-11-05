@@ -203,7 +203,7 @@ window.createMApi = function(socket){
 			socket.request("/user", {}, cb);
 		},
 
-		getUser : function(id, cd) {
+		getUser : function(id, cb) {
 			socket.request("/user/"+id, {}, cb);
 		},
 
