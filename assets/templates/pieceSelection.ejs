@@ -22,25 +22,20 @@
 
   <div class="myTeamView connector">
     <div class="board-row">
-      <div data-pos="pawn-spot" class="spot"></div>
-      <div data-pos="pawn-spot" class="spot dark"></div>
-      <div data-pos="pawn-spot" class="spot"></div>
-      <div data-pos="pawn-spot" class="spot dark"></div>
-      <div data-pos="pawn-spot" class="spot"></div>
-      <div data-pos="pawn-spot" class="spot dark"></div>
-      <div data-pos="pawn-spot" class="spot"></div>
-      <div data-pos="pawn-spot" class="spot dark"></div>
+      <% for (var j = 0; j < 8; j++) {%>
+        <div data-pos="pawn-spot" class="spot <%= (j%2 == 1) ? "dark" : "" %>" style="left:<%= j*100 %>px"></div>
+      <% } %>
     </div>
 
     <div class="board-row">
-      <div data-pos="rook-spot" class="spot dark"></div>
-      <div data-pos="knight-spot" class="spot"></div>
-      <div data-pos="bishop-spot" class="spot dark"></div>
-      <div data-pos="king-spot" class="spot"></div>
-      <div data-pos="queen-spot" class="spot dark"></div>
-      <div data-pos="bishop-spot" class="spot"></div>
-      <div data-pos="knight-spot" class="spot dark"></div>
-      <div data-pos="rook-spot" class="spot"></div>
+      <div data-pos="rook-spot" class="spot dark" style="left:0px"></div>
+      <div data-pos="knight-spot" class="spot" style="left:100px"></div>
+      <div data-pos="bishop-spot" class="spot dark" style="left:200px"></div>
+      <div data-pos="king-spot" class="spot" style="left:300px"></div>
+      <div data-pos="queen-spot" class="spot dark" style="left:400px"></div>
+      <div data-pos="bishop-spot" class="spot" style="left:500px"></div>
+      <div data-pos="knight-spot" class="spot dark" style="left:600px"></div>
+      <div data-pos="rook-spot" class="spot" style="left:700px"></div>
     </div>
   </div>
 

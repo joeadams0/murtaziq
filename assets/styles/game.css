@@ -1,14 +1,18 @@
 #piece-selection .pieceList{
   border: 1px solid black;
   min-height:100px;
+  position: relative;
+  z-index: 2;
 }
 #piece-selection .piece{
   display: inline-block;
-  border: 1px solid black;
+  position: relative;
 }
 #piece-selection .pieceInfo{
   display: none;
+  position: relative;
   border: 1px solid black;
+  padding: 9px;
   background-color: #ddd;
   z-index: 1000;
 }
@@ -16,16 +20,24 @@
   min-height: 200px;
   border: 1px solid black;
 }
-#piece-selection .spot {
-  list-style-type: none;
+.board-row .spot {
   height: 100px;
   width: 100px;
   padding: 1px;
-  display: inline-block;
+  display: block;
+  position: absolute;
+  top: 0;
+  border: 1px solid black;
 }
 #piece-selection rect {
   stroke: black;
   stroke-width: 1px;
+}
+.myTeamView .board-row {
+  position: relative;
+  display: block;
+  height: 100px;
+  z-index: 1;
 }
 .dark {
   fill: #9E8B5D;
