@@ -20,29 +20,24 @@
     <span id="currentCost"></span> / <span id="maxCost"></span>
   </div>
 
-  <ul class="myTeamView connector">
-    <ul class="board-row">
-      <li data-pos="pawn-spot" class="spot light"></li>
-      <li data-pos="pawn-spot" class="spot dark"></li>
-      <li data-pos="pawn-spot" class="spot light"></li>
-      <li data-pos="pawn-spot" class="spot dark"></li>
-      <li data-pos="pawn-spot" class="spot light"></li>
-      <li data-pos="pawn-spot" class="spot dark"></li>
-      <li data-pos="pawn-spot" class="spot light"></li>
-      <li data-pos="pawn-spot" class="spot dark"></li>
-    </ul>
+  <div class="myTeamView connector">
+    <div class="board-row">
+      <% for (var j = 0; j < 8; j++) {%>
+        <div data-pos="pawn-spot" class="spot <%= (j%2 == 1) ? "dark" : "" %>" style="left:<%= j*100 %>px"></div>
+      <% } %>
+    </div>
 
-    <ul class="board-row">
-      <li data-pos="rook-spot" class="spot dark"></li>
-      <li data-pos="knight-spot" class="spot light"></li>
-      <li data-pos="bishop-spot" class="spot dark"></li>
-      <li data-pos="king-spot" class="spot light"></li>
-      <li data-pos="queen-spot" class="spot dark"></li>
-      <li data-pos="bishop-spot" class="spot light"></li>
-      <li data-pos="knight-spot" class="spot dark"></li>
-      <li data-pos="rook-spot" class="spot light"></li>
-    </ul>
-  </ul>
+    <div class="board-row">
+      <div data-pos="rook-spot" class="spot dark" style="left:0px"></div>
+      <div data-pos="knight-spot" class="spot" style="left:100px"></div>
+      <div data-pos="bishop-spot" class="spot dark" style="left:200px"></div>
+      <div data-pos="king-spot" class="spot" style="left:300px"></div>
+      <div data-pos="queen-spot" class="spot dark" style="left:400px"></div>
+      <div data-pos="bishop-spot" class="spot" style="left:500px"></div>
+      <div data-pos="knight-spot" class="spot dark" style="left:600px"></div>
+      <div data-pos="rook-spot" class="spot" style="left:700px"></div>
+    </div>
+  </div>
 
-  <button id="setAsTeam">Set Team</button>
+  <button class="btn btn-primary btn-large" id="setAsTeam">Set Team</button>
 </div>
