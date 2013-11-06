@@ -47,6 +47,13 @@ define(["text!templates/pieceSelection.ejs"], function(template){
   ///////////////
   // FUNCTIONS //
   ///////////////
+  
+  // for changing state
+  sel.recieveMessage = function(data){
+    if (data.data.state == "playing"){
+      game.switchState("match", data.data);
+    }
+  };
 
   // config MUST contain 'matchId' and 'playerId' or this don't work
   sel.init = function(config, cb){
@@ -70,22 +77,22 @@ define(["text!templates/pieceSelection.ejs"], function(template){
   sel.updateCost = function(name, pos, mult){
     if(mult == undefined){mult = 1;}
     switch(pos){
-      case "king-spot":
+      case "royal":
         sel.cost = sel.cost + (mult*(1)*(_.where(sel.pieceVals, {name: name})[0].value));
         break;
-      case "queen-spot":
+      case "queen":
         sel.cost = sel.cost + (mult*(1)*(_.where(sel.pieceVals, {name: name})[0].value));
         break;
-      case "rook-spot":
+      case "rook":
         sel.cost = sel.cost + (mult*(2)*(_.where(sel.pieceVals, {name: name})[0].value));
         break;
-      case "knight-spot":
+      case "knight":
         sel.cost = sel.cost + (mult*(2)*(_.where(sel.pieceVals, {name: name})[0].value));
         break;
-      case "bishop-spot":
+      case "bishop":
         sel.cost = sel.cost + (mult*(2)*(_.where(sel.pieceVals, {name: name})[0].value));
         break;
-      case "pawn-spot":
+      case "pawn":
       default:
         sel.cost = sel.cost + (mult*(8)*(_.where(sel.pieceVals, {name: name})[0].value));
         break;
@@ -199,6 +206,8 @@ define(["text!templates/pieceSelection.ejs"], function(template){
                 pos = $me.data("pos"),
                 $him = ui.draggable,
                 name = $him.data("name");
+
+            if ($me.find("*").length > 0 ){return;}
 
             // Make the document look right
             $("*[data-name="+name+"]").remove();

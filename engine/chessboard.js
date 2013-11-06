@@ -58,7 +58,7 @@ function setSide (isLightSide, side, board) {
     var success, message;
     var maxValue = getMaster().getConfigs().maxTeamValue;
 
-    var value = getDefaultSideValue(side);
+    var value = getSideValue(side);
     if(validateSideValue(side)){
         if(isLightSide)
             setLightSide(getDefaultSide(side), board);
@@ -80,10 +80,10 @@ function setSide (isLightSide, side, board) {
 }
 
 function validateSideValue(side){
-    return getDefaultSideValue(side) <= getMaster().getConfigs().maxTeamValue;
+    return getSideValue(side) <= getMaster().getConfigs().maxTeamValue;
 }
 
-function getDefaultSideValue (side) {
+function getSideValue (side) {
     var value = 0;
 
     value = value + 8*pieces.getValue(side.pawn);
