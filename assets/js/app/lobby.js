@@ -47,6 +47,13 @@ define(["text!templates/lobby/lobby.ejs",
 			this.$playerRow = $("#player-row");
 			this.$hostEl = $("#lobby-host-wrap");
 			this.$startButtonEl = $("#lobby-start-button-wrap");
+
+			 $("#lobby #options, #lobby #switch-sides").tooltip({
+                  'selector': '',
+                  'placement': 'top'
+                });
+
+
 			this.render();
 
 
@@ -68,7 +75,7 @@ define(["text!templates/lobby/lobby.ejs",
 		},
 
 		switchSides : function() {
-			$("#switch-sides").attr('disabled', 'disabled');
+			$("#lobby #switch-sides").attr('disabled', 'disabled');
 			mapi.setPlayer({
 				matchId : this.model.get('id'),
 				playerId : game.state.user.id,

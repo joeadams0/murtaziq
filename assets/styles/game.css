@@ -72,9 +72,14 @@
 
 #lobby img{
   height: 100px;
-  width: 100pxs;
+  width: 100px;
 }
 
-#lobby-start-button{
-  width: 145px;
+#lobby .btn-lg-wrap{
+  width: 128px;
+  margin: auto;
+}
+
+#lobby .chat{
+  min-height: 300px
 }
