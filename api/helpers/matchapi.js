@@ -27,6 +27,7 @@ var _ = require('underscore');
     subscribeSocket : subscribeSocket,
     unsubscribeSocket : unsubscribeSocket,
     removePlayer : removePlayer,
+    destroy : destroy,
  };
 
 /**
@@ -47,8 +48,46 @@ function create (params, cb) {
         });
 }
 
+function destroy (params, cb) {
+    if(!utils.existy(params.matchId)){
+        cb(makeStatus(false, "No matchId specified."));
+        return;
+    }
+    if(!utils.existy(params.playerId)){
+        cb(makeStatus(false, "No playerId specified."));
+        return;
+    }
+
+    getMatch(params.matchId, function(err, match) {
+        if(err)
+            cb(makeStatus(false, err));
+        else if(match.host !== params.playerId){
+            cb(makeStatus(false, "You are not authorized to perform this action."));
+            return;
+        }
+        else{
+            match.destroy(function(err) {
+                if(err)
+                    cb(makeStatus(false, err));
+                else
+                    cb(makeStatus(true, "deleted"));
+            });
+        }
+    });
+}
+
 function getMatch (matchId, cb) {
-    Match.findOne(matchId).done(cb);
+    Match.findOne(matchId).done(function(err, match) {
+        if(err)
+            cb(err, match);
+        else{
+            if(!utils.existy(match))
+                cb("Match does not exist.", match);
+            else
+                cb(undefined, match);
+        }
+
+    });
 }
 
 function addPlayer (params, cb) {

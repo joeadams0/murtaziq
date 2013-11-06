@@ -213,7 +213,11 @@ window.createMApi = function(socket){
 
 		deregisterSocket : function(cb) {
 			socket.request("/deregistersocket", {}, cb);
-		}
+		},
+
+		disbandMatch : function(params, cb) {
+			socket.request("/match/destroy", params, cb);
+		},
 	};
 }
 

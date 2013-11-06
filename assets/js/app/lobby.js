@@ -62,6 +62,7 @@ define(["text!templates/lobby/lobby.ejs",
 		events: {
 		    "click #lobby-start-button" : "startGame",
 		    "click #switch-sides" : "switchSides",
+		    "click #lobby-disband-match" : "disbandMatch"
 		},
 
 		startGame : function() {
@@ -82,6 +83,15 @@ define(["text!templates/lobby/lobby.ejs",
 				isLightSide : game.state.user.id != this.model.get('lightPlayer')
 			},
 			function(status) {
+				if(!status.success)
+					alert(status.data);
+			});
+		},
+
+		disbandMatch : function() {
+			mapi.disbandMatch({
+				matchId : this.model.get('id')
+			}, function(status) {
 				if(!status.success)
 					alert(status.data);
 			});
@@ -121,7 +131,9 @@ define(["text!templates/lobby/lobby.ejs",
 				$(".host-feature").hide();
 			else{
 				$(".host-feature").show();
-				$(".host-feature").removeAttr("disabled");
+				$(".host-feature").removeAttr('disabled');
+				if(this.model.get('lightPlayer')<0 || this.model.get('darkPlayer')<0)
+					$("#lobby-start-button").prop('disabled', true);
 			}
 
 			return this;
@@ -148,11 +160,14 @@ define(["text!templates/lobby/lobby.ejs",
 	};
 
 	lobby.unload = function() {
-		lobby.view.$el.hide();
+		lobby.view.$el.remove();
 	};
 
 	lobby.recieveMessage = function(message) {
-		lobby.model.set(message.data);
+		if(message.verb == "update")
+			lobby.model.set(message.data);
+		if(message.verb == "destroy")
+			game.switchState('mainmenu', "The game was disbanded.");
 	};
 
 	return lobby;

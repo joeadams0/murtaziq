@@ -12,7 +12,7 @@ define(["text!templates/mainmenu.ejs"], function(template) {
 	};
 
 	mainmenu.unload = function() {
-		mainmenu.state.$el.hide();
+		mainmenu.state.$el.remove();
 	};
 
 	mainmenu.render = function(cb) {

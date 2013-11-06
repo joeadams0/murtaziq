@@ -54,6 +54,19 @@ module.exports = {
     });
   },
 
+  destroy : function(req, res) {
+    if(req.param('id'))
+      req.body.matchId = req.param('id');
+    req.body.playerId = UserHelper.getSession(req).id;
+
+    matchapi.destroy(req.body, function(status) {
+      if(status.success){
+        Match.publishDestroy(req.body.matchId);
+      }
+      res.json(status);
+    });
+  },
+
   /**
    * Sets the player to the specified role in the match
    * @param {Object} req request

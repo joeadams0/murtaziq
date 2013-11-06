@@ -30,7 +30,7 @@
 			<div class="row host-feature">
 				<div class="col-md-4 col-md-offset-4">
 					<div class="center-block btn-lg-wrap">
-						<button class="btn-lg btn-primary" id="lobby-start-button">Start Game</button>
+						<button class="btn-lg btn-primary host-feature" id="lobby-start-button">Start Game</button>
 					</div>
 				</div>
 			</div>
@@ -47,9 +47,9 @@
 						<i class="glyphicon glyphicon-cog"/>
 					</button>
 					<ul class="dropdown-menu" role="menu">
-					    <li><a href="#">Invite Player</a></li>
+					    <li><a href="#" id="lobby-invite">Invite Player</a></li>
 					    <li class="divider"></li>
-					    <li><a href="#">Disband Game</a></li>
+					    <li><a href="#" data-toggle="modal" data-target="#disbandModal"><strong>Disband Match</strong></a></li>
 					</ul>
 				</div>
 			</div>
@@ -58,5 +58,22 @@
 			<input type="text" class="form-control" placeholder="Type here...">
 		</div>
 	</div>
+
+	<div class="modal fade" id="disbandModal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h4 class="modal-title">Disband Match</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>Are you sure you want to disband this match?</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" id="lobby-disband-match" data-dismiss="modal"  class="btn btn-danger">Disband</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 </div>
 
