@@ -208,6 +208,8 @@ define(["text!templates/pieceSelection.ejs"], function(template){
                 $him = ui.draggable,
                 name = $him.data("name");
 
+            if ($me.find("*").length > 0 ){return;}
+
             // Make the document look right
             $("*[data-name="+name+"]").remove();
             $("*[data-pos="+pos+"]").append($him);
