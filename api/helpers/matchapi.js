@@ -65,6 +65,8 @@ function destroy (params, cb) {
             cb(makeStatus(false, "You are not authorized to perform this action."));
             return;
         }
+        else if(match.state != match.getStates()['lobby'])
+            cb(makeStatus(false, "You can only disband the game when you are in the lobby."));
         else{
             match.destroy(function(err) {
                 if(err)
