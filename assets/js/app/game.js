@@ -73,10 +73,8 @@ game.loadState = function(stateName, data, cb) {
  * @param  {Object} message The message
  */
 game.recieveMessage = function(message) {
-	_.each(game.states, function(state) {
-		if(state.recieveMessage)
-			state.recieveMessage(message);
-	});
+	if(game.state.currentState.recieveMessage)
+		game.state.currentState.recieveMessage(message);
 };
 
 /*****************************************************************************

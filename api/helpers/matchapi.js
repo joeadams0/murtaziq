@@ -260,6 +260,14 @@ function setPieces(params, cb){
 
                 match.match = engine.toJSONObj(m);
 
+                if(isLightSide)
+                    match.isLightSideReady = true;
+                else
+                    match.isDarkSideReady = true;
+
+                if(match.isLightSideReady && match.isDarkSideReady)
+                    Match.publishUpdate(match.id, match);
+
                 match.save(function(err) {
                     if(err)
                         cb(makeStatus(false, err));
