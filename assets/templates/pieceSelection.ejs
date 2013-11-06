@@ -4,13 +4,15 @@
       <li class="piece" data-name="<%= pieceList[i].name %>">
         <img class="pieceImage" src="/images/pieces/<%= pieceList[i].name %> 1.png" height="100"/>
         <!-- Hidden until mouseover --!>
-        <div class="pieceInfo">
-          <h3>The <%= pieceList[i].name %></h3>
-          <ul>
-            <li><strong>Cost:</strong><%= pieceList[i].value %></li>
-            <li><strong>Moveset:</strong>TODO</li>
-            <li><a href="/wiki/<%= pieceList[i].name %>" target="_blank">more info</a></li>
-          </ul>
+        <div class="pieceInfo popover">
+          <h3 class="popover-title">The <%= pieceList[i].name %></h3>
+          <div class="popover-content">
+            <ul>
+              <li><strong>Cost:</strong><%= pieceList[i].value %></li>
+              <li><strong>Moveset:</strong>TODO</li>
+              <li><a href="/wiki/<%= pieceList[i].name %>" target="_blank">more info</a></li>
+            </ul>
+          </div>
         </div>
       </li>
     <% } %>
@@ -23,19 +25,19 @@
   <div class="myTeamView connector">
     <div class="board-row">
       <% for (var j = 0; j < 8; j++) {%>
-        <div data-pos="pawn-spot" class="spot <%= (j%2 == 1) ? "dark" : "" %>" style="left:<%= j*100 %>px"></div>
+        <div data-pos="pawn" class="spot <%= (j%2 == 1) ? "dark" : "" %>" style="left:<%= j*100 %>px"></div>
       <% } %>
     </div>
 
     <div class="board-row">
-      <div data-pos="rook-spot" class="spot dark" style="left:0px"></div>
-      <div data-pos="knight-spot" class="spot" style="left:100px"></div>
-      <div data-pos="bishop-spot" class="spot dark" style="left:200px"></div>
-      <div data-pos="king-spot" class="spot" style="left:300px"></div>
-      <div data-pos="queen-spot" class="spot dark" style="left:400px"></div>
-      <div data-pos="bishop-spot" class="spot" style="left:500px"></div>
-      <div data-pos="knight-spot" class="spot dark" style="left:600px"></div>
-      <div data-pos="rook-spot" class="spot" style="left:700px"></div>
+      <div data-pos="rook" class="spot dark" style="left:0px"></div>
+      <div data-pos="knight" class="spot" style="left:100px"></div>
+      <div data-pos="bishop" class="spot dark" style="left:200px"></div>
+      <div data-pos="royal" class="spot" style="left:300px"></div>
+      <div data-pos="queen" class="spot dark" style="left:400px"></div>
+      <div data-pos="bishop" class="spot" style="left:500px"></div>
+      <div data-pos="knight" class="spot dark" style="left:600px"></div>
+      <div data-pos="rook" class="spot" style="left:700px"></div>
     </div>
   </div>
 

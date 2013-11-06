@@ -11,9 +11,6 @@
 #piece-selection .pieceInfo{
   display: none;
   position: relative;
-  border: 1px solid black;
-  padding: 9px;
-  background-color: #ddd;
   z-index: 1000;
 }
 #piece-selection .myTeamView{
