@@ -477,10 +477,10 @@ function unsubscribeSocket(matchId, socket){
 
 function addPlayerHelper (match, playerId, cb) {
     if(match.state == match.getStates()['lobby']){
-        if(match.lightPlayer == playerId || match.darkPlayer == playerId || _.contains(match.observers, playerId)){
-            cb(makeStatus(false, "Player has already joined the match."));
-            return;
-        }
+        if(match.lightPlayer == playerId)
+            cb(makeStatus(true, match));
+        else if(match.darkPlayer == playerId)
+            cb(makeStatus(true, match))
         else if(match.lightPlayer < 0){
             match.lightPlayer = playerId;
             if(match.host < 0)
@@ -499,21 +499,31 @@ function addPlayerHelper (match, playerId, cb) {
             }
         });
     }
-    else if(match.state == match.getStates()['surrender']
-        || match.state == match.getStates()['checkmate']
-        || match.state == match.getStates()['stalemate'])
+    else if(isMatchOver(match))
         cb(makeStatus(false, "Cannot join the game when it is over"));
     // If playing, add to observers
     else{
-        match.observers.push(playerId);
-        match.save(function(err) {
-            if(err)
-                cb(makeStatus(false, err));
-            else{
-                cb(makeStatus(true, match.toJSON()));
-            }
-        });
+        if(match.lightPlayer == playerId)
+            cb(makeStatus(true, match));
+        else if(match.darkPlayer == playerId)
+            cb(makeStatus(true, match));
+        else{
+            match.observers.push(playerId);
+            match.save(function(err) {
+                if(err)
+                    cb(makeStatus(false, err));
+                else{
+                    cb(makeStatus(true, match.toJSON()));
+                }
+            });
+        }
     }
+}
+
+function isMatchOver (match) {
+    return match.state == match.getStates()['surrender']
+        || match.state == match.getStates()['checkmate']
+        || match.state == match.getStates()['stalemate'];
 }
 
 /**
