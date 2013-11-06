@@ -50,9 +50,8 @@ define(["text!templates/pieceSelection.ejs"], function(template){
   
   // for changing state
   sel.recieveMessage = function(data){
-    console.log(data);
-    if (data.state == "playing"){
-      game.switchState("match", data);
+    if (data.data.state == "playing"){
+      game.switchState("match", data.data);
     }
   };
 

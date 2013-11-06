@@ -265,8 +265,10 @@ function setPieces(params, cb){
                 else
                     match.isDarkSideReady = true;
 
-                if(match.isLightSideReady && match.isDarkSideReady)
+                if(match.isLightSideReady && match.isDarkSideReady){
+                    match.state = match.getStates()['playing'];
                     Match.publishUpdate(match.id, match);
+                }
 
                 match.save(function(err) {
                     if(err)
