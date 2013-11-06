@@ -57,3 +57,12 @@
   background-color: #999;
   height:21px;
 }
+
+#lobby img{
+  height: 100px;
+  width: 100pxs;
+}
+
+#lobby-start-button{
+  width: 145px;
+}

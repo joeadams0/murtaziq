@@ -1,8 +1,35 @@
 <div id="lobby">
-	<div id="player-roles" class="span4"/>
-	<div id="versus" class="span4">vs.</div>
-	<div id="lobby-dark-player-wrap" class="span4"/>
-	<div id="lobby-start-button-wrap"/>
+	<div id="roles-row" class="row">
+		<h2 class="col-md-3 col-md-offset-2 text-center">
+			<strong>Light Player</strong>
+		</h2>
+		<h2 class="col-md-3 col-md-offset-2 text-center">
+			<strong>Dark Player</strong>
+		</h2>
+	</div>
+	<div id="versus-row" class="row">
+		<div class="col-md-3 col-md-offset-2 text-center">
+			<img src="/images/pieces/pawn 1.png"/>
+		</div>
+		<div class="col-md-2 text-center">
+			<h2>
+				VS.
+			</h2>
+			<button class="btn btn-default host-feature" id="switch-sides">Switch Sides</button>
+		</div>
+		<div class="col-md-3 text-center">
+			<img src="/images/pieces/pawn 2.png"/>
+		</div>
+
+	</div>
+	<div id="player-row" class="row"/>
+	<div class="row host-feature">
+		<div class="col-md-2 col-md-offset-5">
+			<div class="centered">
+				<button class="btn-lg btn-primary" id="lobby-start-button">Start Game</button>
+			</div>
+		</div>
+	</div>
 	<div id="lobby-host-wrap"/>
 	<div id="lobby-observers-wrap"/>
 </div>

@@ -1,8 +1,8 @@
 define(["text!templates/lobby/lobby.ejs", 
-	"text!templates/lobby/player.ejs", 
+	"text!templates/lobby/player-row.ejs", 
 	"text!templates/lobby/lobby-start-button.ejs"], 
 	
-	function(maintemp, playertemp, startbuttontemp) {
+	function(maintemp, pRowTemplate, startbuttontemp) {
 	var lobby = {};
 
 
@@ -38,14 +38,13 @@ define(["text!templates/lobby/lobby.ejs",
 			this.listenTo(this.model, "change", this.render);
 
 			this.maintemp = maintemp;
-			this.playertemp = playertemp;
+			this.pRowTemplate = pRowTemplate;
 			this.startbuttontemp = startbuttontemp;
 
 			this.$el = $(new EJS({text : maintemp}).render({}));
 			this.$el.appendTo("#"+game.config.container);
 
-			this.$lightPlayerEl = $("#lobby-light-player-wrap");
-			this.$darkPlayerEl = $("#lobby-dark-player-wrap");
+			this.$playerRow = $("#player-row");
 			this.$hostEl = $("#lobby-host-wrap");
 			this.$startButtonEl = $("#lobby-start-button-wrap");
 			this.render();
@@ -55,6 +54,7 @@ define(["text!templates/lobby/lobby.ejs",
 		
 		events: {
 		    "click #lobby-start-button" : "startGame",
+		    "click #switch-sides" : "switchSides",
 		},
 
 		startGame : function() {
@@ -67,26 +67,28 @@ define(["text!templates/lobby/lobby.ejs",
 			});
 		},
 
-		renderLightPlayer : function() {
-			var self = this;
-			this.model.getUser(this.model.get('lightPlayer'), function(player) {
-				self.$lightPlayerEl.html(new EJS({text : self.playertemp}).render({
-					title: "Light Player", 
-					player : player,
-					image : "images/pieces/pawn 1.png"
-				}));
-			})
-			return this;
+		switchSides : function() {
+			$("#switch-sides").attr('disabled', 'disabled');
+			mapi.setPlayer({
+				matchId : this.model.get('id'),
+				playerId : game.state.user.id,
+				isLightSide : game.state.user.id != this.model.get('lightPlayer')
+			},
+			function(status) {
+				if(!status.success)
+					alert(status.data);
+			});
 		},
 
-		renderDarkPlayer : function() {
+		renderPlayerRow : function() {
 			var self = this;
-			this.model.getUser(this.model.get('darkPlayer'), function(player) {
-				self.$darkPlayerEl.html(new EJS({text : self.playertemp}).render({
-					title : "Dark Player",
-					player : player,
-					image : "images/pieces/pawn 2.png"
-				}));
+			this.model.getUser(this.model.get('lightPlayer'), function(lightPlayer) {
+				self.model.getUser(self.model.get('darkPlayer'), function(darkPlayer) {
+					self.$playerRow.html(new EJS({text : self.pRowTemplate}).render({
+						lightPlayer : lightPlayer,
+						darkPlayer : darkPlayer
+					}));
+				});
 			});
 			return this;
 		},
@@ -107,29 +109,23 @@ define(["text!templates/lobby/lobby.ejs",
 			return this;
 		},
 
-		renderStartButton : function() {
-			var $el = $(new EJS({text:this.startbuttontemp}).render({
-				dispButton : this.model.get('host') === game.state.user.id,
-			}));
-
-			if(this.model.get('lightPlayer') < 0 || this.model.get('darkPlayer') < 0)
-				$el.attr("disabled", "disabled");
-
-			if(this.model.get('host') === game.state.user.id)
-				this.$startButtonEl.html($el[0].outerHTML);
-			else
-				this.$startButtonEl.html("");
+		renderHostFeatures : function() {
+			if(this.model.get('host') !== game.state.user.id)
+				$(".host-feature").hide();
+			else{
+				$(".host-feature").show();
+				$(".host-feature").removeAttr("disabled");
+			}
 
 			return this;
 		},
 
 		render : function() {
 			this
-				.renderLightPlayer()
-				.renderDarkPlayer()
+				.renderPlayerRow()
 				.renderHost()
 				.renderObservers()
-				.renderStartButton();
+				.renderHostFeatures();
 		},
 	});
 
