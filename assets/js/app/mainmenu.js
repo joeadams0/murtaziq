@@ -25,9 +25,11 @@ define(["text!templates/mainmenu.ejs"], function(template) {
 	};
 
 	mainmenu.createMatch = function() {
+		$("#create-match").button('loading');
 		window.mapi.createMatch({
 	      playerId : game.state.user.id
 	    }, function(status) {
+			$("#create-match").button('reset');
 	      if(status.success){
 	        if(status.success){
 	        	game.switchState("lobby", status.data);
@@ -39,12 +41,14 @@ define(["text!templates/mainmenu.ejs"], function(template) {
 	};
 
 	mainmenu.joinMatch = function(){
+		$("#join-match").button('loading');
 	    var matchId = $("#match-id").val();
 
 	    window.mapi.joinMatch({
 	      playerId : game.state.user.id,
 	      matchId : Number(matchId)
 	    }, function(status) {
+			$("#join-match").button('reset');
 	      if(status.success)
 	        game.switchState("lobby", status.data);
 	      else

@@ -66,23 +66,27 @@ define(["text!templates/lobby/lobby.ejs",
 		},
 
 		startGame : function() {
-			$("#lobby-start-button").attr('disabled', 'disabled');			
+
+			$("#lobby-start-button").button('loading');			
 			mapi.startMatch({
 				id : this.model.get('id')
 			}, function(status) {
+
+				$("#lobby-start-button").button('reset');
 				if(!status.success)
 					alert(status.data);
 			});
 		},
 
 		switchSides : function() {
-			$("#lobby #switch-sides").attr('disabled', 'disabled');
+			$("#lobby #switch-sides").button('loading');
 			mapi.setPlayer({
 				matchId : this.model.get('id'),
 				playerId : game.state.user.id,
 				isLightSide : game.state.user.id != this.model.get('lightPlayer')
 			},
 			function(status) {
+				$("#lobby #switch-sides").button('reset');
 				if(!status.success)
 					alert(status.data);
 			});
@@ -131,9 +135,10 @@ define(["text!templates/lobby/lobby.ejs",
 				$(".host-feature").hide();
 			else{
 				$(".host-feature").show();
-				$(".host-feature").removeAttr('disabled');
 				if(this.model.get('lightPlayer')<0 || this.model.get('darkPlayer')<0)
 					$("#lobby-start-button").prop('disabled', true);
+				else
+					$("#lobby-start-button").removeAttr('disabled');
 			}
 
 			return this;
