@@ -49,8 +49,20 @@ define(["text!templates/mainmenu.ejs"], function(template) {
 	      matchId : Number(matchId)
 	    }, function(status) {
 			$("#join-match").button('reset');
-	      if(status.success)
-	        game.switchState("lobby", status.data);
+	      if(status.success){
+	      	switch(status.data.state){
+	      		case "lobby":
+	        		game.switchState("lobby", status.data);	
+	        		break;
+	        	case "pieceSelection":
+	        		game.switchState("pieceSelection", status.data);
+	        		break;
+	        	case "playing":
+	        		game.switchState("match", status.data);
+	        		break;
+	      	}
+	      	
+	      }
 	      else
 	      	alert(status.data);
 	    });

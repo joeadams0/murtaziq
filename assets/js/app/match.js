@@ -1,60 +1,183 @@
-define([], function() {
+define(["text!templates/match/match.ejs",
+        "text!templates/match/state.ejs"
+  ], function(matchTemplate, stateTemplate) {
 
   var match = {};
 
-  match.load = function(data, cb){
-    if(!cb)
-      cb = function() {};
-    match.events.newMatch(data, cb);
+/************************************************************************************
+ * The Model
+ * **********************************************************************************/
+
+  var modelFunctions = {};
+
+  modelFunctions.initialize = function() {
+    this.cache = {};
+    this.cache.users = {};
   };
 
-  match.unload = function() {
-    $(match.state.view.boardOptions.svg_container).hide();
+  modelFunctions.getUser = function(id, cb) {
+    var self = this;
+    if(id <= 0)
+      cb(undefined);
+    if(this.cache.users[id])
+      cb(this.cache.users[id]);
+    else{
+      mapi.getUser(id, function(user) {
+        self.cache.users[id] = user;
+        cb(user);
+      });
+    }
   };
 
-    // straight re-draw of the board.
-  match.render = function(cb){
-    if(!cb)
-      cb = function() {};
-    var boardDimension = match.state.view.svg.attr("width");
+  modelFunctions.removeHighlights = function() {
+    this.cache.possibleMoves = undefined;
+    _.each(match.state.model.match.board, function(row) {
+      _.each(row, function(space) {
+        space.highlight = undefined;
+      });
+    });
+  };
 
-    var matchState = match.state.model;
+  modelFunctions.getSpace = function(x, y) {
+    if(!this.get('match').board)
+      return undefined;
+    else
+      return this.get('match').board[y][x];
+  };
 
-    match.state.view.lightPlayer.html("Light Player: " + matchState.lightPlayer);
-    match.state.view.darkPlayer.html("Dark Player: " + matchState.darkPlayer);
-    match.state.view.matchId.html("Match Id: " + matchState.id);
 
-    match.state.view.state.html("State: " + matchState.state);
 
-    if(matchState.state === "lobby" && match.state.view.startmatch== undefined){
-      match.state.view.startmatch = d3.select(match.state.view.boardOptions.svg_container)
-                        .append("button")
-                        .html("Start match")
+  var MatchModel = Backbone.Model.extend(modelFunctions);
+
+/************************************************************************************************/
+
+
+
+/********************************************************************************************
+* View
+* *****************************************************************************************/
+  var viewFuns = {};
+
+  viewFuns.initialize = function() {    
+    var self = this;
+
+    this.matchTemplate = matchTemplate;
+    this.stateTemplate = stateTemplate;
+
+    this.piecePath = "./images/pieces/";
+
+    this.model.getUser(this.model.get("lightPlayer"), function(lightPlayer) {
+      self.model.getUser(self.model.get("darkPlayer"),function(darkPlayer) {
+        // Add the HTML Structure
+        self.$el = $(new EJS({text : matchTemplate}).render({
+          lightPlayer : lightPlayer,
+          darkPlayer : darkPlayer
+        }));
+
+        self.$el.appendTo("#"+game.config.container);
+        self.$state = $("#match #state");
+
+        // parse options
+        if (self.model.get('boardOptions') == undefined){
+          options = {};
+          options.svg_container = "board-container";
+          options.dimension = 720;
+          options.duration = 2000;
+          options.fold = true;
+          options.text = false;
+          options.moveHighlightColor = "green"; 
+
+        } else {
+          if (options.svg_container == undefined) options.svg_container = "board-container";
+          if (options.dimension == undefined) options.dimension = 720;
+          if (options.duration == undefined) options.duration = 2000; // 2 seconds
+          if (options.fold != false) options.fold = true;
+          if (options.text != true) options.text = false;
+        }
+
+        // save the options we used so we can use the same ones to end
+        self.model.set('boardOptions', options);
+
+        if (self.isBoardCreated()) {
+          d3.select('#board').remove();
+        }
+
+        if (options.text){
+          self.svg = {};
+          self.board = d3.select(options.svg_container)
+                               .append("table")
+                               .attr("id", "board");
+        }
+
+        self.svg = d3.select(options.svg_container).append("svg")
+                           .attr("id", "view")
+                           .attr("opacity", 0)
+                           .attr("width", 0)
+                           .attr("height", 0);
+
+        self.board = self.svg.append("g").attr("id", "board");
+        self.board.selectAll("g")
+                        .data([[1,0,1,0,1,0,1,0],
+                               [0,1,0,1,0,1,0,1],
+                               [1,0,1,0,1,0,1,0],
+                               [0,1,0,1,0,1,0,1],
+                               [1,0,1,0,1,0,1,0],
+                               [0,1,0,1,0,1,0,1],
+                               [1,0,1,0,1,0,1,0],
+                               [0,1,0,1,0,1,0,1]])
+                        .enter().append("g")
+                        .selectAll("rect").data(function(d) {return d;})
+                        .enter().append("rect")
                         .on("click", function() {
-                          window.mapi.startMatch({id: matchState.id});
-                        });
-    }
-    else if(matchState.state === "playing" && match.state.view.startmatch ){
-      match.state.view.startmatch.remove();
-      if(!match.state.view.turn){
-        match.state.view.turn = d3.select(match.state.view.boardOptions.svg_container).append("p");
-      }
-      var turn;
-      if(matchState.match.isLightTurn)
-        turn = "light player";
-      else
-        turn = "dark player";
-      match.state.view.turn.html("Turn: " + turn);
-    }
+                          var space = d3.select(this);
+                          console.log({x: space.attr("x")/space.attr("width"), y :  space.attr("y")/space.attr("height")});
+                        })
+                        .attr("x", function(d, i) {return (i % 8)*(options.dimension/8);})
+                        .attr("y", function(d, i, j) {return j*(options.dimension/8);})
+                        .attr("width", options.dimension/8)
+                        .attr("height", options.dimension/8)
+                        .attr("class", function(d) {return (d == 1) ? ("dark") : ("light");})
+                        .attr("tile-color", function(d) {return (d == 1) ? ("dark") : ("light");});
 
+        //animations to show the board
+        if (options.fold){
+          self.svg.transition().duration(options.duration/3)
+                        .style("opacity", 1)
+                        .attr("width", options.dimension/2)
+                        .attr("height", options.dimension/2);
+          self.svg.transition().duration(options.duration/3).delay(options.duration/3)
+                        .attr("height", options.dimension);
+          self.svg.transition().duration(options.duration/3).delay(2*options.duration/3)
+                        .attr("width", options.dimension)
+        } else {
+          self.svg.transition().duration(options.duration)
+                        .style("opacity", 1)
+                        .attr("width", options.dimension)
+                        .attr("height", options.dimension);
+        }
+
+
+
+        self.listenTo(self.model, "change", self.render);
+        self.render();
+      });
+    });
+
+  };
+
+  viewFuns.renderMatch = function() {
+    var self = this;
+    var boardDimension = this.svg.attr("width");
+
+    var matchState = this.model.attributes;
 
     if (d3.select("#pieces").node() == null) {
-      match.state.view.pieces = match.state.view.svg.append("g").attr("id", "pieces");
-      match.state.view.piecesRows = match.state.view.pieces.selectAll("g");
-      match.state.view.piecesRows.data(matchState.match.board).enter().append("g").selectAll("image")
+      this.pieces = this.svg.append("g").attr("id", "pieces");
+      this.piecesRows = this.pieces.selectAll("g");
+      this.piecesRows.data(matchState.match.board).enter().append("g").selectAll("image")
                        .data(function(d) {return d;})
                        .enter().append("image")
-                       .attr("xlink:href", function(d){ return (d.piece == undefined) ? (""): (match.state.view.piecePath + d.piece.name +" "+(d.piece.team + 1)+".png");})
+                       .attr("xlink:href", function(d){ return (d.piece == undefined) ? (""): (self.piecePath + d.piece.name +" "+(d.piece.team + 1)+".png");})
                        .style("opacity", 0) // initially invisible
                        .attr("height", (boardDimension/8)+"px")
                        .attr("pointer-events", "none")
@@ -63,9 +186,9 @@ define([], function() {
                        .attr("y", function(d, i, j) {return j*(boardDimension/8);})
                        .transition().duration(500).style("opacity", 1); // fade in
     } else {
-      var imgs = match.state.view.pieces.selectAll("g").data(matchState.match.board).selectAll("image").data(function(d) {return d;});
+      var imgs = this.pieces.selectAll("g").data(matchState.match.board).selectAll("image").data(function(d) {return d;});
 
-      match.state.view.board.selectAll("g")
+      this.board.selectAll("g")
           .data(matchState.match.board)
           .selectAll("rect")
           .data(function(d) { return d})
@@ -82,7 +205,7 @@ define([], function() {
            .attr("width", (boardDimension/8)+"px")
            .attr("pointer-events", "none");
       // enter + update
-      imgs.attr("xlink:href", function(d){ return (d.piece == undefined) ? (""): (match.state.view.piecePath + d.piece.name +" "+(d.piece.team + 1)+".png");})
+      imgs.attr("xlink:href", function(d){ return (d.piece == undefined) ? (""): (self.piecePath + d.piece.name +" "+(d.piece.team + 1)+".png");})
            .attr("x", function(d, i) {return (i % 8)*(boardDimension/8);})
            .attr("y", function(d, i, j) {return j*(boardDimension/8);})
            .attr("pointer-events", "none");
@@ -91,18 +214,59 @@ define([], function() {
     }
     d3.selectAll("image").select(function(d) {return (d.piece == undefined) ? (this) : null ;}).remove();
 
+    return this;
+  };
+
+  viewFuns.renderState = function() {
+    this.$state.html(new EJS({text : this.stateTemplate}).render({
+      isLightTurn : this.model.get('match').isLightTurn,
+      state : this.model.get('match').state == "normal" ? undefined : this.model.get('match').state
+    }));
+    return this;
+  };
+
+  viewFuns.isBoardCreated = function() {
+    return d3.select("#board").node() != null;
+  };
+
+  viewFuns.render = function() {
+    this.renderMatch()
+        .renderState();
+  };
+
+  viewFuns.unload = function() {
+    this.$el.remove();
+  };
+
+  var MatchView = Backbone.View.extend(viewFuns);
+
+/*********************************************************************************************************************/
+
+  // Load up the game
+  match.load = function(data, cb){
+    if(!cb)
+      cb = function() {};
+    match.model = new MatchModel(data);
+    match.view = new MatchView({
+      model : match.model
+    });
     cb();
-};
+  };
+
+  // Remove the game
+  match.unload = function() {
+    this.view.unload();
+  };
 
   match.drawTextmatch = function(matchState){
     matchState = JSON.parse(matchState);
-    if (!match.state.view.isBoardCreated() || !match.state.view.boardIsText()) {
+    if (!self.isBoardCreated() || !self.boardIsText()) {
       match.init.board({text:true});
-      match.state.view.textRows = match.state.view.board.selectAll("tr")
+      self.textRows = self.board.selectAll("tr")
                                 .data(matchState)
                                 .enter().append("tr");
 
-      var td = match.state.view.textRows.selectAll("td")
+      var td = self.textRows.selectAll("td")
           .data(function(d) { return d; })
           .enter().append("td")
           .text(function(d) { return (d.piece == undefined) ? ("") : (d.piece.name); })
@@ -113,10 +277,10 @@ define([], function() {
             return ((j+i)%2 == 0) ? ("#D6C8A7") : ("#9E8B5D");
           });
     } else {
-      match.state.view.textRows = match.state.view.board.selectAll("tr")
+      self.textRows = self.board.selectAll("tr")
                                 .data(matchState);
 
-      var td = match.state.view.textRows.selectAll("td")
+      var td = self.textRows.selectAll("td")
           .data(function(d) { return d; })
           .text(function(d) { return (d.piece == undefined) ? ("") : (d.piece.name); })
           .attr("class", function(d){ 
@@ -127,12 +291,12 @@ define([], function() {
   };
   // only works for svg matchs
   match.move = function(initialState, move){
-    if (match.state.view.isBoardCreated() && !match.state.view.boardIsText()){
+    if (self.isBoardCreated() && !self.boardIsText()){
       match.draw.fromBoardState(initialState);
       move = JSON.parse(move);
-      var boardDimension = match.state.view.svg.attr("width");
+      var boardDimension = self.svg.attr("width");
 
-      match.state.view.pieces.selectAll("image").select(function() {
+      self.pieces.selectAll("image").select(function() {
         return (this.x.baseVal.value/90 == move.source.x && this.y.baseVal.value/90 == move.source.y) ? this : null;
       }).transition().duration(500)
                      .attr("x", move.target.x * (boardDimension/8))
@@ -306,100 +470,7 @@ define([], function() {
    
 
   match.init.board = function(cb, options){
-    var return_status = "board created";
-    // parse options
-    if (options == undefined){
-      options = {};
-      options.svg_container = "body";
-      options.dimension = 720;
-      options.duration = 2000;
-      options.fold = true;
-      options.text = false;
-      options.moveHighlightColor = "green";      
-    } else {
-      if (options.svg_container == undefined) options.svg_container = "body";
-      if (options.dimension == undefined) options.dimension = 720;
-      if (options.duration == undefined) options.duration = 2000; // 2 seconds
-      if (options.fold != false) options.fold = true;
-      if (options.text != true) options.text = false;
-    }
-    // save the options we used so we can use the same ones to end
-    match.state.view.boardOptions = options;
-
-    if (match.state.view.isBoardCreated()) {
-      d3.select('#match').remove();
-    }
-
-    if (options.text){
-      match.state.view.svg = {};
-      match.state.view.board = d3.select(options.svg_container)
-                           .append("table")
-                           .attr("id", "match");
-      return "text board created";
-    }
-
-    match.state.view.svg = d3.select(options.svg_container).append("svg")
-                       .attr("id", "match")
-                       .attr("opacity", 0)
-                       .attr("width", 0)
-                       .attr("height", 0);
-
-    match.state.view.lightPlayer = d3.select(options.svg_container)
-                        .append("p");
-
-    match.state.view.darkPlayer = d3.select(options.svg_container)
-                        .append("p");
-
-    match.state.view.matchId = d3.select(options.svg_container)
-                        .append("p");
-
-    match.state.view.state = d3.select(options.svg_container)
-                        .append("p");
-
-
-    match.state.view.board = match.state.view.svg.append("g").attr("id", "board");
-    match.state.view.board.selectAll("g")
-                    .data([[1,0,1,0,1,0,1,0],
-                           [0,1,0,1,0,1,0,1],
-                           [1,0,1,0,1,0,1,0],
-                           [0,1,0,1,0,1,0,1],
-                           [1,0,1,0,1,0,1,0],
-                           [0,1,0,1,0,1,0,1],
-                           [1,0,1,0,1,0,1,0],
-                           [0,1,0,1,0,1,0,1]])
-                    .enter().append("g")
-                    .selectAll("rect").data(function(d) {return d;})
-                    .enter().append("rect")
-                    .on("click", function() {
-                      var space = d3.select(this);
-                      console.log({x: space.attr("x")/space.attr("width"), y :  space.attr("y")/space.attr("height")});
-                      match.events.spaceClicked(space.attr("x")/space.attr("width"), space.attr("y")/space.attr("height"));
-                    })
-                    .attr("x", function(d, i) {return (i % 8)*(options.dimension/8);})
-                    .attr("y", function(d, i, j) {return j*(options.dimension/8);})
-                    .attr("width", options.dimension/8)
-                    .attr("height", options.dimension/8)
-                    .attr("class", function(d) {return (d == 1) ? ("dark") : ("light");})
-                    .attr("tile-color", function(d) {return (d == 1) ? ("dark") : ("light");});
-
-    //animations to show the board
-    if (options.fold){
-      match.state.view.svg.transition().duration(options.duration/3)
-                    .style("opacity", 1)
-                    .attr("width", options.dimension/2)
-                    .attr("height", options.dimension/2);
-      match.state.view.svg.transition().duration(options.duration/3).delay(options.duration/3)
-                    .attr("height", options.dimension);
-      match.state.view.svg.transition().duration(options.duration/3).delay(2*options.duration/3)
-                    .attr("width", options.dimension)
-                    .each("end", cb);
-    } else {
-      match.state.view.svg.transition().duration(options.duration)
-                    .style("opacity", 1)
-                    .attr("width", options.dimension)
-                    .attr("height", options.dimension)
-                    .each("end", cb);
-    }
+    
 
     return return_status;
   };
@@ -418,12 +489,12 @@ define([], function() {
   match.end.board =  function(options){
     if (options == undefined){
       options = {};
-      if (match.state.view.boardOptions == undefined){
+      if (self.boardOptions == undefined){
         options.duration = 2000;
         options.fold = true;
         options.text = false;
       } else {
-        options = match.state.view.boardOptions;
+        options = self.boardOptions;
       }
     } else {
       if (options.duration == undefined) options.duration = 2000; // 2 seconds
@@ -432,34 +503,34 @@ define([], function() {
     }
     
     if (options.text){
-      match.state.view.board.remove();
-      match.state.view.board = {};
-      match.state.view.svg = {};
+      self.board.remove();
+      self.board = {};
+      self.svg = {};
 
       return "text board removed";
     }
 
-    var width = match.state.view.svg.attr("width");
+    var width = self.svg.attr("width");
 
     if (options.fold) {
-      match.state.view.svg.transition().duration(options.duration/3)
+      self.svg.transition().duration(options.duration/3)
                     .attr("width", width/2);
-      match.state.view.svg.transition().duration(options.duration/3).delay(options.duration/3)
+      self.svg.transition().duration(options.duration/3).delay(options.duration/3)
                     .attr("height", width/2);
-      match.state.view.svg.transition().duration(options.duration/3).delay(2*options.duration/3)
+      self.svg.transition().duration(options.duration/3).delay(2*options.duration/3)
                     .style("opacity", 0)
                     .attr("width", 0)
                     .attr("height", 0)
                     .remove();
     } else {
-      match.state.view.svg.transition().duration(options.duration)
+      self.svg.transition().duration(options.duration)
                     .style("opacity", 0)
                     .attr("width", 0)
                     .attr("height", 0)
                     .remove();
     }
-    match.state.view.board = {};
-    match.state.view.svg = {};
+    self.board = {};
+    self.svg = {};
 
     return "board removed";
   };
@@ -469,42 +540,14 @@ define([], function() {
   match.state = {};
 
   // Contains all things relating to the rendering of the state
-  match.state.view = {};
+  self = {};
 
-  match.state.view.isBoardCreated = function(){
+  self.isBoardCreated = function(){
     return d3.select("#match").node() != null;
   };
 
-  match.state.view.boardIsText = function(){
-    return !Array.isArray(match.state.view.svg);
-  };
-
-  match.state.view.svg = {};
-
-  match.state.view.board = {};
-
-  // boardOptions is not initialized, because 'undefined' has meaning.
-  match.state.view.piecePath = "./images/pieces/";
-
-  // MODEL
-
-  // Contains the data for the view
-  match.state.model = {};
-
-  match.state.model.getSpace = function(x, y) {
-    if(!match.state.model.match.board)
-      return undefined;
-    else
-      return match.state.model.match.board[y][x];
-  };
-
-  match.state.model.removeHighlights = function() {
-    match.state.model.possibleMoves = undefined;
-    _.each(match.state.model.match.board, function(row) {
-      _.each(row, function(space) {
-        space.highlight = undefined;
-      });
-    });
+  self.boardIsText = function(){
+    return !Array.isArray(self.svg);
   };
 
   return match;
