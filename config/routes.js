@@ -51,9 +51,11 @@ module.exports.routes = {
 
   '/matchmaking' : 'MatchmakingController.index',
 
-  '/registersocket' : 'User.registersocket',
+  '/registersocket' : 'UserController.registersocket',
 
-  '/deregistersocket' : 'User.deregistersocket'
+  '/deregistersocket' : 'UserController.deregistersocket',
+
+  'match/destroy' : "MatchController.destroy",
   
   /*
   // But what if you want your home page to display
