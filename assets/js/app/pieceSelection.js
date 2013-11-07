@@ -194,7 +194,17 @@ define(["text!templates/pieceSelection.ejs"], function(template){
         act.handleShowingInfo();
         act.allowDragging();
       };
-
+      
+      //helper method
+      act.removeFromArmy = function ( name, pos ){
+        // remove the piece from it's old spot in the army
+        _.each( sel.pieces, function( val, key, list){
+          if ( val == name && key != pos){
+            sel.updateCost(val, key, -1);
+            sel.pieces[key] = undefined;
+          }
+        });
+      };
 
       // DROPPING PIECES on either the board or the unit list
       act.allowDropping = function(){
@@ -207,7 +217,17 @@ define(["text!templates/pieceSelection.ejs"], function(template){
                 $him = ui.draggable,
                 name = $him.data("name");
 
-            if ($me.find("*").length > 0 ){return;}
+
+            if ($me.find("*").length > 0 ){
+              $("*[data-name="+name+"]").remove();
+              $( cfg.pieceListClass ).append($him);
+              $("*[data-name="+name+"]").removeClass("ui-draggable-dragging");
+              $("*[data-name="+name+"]").attr("style", "");
+              act.things();
+              // remove the piece from it's old spot in the army
+              act.removeFromArmy( name );
+              return;
+            }
 
             // Make the document look right
             $("*[data-name="+name+"]").remove();
@@ -226,12 +246,7 @@ define(["text!templates/pieceSelection.ejs"], function(template){
             sel.updateCost(name, pos);
 
             // remove the piece from it's old spot in the army
-            _.each( sel.pieces, function( val, key, list){
-              if ( val == name && key != pos){
-                sel.updateCost(val, key, -1);
-                sel.pieces[key] = undefined;
-              }
-            });
+            act.removeFromArmy( name, pos );
           }
         });
         // listen for user dropping piece on piece list.
@@ -251,12 +266,7 @@ define(["text!templates/pieceSelection.ejs"], function(template){
             $( cfg.pieceInfoClass ).hide();
             
             // remove the piece from it's old spot in the army
-            _.each( sel.pieces, function( val, key, list){
-              if ( val == name){
-                sel.updateCost(val, key, -1);
-                sel.pieces[key] = undefined;
-              }
-            });
+            act.removeFromArmy( name );
           }
         });
       };
