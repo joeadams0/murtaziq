@@ -80,3 +80,7 @@
 .chat{
   min-height: 300px
 }
+#view {
+  position: relative;
+  top: -350px;
+}

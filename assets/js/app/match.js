@@ -68,6 +68,7 @@ define(["text!templates/match/match.ejs",
 
     this.model.getUser(this.model.get("lightPlayer"), function(lightPlayer) {
       self.model.getUser(self.model.get("darkPlayer"),function(darkPlayer) {
+        var options = self.model.get('boardOptions');
         // Add the HTML Structure
         self.$el = $(new EJS({text : matchTemplate}).render({
           lightPlayer : lightPlayer,
@@ -78,17 +79,16 @@ define(["text!templates/match/match.ejs",
         self.$state = $("#match #state");
 
         // parse options
-        if (self.model.get('boardOptions') == undefined){
+        if (options == undefined){
           options = {};
-          options.svg_container = "board-container";
+          options.svg_container = "#match";
           options.dimension = 720;
           options.duration = 2000;
           options.fold = true;
           options.text = false;
           options.moveHighlightColor = "green"; 
-
         } else {
-          if (options.svg_container == undefined) options.svg_container = "board-container";
+          if (options.svg_container == undefined) options.svg_container = "#match";
           if (options.dimension == undefined) options.dimension = 720;
           if (options.duration == undefined) options.duration = 2000; // 2 seconds
           if (options.fold != false) options.fold = true;
