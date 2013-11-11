@@ -19,6 +19,16 @@ module.exports = {
 				res.view('play/matchmaking', {currentUser : user.username, users : allUsers});
 			})
 		});
-
+		
+		//Add current user to matchmaking queue
+		InMatchQueue.findOne({playerId: userId}).done(function(err, imq){
+			if(err) {
+				//TODO: should something be here?
+			} else if(imq) {
+				InMatchQueue.update({playerId: userId}, {inQueue: true}, function() {});
+			} else {
+				InMatchQueue.create({playerId : userId, inQueue : true}).done(function(err,user){});
+			}
+		});
 	}
 };

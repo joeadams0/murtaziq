@@ -11,7 +11,7 @@ module.exports = {
 
   attributes: {
   	
-    player : {
+    playerId : {
       type : 'integer',
       defaultsTo : -1
     },
