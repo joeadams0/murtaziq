@@ -7,6 +7,7 @@
  */
 var match = require('../../engine/match.js');
 var _ = require('underscore');
+var chathelper = require("../helpers/chat-helper.js");
 module.exports = {
 
   attributes: {
@@ -68,6 +69,12 @@ module.exports = {
     if(!values.match){
       values.match = match.toJSONObj(match.create());
     }
-    next();
+    chathelper.create(function(lobbyChat) {
+      values.lobbyChat = lobbyChat.id;
+      chathelper.create(function(playerChat) {
+        values.playerChat = playerChat.id;
+        next();
+      });
+    }); 
   },
 };

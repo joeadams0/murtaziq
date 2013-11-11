@@ -73,7 +73,9 @@ module.exports = {
         User.findOne(req, cb);
     },
     getCurrentUser : function(req, cb){
-        User.findOne(this.getSession(req), cb);
+        User.findOne({
+            id : this.getSession(req).id
+        }, cb);
     },
     
     setOnline : function(req, username, cb){  
@@ -84,7 +86,10 @@ module.exports = {
         		state: states.online
         	},
         	function(err, users){
-                self.setSession(req, {id : users[0].id});
+                self.setSession(req, {
+                    id : users[0].id, 
+                    username : users[0].username
+                });
                 cb();
         });
     },

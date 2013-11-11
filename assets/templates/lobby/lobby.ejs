@@ -42,20 +42,22 @@
 				<div class="col-md-9">
 					<strong>Chat</strong>
 				</div>
-				<div class="host-feature col-md-3 pull-right btn-group">
+				<div class="col-md-3 pull-right btn-group">
 					<button class="btn btn-default dropdown-toggle" id="options" rel="tooltip" title="Options" data-toggle="dropdown">
 						<i class="glyphicon glyphicon-cog"/>
 					</button>
-					<ul class="dropdown-menu" role="menu">
-					    <li><a href="#" id="lobby-invite">Invite Player</a></li>
-					    <li class="divider"></li>
-					    <li><a href="#" data-toggle="modal" data-target="#disbandModal"><strong>Disband Match</strong></a></li>
+					<ul class="dropdown-menu" role="menu" id="options-menu">
 					</ul>
 				</div>
 			</div>
 			<div class="chat panel panel-default">
 			</div>
-			<input type="text" class="form-control" placeholder="Type here...">
+			<form class="form-inline chat-form">
+				<input type="text" class="chat-input form-control" placeholder="Type here...">
+				<button class="btn btn-success chat-send" type=button>
+					<i class="glyphicon glyphicon-share-alt"/>
+				</button> 
+			</form>
 		</div>
 	</div>
 
@@ -71,6 +73,23 @@
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	        <button type="button" id="lobby-disband-match" data-dismiss="modal"  class="btn btn-danger">Disband</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+	<div class="modal fade" id="leaveMatchModal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h4 class="modal-title">Leave Match</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>Are you sure you want to Leave this match?</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" id="lobby-leave-match" data-dismiss="modal"  class="btn btn-danger">Leave</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->

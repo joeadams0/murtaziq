@@ -104,7 +104,6 @@ window.createMApi = function(socket){
 		 *
 		 * params : {
 		 * 		matchId : INTEGER,
-		 * 		playerId : INTEGER,
 		 * 		source : {
 		 * 			x : INTEGER,
 		 * 			y : INTEGER,
@@ -126,7 +125,6 @@ window.createMApi = function(socket){
 		 *
 		 * params : {
 		 * 		matchId : INTEGER,
-		 * 		playerId : INTEGER
 		 * }
 		 */
 		removePlayer : function(params, cb) {
@@ -140,7 +138,6 @@ window.createMApi = function(socket){
 		 *
 		 * params : {
 		 * 		matchId : INTEGER,
-		 * 		playerId : INTEGER,
 		 * 		pieces : {
 		 * 			pawn : PAWN NAME,
 		 * 			rook : ROOK NAME,
@@ -162,7 +159,6 @@ window.createMApi = function(socket){
 		 *
 		 * params : {
 		 * 		matchId : INTEGER,
-		 * 		playerId : INTEGER
 		 * }
 		 */
 		surrender : function(params, cb) {
@@ -192,7 +188,6 @@ window.createMApi = function(socket){
 		 *
 		 * params : {
 		 * 		matchId : INTEGER,
-		 * 		playerId : INTEGER
 		 * }
 		 */
 		setHost : function(params, cb) {
@@ -217,6 +212,22 @@ window.createMApi = function(socket){
 
 		disbandMatch : function(params, cb) {
 			socket.request("/match/destroy", params, cb);
+		},
+
+		createChat : function(cb) {
+			socket.request("/chat/create", {}, cb);
+		},
+
+		joinChat : function(id, cb) {
+			socket.request("/chat/join", { chatId : id }, cb); 
+		},
+
+		leaveChat : function(id, cb) {
+			socket.request("/chat/leave", {chatId : id}, cb);
+		},
+
+		postChat : function(id, message, cb) {
+			socket.request("/chat/post", {chatId : id, message : message}, cb);
 		},
 	};
 }

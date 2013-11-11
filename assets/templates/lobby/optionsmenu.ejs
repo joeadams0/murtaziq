@@ -1,0 +1,7 @@
+<%if(isHost){%>
+    <li><a href="#" id="lobby-invite">Invite Player</a></li>
+    <li class="divider"></li>
+    <li><a href="#" data-toggle="modal" data-target="#disbandModal"><strong>Disband Match</strong></a></li>
+<%}else{%>
+    <li><a href="#" data-toggle="modal" data-target="#leaveMatchModal"><strong>Leave Match</strong></a></li>
+<%}%>

@@ -56,6 +56,7 @@ module.exports.routes = {
   '/deregistersocket' : 'UserController.deregistersocket',
 
   'match/destroy' : "MatchController.destroy",
+
   
   /*
   // But what if you want your home page to display

@@ -16,23 +16,33 @@ game.init = function(cb) {
 	if(!cb)
 		cb = function() {};
 
-	mapi.getCurrentUser(function(user) {
-		game.state.user = user;
-		
-		require([game.config], function(config) {
-			game.config = config;
+	require([
+		"/js/app/chat.js"
+		],
+		function(chat) {
+			game.chat = chat;
+			game.chats = {};
 
-			// Get all the states
-			require(_.values(game.config.states), function() {
-				game.states = _.object(_.keys(game.config.states), arguments);
+			game.socket.on("chat", game.chat.recieveMessage);
+			mapi.getCurrentUser(function(user) {
+				game.state.user = user;
+				
+				require([game.config], function(config) {
+					game.config = config;
 
-				if(game.config.startingState)
-					game.loadState(game.config.startingState, {}, cb);
-				else
-					cb();
+					// Get all the states
+					require(_.values(game.config.states), function() {
+						game.states = _.object(_.keys(game.config.states), arguments);
+
+						if(game.config.startingState)
+							game.loadState(game.config.startingState, {}, cb);
+						else
+							cb();
+					});
+				});
 			});
-		});
-	});
+		}
+	);
 };
 
 /**
@@ -77,6 +87,12 @@ game.recieveMessage = function(message) {
 		game.state.currentState.recieveMessage(message);
 };
 
+game.unloadPage = function(cb) {
+	game.state.currentState.unloadPage(function() {
+		cb();
+	});
+};
+
 /*****************************************************************************
  * Startup code
  *****************************************************************************/
@@ -97,16 +113,20 @@ $(document).ready(function() {
 		window.game.socket = socket;
 
 		window.createMApi(socket);
-		  game.init();
-		  mapi.registerSocket(function(status) {});
-		});
+		game.init();
+		mapi.registerSocket(function(status) {});
 
-	  socket.on('message', function(message) {
-	    game.recieveMessage(message);
-	  });
+	});
+
+	socket.on('message', function(message) {	    
+		game.recieveMessage(message);
+	});
+
 
 	window.onbeforeunload = function(e) {
-	  mapi.deregisterSocket();
+		game.unloadPage(function() {
+		 	mapi.deregisterSocket();
+		});
 	};
 });
 

@@ -9,6 +9,8 @@
 var engine = require('../../engine/match.js');
 var utils = require('../../engine/utils.js');
 var _ = require('underscore');
+var chathelper = require("./chat-helper.js");
+var userhelper = require("./user-helper.js");
 
  module.exports = {
  	create : create,
@@ -43,8 +45,7 @@ function create (params, cb) {
             else{
                 if(utils.existy(params.playerId))
                     addPlayerHelper(match, params.playerId, cb);
-                cb(makeStatus(true, match.toJSON()));
-            }
+                cb(makeStatus(true, match.toJSON()));            }
         });
 }
 

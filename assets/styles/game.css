@@ -78,5 +78,15 @@
 }
 
 .chat{
-  min-height: 300px
+  min-height: 300px;
+  line-height: normal;
+  padding : 5px;
+  font-size: 15px;
+}
+.chat-input{
+  width: 76%;
+}
+
+.chat div{
+  margin-bottom: 10px;
 }

@@ -17,6 +17,7 @@ module.exports = {
   create: function (req,res) {
     delete req.body.id;
 
+    req.body.playerId = UserHelper.getSession(req).id;
     matchapi.create(req.body, function(status) {
         if(status.success)
           matchapi.subscribeSocket(status.data.id, req.socket);
@@ -35,14 +36,15 @@ module.exports = {
    *
    * Note: message body must contain the following fields:
    * {
-   *   matchId : INTEGER,
-   *   playerId : INTEGER,
+   *   matchId : INTEGER
    * }
    */
   addPlayer : function(req, res) {
     if(req.param('id'))
       req.body.matchId = req.param('id');
 
+
+    req.body.playerId = UserHelper.getSession(req).id;
     matchapi.addPlayer(req.body, function(status) {
 
       if(status.success){
@@ -57,6 +59,7 @@ module.exports = {
   destroy : function(req, res) {
     if(req.param('id'))
       req.body.matchId = req.param('id');
+
     req.body.playerId = UserHelper.getSession(req).id;
 
     matchapi.destroy(req.body, function(status) {
@@ -75,7 +78,6 @@ module.exports = {
    * Note: message body must contain the following fields:
    * {
    *   matchId : INTEGER,
-   *   playerId : INTEGER,
    *   side : INTEGER 
    * }
    */
@@ -83,6 +85,8 @@ module.exports = {
     if(req.param('id'))
       req.body.matchId = req.param('id');   
 
+
+    req.body.playerId = UserHelper.getSession(req).id;
     matchapi.setPlayer(req.body, function(status) {
       if(status.success){
         Match.publishUpdate(status.data.id, status.data);
@@ -95,6 +99,8 @@ module.exports = {
     if(req.param('id'))
       req.body.matchId = req.param('id');
 
+
+    req.body.playerId = UserHelper.getSession(req).id;
     matchapi.removePlayer(req.body, function(status) {
       if(status.success){
         matchapi.unsubscribeSocket(status.data.id, req.socket);
@@ -109,6 +115,8 @@ module.exports = {
     if(req.param('id'))
       req.body.matchId = req.param('id');   
 
+
+    req.body.playerId = UserHelper.getSession(req).id;
     matchapi.setPieces(req.body, function(status) {
       if(status.success)
         Match.publishUpdate(status.data.id, status.data);
@@ -121,6 +129,8 @@ module.exports = {
     if(req.param('id'))
       req.body.matchId = req.param('id');   
 
+
+    req.body.playerId = UserHelper.getSession(req).id;
     matchapi.getMoves(req.body, function(status) {
       res.json(status);
     });
@@ -130,6 +140,8 @@ module.exports = {
     if(req.param('id'))
       req.body.matchId = req.param('id');  
 
+
+    req.body.playerId = UserHelper.getSession(req).id;
     matchapi.surrender(req.body, function(status) {
       if(status.success)
         Match.publishUpdate(status.data.id, status.data);
@@ -144,6 +156,8 @@ module.exports = {
     else
       id = req.body.id; 
 
+
+    req.body.playerId = UserHelper.getSession(req).id;
     matchapi.startMatch(id, function(status) {
       if(status.success)
         Match.publishUpdate(status.data.id, status.data);
@@ -163,6 +177,8 @@ module.exports = {
     if(req.param('id'))
       req.body.matchId = req.param('id');  
 
+
+    req.body.playerId = UserHelper.getSession(req).id;
     matchapi.performMove(req.body, function(status) {
       if(status.success)
         Match.publishUpdate(status.data.id, status.data);
@@ -174,24 +190,12 @@ module.exports = {
     if(req.param('id'))
       req.body.matchId = req.param('id');  
 
+    
+    req.body.playerId = UserHelper.getSession(req).id;
     matchapi.setHost(req.body, function(status) {
       if(status.success)
         Match.publishUpdate(status.data.id, status.data);
       res.json(status);
-    });
-  },
-
-  registerSocket : function(req, res) {
-    if(!req.socket)
-      res.json("Need to have a socket to register.");
-    matchapi.registerSocket(UserHelper.getSession(req), req.socket, function(status) {
-      req.json(status);
-    });
-  },
-
-  deregisterSocket : function(req, res) {
-    match.deregisterSocket(UserHelper.getSession(req), function(status) {
-      req.json(status);
     });
   },
 };

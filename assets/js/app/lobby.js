@@ -1,8 +1,10 @@
-define(["text!templates/lobby/lobby.ejs", 
+define([
+	"text!templates/lobby/lobby.ejs", 
 	"text!templates/lobby/player-row.ejs", 
-	"text!templates/lobby/lobby-start-button.ejs"], 
+	"text!templates/lobby/optionsmenu.ejs"
+	], 
 	
-	function(maintemp, pRowTemplate, startbuttontemp) {
+	function(maintemp, pRowTemplate, optionsMenuTemplate) {
 	var lobby = {};
 
 
@@ -15,6 +17,11 @@ define(["text!templates/lobby/lobby.ejs",
 			this.bind("change:state", lobby.loadPieceSelection);
 			this.cache = {};
 			this.cache.users = {};
+
+			mapi.joinChat(this.get('lobbyChat'), function(status) {
+				if(!status.success)
+					alert(status.data);
+			});
 		},
 
 		getUser : function(id, cb) {
@@ -35,11 +42,12 @@ define(["text!templates/lobby/lobby.ejs",
 
 	var LobbyView = Backbone.View.extend({
 		initialize : function() {
+			
 			this.listenTo(this.model, "change", this.render);
 
 			this.maintemp = maintemp;
 			this.pRowTemplate = pRowTemplate;
-			this.startbuttontemp = startbuttontemp;
+			this.optionsMenuTemplate = optionsMenuTemplate;
 
 			this.$el = $(new EJS({text : maintemp}).render({}));
 			this.$el.appendTo("#"+game.config.container);
@@ -47,12 +55,18 @@ define(["text!templates/lobby/lobby.ejs",
 			this.$playerRow = $("#player-row");
 			this.$hostEl = $("#lobby-host-wrap");
 			this.$startButtonEl = $("#lobby-start-button-wrap");
+			this.$optionsMenu = $("#lobby #options-menu");
 
-			 $("#lobby #options, #lobby #switch-sides").tooltip({
-                  'selector': '',
-                  'placement': 'top'
-                });
+			$("#lobby #options, #lobby #switch-sides").tooltip({
+			  'selector': '',
+			  'placement': 'top'
+			});
 
+			$("#lobby .chat-form").submit(function() {
+				return false;
+			});
+			 
+			game.chat.create(this.model.get('lobbyChat'), $("#lobby .chat"), $("#lobby .chat-input"), $("#lobby .chat-send"));
 
 			this.render();
 
@@ -62,7 +76,8 @@ define(["text!templates/lobby/lobby.ejs",
 		events: {
 		    "click #lobby-start-button" : "startGame",
 		    "click #switch-sides" : "switchSides",
-		    "click #lobby-disband-match" : "disbandMatch"
+		    "click #lobby-disband-match" : "disbandMatch",
+		    "click #lobby-leave-match" : "leaveMatch"
 		},
 
 		startGame : function() {
@@ -101,6 +116,17 @@ define(["text!templates/lobby/lobby.ejs",
 			});
 		},
 
+		leaveMatch : function() {
+			mapi.removePlayer({
+				matchId : this.model.get('id')
+			}, function(status) {
+				if(!status.success)
+					alert(status.data);
+				else
+					game.switchState("mainmenu");
+			});
+		},
+
 		renderPlayerRow : function() {
 			var self = this;
 			this.model.getUser(this.model.get('lightPlayer'), function(lightPlayer) {
@@ -131,6 +157,11 @@ define(["text!templates/lobby/lobby.ejs",
 		},
 
 		renderHostFeatures : function() {
+
+			this.$optionsMenu.html(new EJS({text : this.optionsMenuTemplate}).render({
+				isHost : this.model.get('host') == game.state.user.id,
+			}));
+
 			if(this.model.get('host') !== game.state.user.id)
 				$(".host-feature").hide();
 			else{
@@ -156,7 +187,6 @@ define(["text!templates/lobby/lobby.ejs",
 	lobby.load = function(data, cb) {
 		lobby.model = new LobbyModel(data); 
 		lobby.view = new LobbyView({model : lobby.model});
-
 		cb();
 	};
 
@@ -166,13 +196,29 @@ define(["text!templates/lobby/lobby.ejs",
 
 	lobby.unload = function() {
 		lobby.view.$el.remove();
+		game.chat.leave(this.model.get("lobbyChat"));
 	};
 
 	lobby.recieveMessage = function(message) {
-		if(message.verb == "update")
-			lobby.model.set(message.data);
+		if(message.verb == "update"){
+			if(message.data.lightPlayer != game.state.user.id &&
+				message.data.darkPlayer != game.state.user.id &&
+				!_.contains(message.data.observers, game.state.user.id))
+				game.switchState('mainmenu', "You were removed from the match.");
+			else
+				lobby.model.set(message.data);
+		}
 		if(message.verb == "destroy")
 			game.switchState('mainmenu', "The game was disbanded.");
+	};
+
+	lobby.unloadPage = function(cb) {
+		if(this.model.get('host') == game.state.user.id)
+			this.view.disbandMatch();
+		else
+			this.view.leaveMatch();
+		game.chat.leave(this.model.get("lobbyChat"));
+		cb();
 	};
 
 	return lobby;
