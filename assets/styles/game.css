@@ -90,3 +90,7 @@
 .chat div{
   margin-bottom: 10px;
 }
+#view {
+  position: relative;
+  top: -350px;
+}

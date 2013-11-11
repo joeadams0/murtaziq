@@ -43,3 +43,8 @@ nbproject
 ########################
 config/local.js
 config/adapters.js
+
+########################
+# istanbul
+########################
+coverage/
