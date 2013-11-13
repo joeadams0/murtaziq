@@ -1,8 +1,8 @@
 /**
- * User
+ * Invitation
  *
  * @module      :: Model
- * @description :: This models Invitations for games, the model has sender, reciever, and state
+ * @description :: This models Invitations for games, the model has sender, receiver, and state
  *
  */
 
