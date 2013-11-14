@@ -345,7 +345,6 @@ function loadJSONObj(JSONObj){
 
         state : JSONObj.state
     };
-
      
     return match;
 }

@@ -71,12 +71,18 @@ function setSide (isLightSide, side, board) {
         message = "Your total piece value exceeds the total piece value maximum."
     }
 
-    return {
-        success : success,
-        value : value,
-        message : message,
-        maxValue : maxValue
-    };
+    var obj = {};
+
+    obj.success = success;
+    if(message)
+        obj.data = message;
+    else
+        obj.data = {
+            value : value,
+            maxValue : maxValue
+        };
+
+    return obj;
 }
 
 function validateSideValue(side){
@@ -227,7 +233,6 @@ function setPawns(rowIndex, piece, team, board){
         board,
         team,
         "pawn",
-        false,
         vector.create(0, rowIndex),
         vector.create(1, rowIndex),
         vector.create(2, rowIndex),
@@ -245,7 +250,6 @@ function setRooks(rowIndex, piece, team, board){
         board,
         team,
         "rook",
-        false,
         vector.create(0, rowIndex),
         vector.create(7, rowIndex)
     );
@@ -257,7 +261,6 @@ function setKnights(rowIndex, piece, team, board){
         board,
         team,
         "knight",
-        false,
         vector.create(1, rowIndex),
         vector.create(6, rowIndex)
     );
@@ -269,7 +272,6 @@ function setBishops(rowIndex, piece, team, board){
         board,
         team,
         "bishop",
-        false,
         vector.create(2, rowIndex),
         vector.create(5, rowIndex)
     );
@@ -281,7 +283,6 @@ function setQueen(rowIndex, offset, piece, team, board){
         board,
         team,
         "queen",
-        false,
         vector.create(3, rowIndex)
     );
 }
@@ -292,26 +293,22 @@ function setRoyal(rowIndex, offset, piece, team, board){
         board,
         team,
         "royal",
-        true,
         vector.create(4, rowIndex)
     );
 }
 
 
-function createPiecesAt(piece, board, team, position, isRoyal){
-    var index = 3;
-    if(_.isBoolean(isRoyal))
-        index = 4;
+function createPiecesAt(piece, board, team, position){
     _.each(
-        _.rest(arguments, index),
-        createPieceGen(piece, board, team, position,isRoyal)
+        _.rest(arguments, 3),
+        createPieceGen(piece, board, team, position)
     );
     return board;
 }
 
-function createPieceGen(piece, board, team, position, isRoyal){
+function createPieceGen(piece, board, team, position){
     return function(vec){
-        Space.setPiece(getSpace(board, vec), new piece(team, position, isRoyal));
+        Space.setPiece(getSpace(board, vec), new piece(team, position));
     };
 }
 

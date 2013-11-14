@@ -1,4 +1,8 @@
-define(["text!templates/pieceSelection.ejs"], function(template){
+define([
+  "text!templates/pieceselection/pieceSelection.ejs",
+  "text!templates/pieceselection/readystate.ejs"
+],
+  function(template, readyStateTemplate){
   var sel = {};
   
   // required load function to be used by the SPA architecture
@@ -8,16 +12,38 @@ define(["text!templates/pieceSelection.ejs"], function(template){
       matchId: data.id,
       playerId: game.state.user.id
     }, function(){  // put this stuff in a callback, so that we can be sure that things are initialized first.
-      // render the view
-      sel.$template = $(new EJS({text : template}).render({pieceList: sel.pieceVals}));
-      sel.$template.appendTo("#" + game.config.container);
 
-      // set up the jQuery DOM manipulators/ listeners
-      //   depends on jQuery-ui
-      sel.jQuery();
+      mapi.getUser(data.lightPlayer, function(lightPlayer) {
+        mapi.getUser(data.darkPlayer, function(darkPlayer) {
 
-      // call the callback to finish
-      cb();
+          // render the view
+          sel.$template = $(new EJS({text : template}).render({
+            pieceList: sel.pieceVals, 
+            lightPlayer : lightPlayer.username,
+            darkPlayer : darkPlayer.username
+          }));
+          sel.$template.appendTo("#" + game.config.container);
+          sel.readyStateTemplate = readyStateTemplate;
+          sel.$lightPlayerState = $("#piece-selection .light-player-state");
+          sel.$darkPlayerState = $("#piece-selection .dark-player-state");
+          sel.renderPlayerStates(data);
+
+
+          mapi.getMaxTeamValue(function(val){
+            sel.maxTeamValue = val;
+            $(sel.cfg.maxCostId).html(sel.maxTeamValue);
+          });
+
+          $(sel.cfg.currentCostId).html(0);
+
+          // set up the jQuery DOM manipulators/ listeners
+          //   depends on jQuery-ui
+          sel.jQuery();
+
+          // call the callback to finish
+          cb();
+        });
+      });
     });
   };
 
@@ -53,6 +79,18 @@ define(["text!templates/pieceSelection.ejs"], function(template){
     if (data.data.state == "playing"){
       game.switchState("match", data.data);
     }
+    else
+      this.renderPlayerStates(data.data);
+  };
+
+  sel.renderPlayerStates = function(data) {
+    sel.$lightPlayerState.html(new EJS({text : sel.readyStateTemplate}).render({
+      isReady : data.isLightSideReady
+    }));
+
+    sel.$darkPlayerState.html(new EJS({text : sel.readyStateTemplate}).render({
+      isReady : data.isDarkSideReady
+    }));
   };
 
   // config MUST contain 'matchId' and 'playerId' or this don't work
@@ -60,11 +98,6 @@ define(["text!templates/pieceSelection.ejs"], function(template){
     sel.cfg = _.defaults(config, {
       maxCostId: "#maxCost",
       currentCostId: "#currentCost"
-    });
-
-    mapi.getMaxTeamValue(function(val){
-      sel.maxTeamValue = val;
-      $(sel.cfg.maxCostId).text(""+sel.maxTeamValue);
     });
 
     mapi.getAllPieces(function(arr){
@@ -101,15 +134,21 @@ define(["text!templates/pieceSelection.ejs"], function(template){
     $(sel.cfg.currentCostId).text(""+sel.cost);
   };
 
-  sel.setTeam = function(){
+  sel.setTeam = function(cb){
     if (sel.cost > sel.maxTeamValue)
       alert("nope. Army too big, buddy.");
-    else
+    else{
+      console.log(sel.pieces);
       mapi.setPieces({
         matchId: sel.cfg.matchId,
         playerId: sel.cfg.playerId,
         pieces: sel.pieces
-      }, function(res){console.log(res);});
+      }, function(res){
+        if(!res.success)
+          alert(res.data);
+        cb();
+      });
+    }
   };
 
   sel.jQuery = function(){
@@ -136,8 +175,12 @@ define(["text!templates/pieceSelection.ejs"], function(template){
 
       // set up listeners
       act.listenToSubmit = function(){
-        $( cfg.submitId ).click(function(e){
-          sel.setTeam();
+        var $button = $( cfg.submitId );
+        $button.click(function(e){
+          $button.button('loading');
+          sel.setTeam(function() {
+            $button.text("Waiting...");
+          });
         });
       };
       // DISPLAY PIECE INFO

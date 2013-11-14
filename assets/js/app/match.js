@@ -13,6 +13,13 @@ define(["text!templates/match/match.ejs",
   modelFunctions.initialize = function() {
     this.cache = {};
     this.cache.users = {};
+    this.cache.moves = {};
+    this.highlights = {
+      selected : "selected",
+      friendly : "friendly",
+      enemy : "enemy",
+      neutral : "neutral"
+    }
   };
 
   modelFunctions.getUser = function(id, cb) {
@@ -31,7 +38,7 @@ define(["text!templates/match/match.ejs",
 
   modelFunctions.removeHighlights = function() {
     this.cache.possibleMoves = undefined;
-    _.each(match.state.model.match.board, function(row) {
+    _.each(this.get('match').board, function(row) {
       _.each(row, function(space) {
         space.highlight = undefined;
       });
@@ -45,8 +52,79 @@ define(["text!templates/match/match.ejs",
       return this.get('match').board[y][x];
   };
 
+  modelFunctions.getMoves = function(loc, cb) {
+    var self = this;
+    if(this.cache.moves[loc.x] && this.cache.moves[loc.x][loc.y]){
+      cb(this.cache.moves[loc.x][loc.y]);
+    }
+    else
+      mapi.getMoves({
+        matchId : this.get('id'),
+        loc : loc
+      }, function(status) {
+        if(status.success){
+          cb(status.data);
+          if(self.cache.moves[loc.x])
+            self.cache.moves[loc.x][loc.y] = status.data;
+          else{
+            self.cache.moves[loc.x] = {};
+            self.cache.moves[loc.x][loc.y] = status.data;
+          }
+        }
+        else{
+          alert(status.data);
+          cb({});
+        }
+      });
+  };
 
+  modelFunctions.locEquality = function(loc1, loc2) {
+    return loc1.x == loc2.x && loc1.y == loc2.y;
+  };
 
+  modelFunctions.highlightMoves = function(data) {
+
+    this.getSpace(data.loc.x, data.loc.y).highlight = this.highlights.selected;
+
+    _.each(data.moves, function(move) {
+      // Friendly moves
+      if((move.isLightTeam && game.state.user.id === this.get('lightPlayer'))||
+          (!move.isLightTeam && game.state.user.id === this.get('darkPlayer'))){
+
+        this.getSpace(move.target.x, move.target.y).highlight = this.highlights.friendly;
+      }
+      // Enemy Moves
+      else if((move.isLightTeam && game.state.user.id === this.get('darkPlayer'))||
+          (!move.isLightTeam && game.state.user.id === this.get('lightPlayer'))){
+
+        this.getSpace(move.target.x, move.target.y).highlight = this.highlights.enemy;
+      }
+      // Observer Moves
+      else{
+        this.getSpace(move.target.x, move.target.y).highlight = this.highlights.neutral;
+      }
+    }, this);
+  };
+
+  modelFunctions.attemptMove = function(source, target) {
+    var self = this;
+
+    mapi.performMove({
+      matchId : this.get('id'),
+      playerId : game.state.user.id,
+      source : source,
+      target : target,
+    }, function(status) {
+      if(!status.success)
+        alert(status.data);
+      else
+        self.clearMoveCache();
+    });
+  };
+
+  modelFunctions.clearMoveCache = function() {
+    this.cache.moves = [];
+  };
   var MatchModel = Backbone.Model.extend(modelFunctions);
 
 /************************************************************************************************/
@@ -77,45 +155,55 @@ define(["text!templates/match/match.ejs",
 
         self.$el.appendTo("#"+game.config.container);
         self.$state = $("#match #state");
+        
+        var defaultOptions = {};
+        defaultOptions.svg_container = "#board-container";
+        defaultOptions.dimension = 720;
+        defaultOptions.duration = 2000;
+        defaultOptions.fold = true;
+        defaultOptions.text = false;
+        defaultOptions.moveHighlightColor = "green"; 
+        defaultOptions.boardId = "board";
+        defaultOptions.viewId = "view";
+        defaultOptions.piecesId = "pieces";
+        defaultOptions.darkSpaceClass = "dark";
+        defaultOptions.lightSpaceClass = "light";
+        defaultOptions.friendlyHighlight = "friendly-highlight";
+        defaultOptions.enemyHighlight = "enemy-highlight";
+        defaultOptions.neutralHighlight = "neutral-highlight";
 
         // parse options
         if (options == undefined){
-          options = {};
-          options.svg_container = "#match";
-          options.dimension = 720;
-          options.duration = 2000;
-          options.fold = true;
-          options.text = false;
-          options.moveHighlightColor = "green"; 
+          options = defaultOptions;
+          
         } else {
-          if (options.svg_container == undefined) options.svg_container = "#match";
-          if (options.dimension == undefined) options.dimension = 720;
-          if (options.duration == undefined) options.duration = 2000; // 2 seconds
-          if (options.fold != false) options.fold = true;
-          if (options.text != true) options.text = false;
+          _.each(defaultOptions, function(value, key) {
+            if(!options[key])
+              options[key] = value;
+          });
         }
 
         // save the options we used so we can use the same ones to end
         self.model.set('boardOptions', options);
 
         if (self.isBoardCreated()) {
-          d3.select('#board').remove();
+          d3.select('#'+options.boardId).remove();
         }
 
         if (options.text){
           self.svg = {};
           self.board = d3.select(options.svg_container)
                                .append("table")
-                               .attr("id", "board");
+                               .attr("id", options.boardId);
         }
 
         self.svg = d3.select(options.svg_container).append("svg")
-                           .attr("id", "view")
+                           .attr("id", options.viewId)
                            .attr("opacity", 0)
                            .attr("width", 0)
                            .attr("height", 0);
 
-        self.board = self.svg.append("g").attr("id", "board");
+        self.board = self.svg.append("g").attr("id", options.boardId);
         self.board.selectAll("g")
                         .data([[1,0,1,0,1,0,1,0],
                                [0,1,0,1,0,1,0,1],
@@ -130,14 +218,14 @@ define(["text!templates/match/match.ejs",
                         .enter().append("rect")
                         .on("click", function() {
                           var space = d3.select(this);
-                          console.log({x: space.attr("x")/space.attr("width"), y :  space.attr("y")/space.attr("height")});
+                          match.spaceSelected(space.attr("x")/space.attr("width"), space.attr("y")/space.attr("height"));
                         })
                         .attr("x", function(d, i) {return (i % 8)*(options.dimension/8);})
                         .attr("y", function(d, i, j) {return j*(options.dimension/8);})
                         .attr("width", options.dimension/8)
                         .attr("height", options.dimension/8)
-                        .attr("class", function(d) {return (d == 1) ? ("dark") : ("light");})
-                        .attr("tile-color", function(d) {return (d == 1) ? ("dark") : ("light");});
+                        .attr("class", function(d) {return (d == 1) ? (options.darkSpaceClass) : (options.lightSpaceClass);})
+                        .attr("tile-color", function(d) {return (d == 1) ? (options.darkSpaceClass) : (options.lightSpaceClass);});
 
         //animations to show the board
         if (options.fold){
@@ -149,17 +237,20 @@ define(["text!templates/match/match.ejs",
                         .attr("height", options.dimension);
           self.svg.transition().duration(options.duration/3).delay(2*options.duration/3)
                         .attr("width", options.dimension)
+                        .each("end", function() {
+                          self.listenTo(self.model, "change", self.render);
+                          self.render();
+                        });
         } else {
           self.svg.transition().duration(options.duration)
                         .style("opacity", 1)
                         .attr("width", options.dimension)
-                        .attr("height", options.dimension);
+                        .attr("height", options.dimension)
+                        .each("end", function() {
+                          self.listenTo(self.model, "change", self.render);
+                          self.render();
+                        });
         }
-
-
-
-        self.listenTo(self.model, "change", self.render);
-        self.render();
       });
     });
 
@@ -172,7 +263,7 @@ define(["text!templates/match/match.ejs",
     var matchState = this.model.attributes;
 
     if (d3.select("#pieces").node() == null) {
-      this.pieces = this.svg.append("g").attr("id", "pieces");
+      this.pieces = this.svg.append("g").attr("id", matchState.boardOptions.piecesId);
       this.piecesRows = this.pieces.selectAll("g");
       this.piecesRows.data(matchState.match.board).enter().append("g").selectAll("image")
                        .data(function(d) {return d;})
@@ -193,8 +284,20 @@ define(["text!templates/match/match.ejs",
           .selectAll("rect")
           .data(function(d) { return d})
           .attr("class", function(d) { 
-            if(d.highlight)
-              return d.highlight;
+            if(d.highlight){
+              switch(d.highlight){
+                case self.model.highlights.friendly:
+                  return matchState.boardOptions.friendlyHighlight;
+                  break;
+
+                case self.model.highlights.enemy:
+                  return matchState.boardOptions.enemyHighlight;
+                  break;
+
+                default:
+                  return matchState.boardOptions.neutralHighlight;
+              }
+            }
             else
               return d3.select(this).attr("tile-color");
           });
@@ -258,6 +361,61 @@ define(["text!templates/match/match.ejs",
     this.view.unload();
   };
 
+  match.recieveMessage = function(message) {
+    if(message.verb = "update")
+      match.model.set(message.data);
+  };
+
+  match.spaceSelected = function(x,y) {
+    var highlightMoves = true;
+    var self = this;
+
+    if(this.model.get('selectedLoc')){
+      var selectedLoc = this.model.get('selectedLoc');
+      // If trying to move
+      if(!this.model.locEquality(selectedLoc, {
+          x : x,
+          y : y
+        })){
+        this.model.getMoves(selectedLoc, function(data) {
+          _.each(data.moves , function(move) {
+            if( (this.model.locEquality(selectedLoc, move.source)) && (this.model.locEquality({x: x, y:y}, move.target))){
+              this.model.attemptMove(move.source, move.target);
+              highlightMoves = false;
+            }
+          }, self);
+        });
+      }
+      else
+        highlightMoves = false;
+    }
+
+    if(this.model.get('selectedLoc'))
+      this.model.removeHighlights();
+    this.model.set({
+      selectedLoc : undefined
+    });
+
+    
+    // If highlight possible moves
+    if(highlightMoves && this.model.getSpace(x,y).piece){
+      var selectedLoc = {
+        x : x,
+        y : y
+      };
+      this.model.set({
+        selectedLoc : selectedLoc
+      });
+      this.model.getMoves(selectedLoc, function(data) {
+        self.model.highlightMoves(data);
+        self.view.render();
+      });
+    }
+    else{
+      this.view.render();
+    }
+  };
+
   match.drawTextmatch = function(matchState){
     matchState = JSON.parse(matchState);
     if (!self.isBoardCreated() || !self.boardIsText()) {
@@ -307,173 +465,7 @@ define(["text!templates/match/match.ejs",
     }
   };
 
-  // EVENT handlers
 
-  match.events = {};
-
-  match.events.spaceClicked = function(x,y) {
-    var highlightMoves = true;
-
-    // If trying to move
-    if(match.state.model.selectedLoc && match.state.model.possibleMoves){
-      _.each(match.state.model.possibleMoves, function(move) {
-        if( (match.state.model.selectedLoc.x === move.source.x && match.state.model.selectedLoc.y === move.source.y) && (x === move.target.x && y === move.target.y)){
-          match.events.moveAttempt(move.source, move.target);
-          highlightMoves = false;
-        }
-      });
-    }
-
-    match.state.model.removeHighlights();
-    match.state.model.selectedLoc = undefined;
-
-    
-    // If highlight possible moves
-    if(highlightMoves && match.state.model.getSpace(x,y).piece)
-      window.mapi.getMoves({
-        id : match.state.model.id,
-        loc : {
-          x : x,
-          y : y
-        }
-      }, function(status) {
-        if(status.success){
-          match.state.model.selectedLoc = status.data.loc;
-          match.state.model.possibleMoves = status.data.moves;
-
-          match.state.model.getSpace(status.data.loc.x, status.data.loc.y).highlight = "selected-highlight"
-
-          _.each(status.data.moves, function(move) {
-            // Friendly moves
-            if((move.isLightTeam && match.state.model.thisPlayer === match.state.model.lightPlayer)||
-                (!move.isLightTeam && match.state.model.thisPlayer === match.state.model.darkPlayer)){
-
-              match.state.model.getSpace(move.target.x, move.target.y).highlight = "friendly-highlight";
-            }
-            // Enemy Moves
-            else if((move.isLightTeam && match.state.model.thisPlayer === match.state.model.darkPlayer)||
-                (!move.isLightTeam && match.state.model.thisPlayer === match.state.model.lightPlayer)){
-
-              match.state.model.getSpace(move.target.x, move.target.y).highlight = "enemy-highlight";
-            }
-            // Observer Moves
-            else{
-              match.state.model.getSpace(move.target.x, move.target.y).highlight = "neutral-highlight";
-            }
-          });
-
-
-          match.render();
-        }
-      });
-    else{
-      match.render();
-    }
-  };
-
-  match.events.moveAttempt = function(source, target) {
-    window.mapi.performMove({
-      matchId : match.state.model.id,
-      playerId : match.state.model.thisPlayer,
-      source : source,
-      target : target,
-    }, function(status) {
-      if(!status.success)
-        alert(status.data);
-    });
-  };
-
-  match.events.updateState = function(state, cb) {
-
-    if(!cb)
-      cb = function() {};
-
-    _.each(state, function(el, key) {
-      match.state.model[key] = el;
-    });
-    // var model = match.state.model;
-    // var match = state.match;
-    // var obs = state.observers;
-
-    // state.match = undefined;
-    // state.observers = undefined;
-
-    // // Match turn
-    // if(model.isLightTurn !== undefined && model.isLightTurn !== match.isLightTurn){
-    //   model.isLightTurn.value = match.isLightTurn;
-    //   model.isLightTurn.hasChanged = true;
-    // }
-
-    // // Match board
-    // // Rows
-    // _.each(match.board, function(row, y, list) {
-    //   // Spaces
-    //   _.each(row function(newSpace, x) {
-
-    //     var oldSpace = model.board[x][y];
-
-    //     if(newSpace.piece && oldSpace.piece){
-    //       // Go thru each member and see if it has changed
-    //       var hasChanged = _.every(newSpace.piece, function(element, key) {
-    //         return oldSpace[key] !== undefined || oldSpace[key].value !== element;
-    //       });          
-
-    //       if(hasChanged){
-    //         oldSpace.piece = newSpace.piece;
-    //         oldSpace.hasChanged = true;
-    //       }
-
-    //     }
-    //     else if(newSpace.piece || oldSpace.piece){
-    //         oldSpace.piece = newSpace.piece;
-    //         oldSpace.hasChanged = true;
-    //     }
-        
-    //   });
-    // });
-
-    // // Match history
-    
-
-    // // Normal State
-    // _.each(state, function(value, key, list) {
-    //   if(model[key] && value !== model[key].value){
-    //       model[key].value = value;
-    //       model[key].hasChanged = true;
-    //     }
-    //   }
-    // });
-
-    match.render(cb);
-  };
-
-  match.events.newMatch = function(state, cb) {
-
-    if(!cb)
-      cb = function() {};
-
-    match.init.board(function() {
-      match.events.updateState(state, cb);
-    });
-  };
-
-
-  match.init = {};
-    /* match.init.options = {
-         svg_container: selector,
-         dimension: integer,
-         duration: integer (ms),
-         fold: boolean,
-         text: boolean
-       };
-    */
-   
-
-  match.init.board = function(cb, options){
-    
-
-    return return_status;
-  };
 
   // CLEANUP functions
 
@@ -535,20 +527,6 @@ define(["text!templates/match/match.ejs",
     return "board removed";
   };
 
-  // STATE Tracking Functions
-
-  match.state = {};
-
-  // Contains all things relating to the rendering of the state
-  self = {};
-
-  self.isBoardCreated = function(){
-    return d3.select("#match").node() != null;
-  };
-
-  self.boardIsText = function(){
-    return !Array.isArray(self.svg);
-  };
 
   return match;
 

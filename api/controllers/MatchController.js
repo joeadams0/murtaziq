@@ -118,8 +118,12 @@ module.exports = {
 
     req.body.playerId = UserHelper.getSession(req).id;
     matchapi.setPieces(req.body, function(status) {
-      if(status.success)
-        Match.publishUpdate(status.data.id, status.data);
+      if(status.success){
+        matchapi.getMatch(req.body.matchId, function(err, match) {
+          if(!err)
+            Match.publishUpdate(req.body.matchId, match);      
+        });
+      }
 
       res.json(status); 
     });

@@ -31,7 +31,7 @@ module.exports = {
  */
 function constructorGenerator(pieceConfigs){
     
-    return function(team, position, royalty){
+    return function(team, position){
         master = require('../master.js');
 
         var configs = master.getConfigs();
@@ -49,7 +49,6 @@ function constructorGenerator(pieceConfigs){
         this.position = position;
         this.team = team;
         this.moveCount = 0;
-        this.royalty = utils.existy(royalty) ? royalty : false;
         this.lightTeam = lightTeam;
         this.darkTeam = darkTeam;
 		this.getPosition=getPosition;
@@ -123,7 +122,7 @@ function getMoveCount(){
 }
 
 function isRoyal(){
-    return this.royalty;
+    return this.getPosition() == "royal";
 }
 
 function incrMoveCount(){
@@ -294,12 +293,13 @@ function toJSONObj () {
         moveCount : this.getMoveCount(),
         royalty : this.isRoyal(),
         schemas : this.schemaFiles,
+        position : this.getPosition(),
     }
 }
 
 function loadJSONObj(JSONObj, configs){
     var piece = constructorGenerator(JSONObj);
-    piece = new piece(JSONObj.team, JSONObj.royalty);
+    piece = new piece(JSONObj.team, JSONObj.position);
     piece.setMoveCount(JSONObj.moveCount);
     return piece;
 }
@@ -311,6 +311,6 @@ function toClientJSONObj () {
         abbr : this.getAbbr(),
         team : this.getTeam(),
         moveCount : this.getMoveCount(),
-        royalty : this.isRoyal(),
+        postition : this.getPosition(),
     }
 }

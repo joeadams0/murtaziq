@@ -31,7 +31,7 @@ define([
 					username : username,
 					message : message
 				});
-				this.$el.append(html);
+				this.addHtml(html);
 			};
 
 			this.memberJoined = function(username) {
@@ -39,7 +39,7 @@ define([
 					username : username
 				});
 
-				this.$el.append(html);
+				this.addHtml(html);
 			};
 
 			this.memberLeft = function(username) {
@@ -47,7 +47,12 @@ define([
 					username : username
 				});	
 
-				this.$el.append(html);			
+				this.addHtml(html);		
+			};
+
+			this.addHtml = function(html) {
+				this.$el.append(html);
+				$el.scrollTop($el[0].scrollHeight);
 			};
 
 

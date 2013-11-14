@@ -1,9 +1,30 @@
 <div id="piece-selection">
+  <div class="row text-center">
+    <div class="light-player col-md-2 col-md-offset-3">
+      <h1>
+        <strong> 
+          <span class="username"><%=lightPlayer%></span>
+        </strong>
+      </h1>
+      <div class="light-player-state"/>
+    </div>
+    <div class="col-md-2 versus">
+      <h2>VS</h2>
+    </div>
+    <div class="dark-player col-md-2">      
+      <h1>
+        <strong>
+          <span class="username"><%=darkPlayer%></span>
+        </strong>
+      </h1>
+      <div class="dark-player-state"/>
+    </div>
+  </div>
   <ul class="pieceList connector">
     <% for(var i = 0; i < pieceList.length; i++){ %>
       <li class="piece" data-name="<%= pieceList[i].name %>">
         <img class="pieceImage" src="/images/pieces/<%= pieceList[i].name %> 1.png" height="100"/>
-        <!-- Hidden until mouseover --!>
+        <!-- Hidden until mouseover -->
         <div class="pieceInfo popover">
           <h3 class="popover-title">The <%= pieceList[i].name %></h3>
           <div class="popover-content">
@@ -41,5 +62,7 @@
     </div>
   </div>
 
-  <button class="btn btn-primary btn-large" id="setAsTeam">Set Team</button>
+  <div id="setAsTeamWrapper">
+    <button class="btn btn-primary btn-large" data-loading-text="Loading..." data-waiting-text="Waiting..." id="setAsTeam">Ready!</button>
+  </div>
 </div>

@@ -16,6 +16,8 @@
 #piece-selection .myTeamView{
   min-height: 200px;
   border: 1px solid black;
+  width: 802px;
+  margin: auto;
 }
 .board-row .spot {
   height: 100px;
@@ -26,7 +28,7 @@
   top: 0;
   border: 1px solid black;
 }
-#piece-selection rect {
+#piece-selection rect, #board-container rect {
   stroke: black;
   stroke-width: 1px;
 }
@@ -78,10 +80,11 @@
 }
 
 .chat{
-  min-height: 300px;
+  height: 300px;
   line-height: normal;
   padding : 5px;
   font-size: 15px;
+  overflow: auto;
 }
 .chat-input{
   width: 76%;
@@ -91,6 +94,36 @@
   margin-bottom: 10px;
 }
 #view {
-  position: relative;
-  top: -350px;
+}
+
+.versus {
+  margin-top: 30px;
+}
+
+#piece-selection #setAsTeam {
+  width: 130px;
+  height: 55px;
+  font-size: 25px;
+  margin: auto;
+}
+#piece-selection #setAsTeamWrapper {
+  width: 130px;
+  font-size: 25px;
+  margin: auto; 
+  margin-top: 35px;
+}
+
+#match .players{
+  line-height: normal;
+}
+
+#match .player-name{
+  font-size: 30px;
+}
+#match #state{
+  font-size: 15px
+}
+
+hr{
+  border-top-color: #ccc;
 }

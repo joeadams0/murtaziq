@@ -309,7 +309,6 @@ function setPieces(params, cb){
 
                 if(match.isLightSideReady && match.isDarkSideReady){
                     match.state = match.getStates()['playing'];
-                    Match.publishUpdate(match.id, match);
                 }
 
                 match.save(function(err) {
