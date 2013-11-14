@@ -13,10 +13,22 @@ module.exports = {
     index : function(req, res){
 		userId = UserHelper.getSession(req).id;
 		
-		//TODO: update this to only include users in matchmaking queue
 		UserHelper.getUsers({ id: { '!': userId }}, function(err, allUsers) {
+		
+			usersInQueue = [];
+			//foreach loop solution to joining User and InMatchQueue and querying on inQueue
+			//may be able to do this a better way
+			allUsers.forEach(function(user) {
+				InMatchQueue.findOne({playerId: user.id}).done(function(err, imq){
+					if (imq != null && imq.inQueue == true)
+					{
+						usersInQueue.push(user);
+					}
+				});
+			});
+		
 			User.findOne({id: userId}).done(function(err, user) {
-				res.view('play/matchmaking', {currentUser : user.username, users : allUsers});
+				res.view('play/matchmaking', {currentUser : user.username, users : usersInQueue});
 			})
 		});
 		
