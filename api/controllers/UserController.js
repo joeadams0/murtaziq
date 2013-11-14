@@ -91,14 +91,15 @@ module.exports = {
     },
 
     userlist : function(req, res){
-	User.find({}).limit(10).sort('name ASC').done(function(err, users) {
-		  // Error handling
-		  if (err) {
-		    return res.json(err);
-		  // Found multiple users!
-		  } else {
-		res.view('user/index', { list : users } )  
-		}
+		User.find({}).limit(10).sort('name ASC').done(function(err, users) {
+			// Error handling
+			if (err) {
+				return res.json(err);
+				// Found multiple users!
+			} else {
+				user = UserHelper.getSession(req);
+				res.view('user/index', { list : users , currentUser : user} )  
+			}
 		});
     },
 

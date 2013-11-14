@@ -23,12 +23,25 @@ module.exports = {
 		//Add current user to matchmaking queue
 		InMatchQueue.findOne({playerId: userId}).done(function(err, imq){
 			if(err) {
-				//TODO: should something be here?
+				res.send(err, 500);
 			} else if(imq) {
 				InMatchQueue.update({playerId: userId}, {inQueue: true}, function() {});
 			} else {
 				InMatchQueue.create({playerId : userId, inQueue : true}).done(function(err,user){});
 			}
 		});
-	}
+	},
+	
+	leave : function(req, res){
+		userId = UserHelper.getSession(req).id;
+		InMatchQueue.findOne({playerId: userId}).done(function(err, imq){
+			if(err) {
+				res.send(err, 500);
+			} else if(imq) {
+				InMatchQueue.update({playerId: userId}, {inQueue: false}, function() {});
+			} else {
+				InMatchQueue.create({playerId : userId, inQueue : false}).done(function(err,user){});
+			}
+		});
+	},
 };

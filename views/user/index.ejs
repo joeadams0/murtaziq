@@ -2,12 +2,22 @@ USERS:
 <table>
 <tr>
 <td>Username</td>
+<td>Friendship</td>
 <td>State</td>
 <td>User ID</td>
 </tr>
 <% _.each( list, function(el){ %>
 <tr>
-<td align='center'><a href=<%=util.format("/user/%s",el.id)%>><%= el.username %></a></td>
+<td align='center'>
+	<a href=<%=util.format("/user/%s",el.id)%>><%= el.username %></a>
+</td>
+<td align='center'>
+	<% if (el.id != currentUser.id) { %>
+	<a href="/friendship/add/<%= el.id %>" class="btn btn-lg btn-primary">Add as friend</a>
+	<% } else { %>
+	This Is You
+	<% } %> 
+</td>
 <td align='center'><%= el.state %></td>
 <td align='center'><%= el.id %></td>
 </tr>
