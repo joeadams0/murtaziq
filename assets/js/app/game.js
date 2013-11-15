@@ -88,10 +88,12 @@ game.recieveMessage = function(message) {
 };
 
 game.unloadPage = function(cb) {
-	game.state.currentState.unloadPage(function() {
-		game.chat.unloadPage(function() {
-			cb();
-		});
+
+	game.chat.unloadPage(function() {
+		if(game.state.currentState.unloadPage)
+			game.state.currentState.unloadPage(function() {
+				cb();
+			});
 	});
 
 };

@@ -20,20 +20,21 @@ chatHelper.join = function(id, username, socket, cb) {
 			}
 			else{
 				Chat.subscribe(socket, id);
-				if(!chat.members[username] || chat.members[username].length == 0){
+				var sendJoin = !chat.members[username] || chat.members[username].length == 0;
+				if(!chat.members[username])
 					chat.members[username] = [username];
-					chat.save(function(err) {
-						if(err)
-							status = makeStatus(false, err);
-						else{
-							chatHelper.broadcast('join', id, username);
-							status = makeStatus(true);
-						}
-						cb(status);
-					});
-				}
 				else
-					cb(makeStatus(true));
+					chat.members[username].push(username);
+				chat.save(function(err) {
+					if(err)
+						status = makeStatus(false, err);
+					else{
+						if(sendJoin)
+							chatHelper.broadcast('join', id, username);
+						status = makeStatus(true);
+					}
+					cb(status);
+				});
 			}
 		});
 	}
@@ -51,7 +52,7 @@ chatHelper.leave = function(id, username, socket, cb) {
 			}
 			else{
 				Chat.unsubscribe(socket, id);
-				if(chat.members[username]){
+				if(chat.members[username] && chat.members[username].length > 0){
 					chat.members[username].pop();
 					chat.save(function(err) {
 						if(err)

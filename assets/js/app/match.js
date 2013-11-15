@@ -21,10 +21,6 @@ define(["text!templates/match/match.ejs",
       neutral : "neutral"
     };
 
-    mapi.joinChat(this.get('playerChat'), function(status) {
-        if(!status.success)
-          alert(status.data);
-      });
   };
 
   modelFunctions.getUser = function(id, cb) {
@@ -164,6 +160,10 @@ define(["text!templates/match/match.ejs",
         game.chat.create(self.model.get('playerChat'), $("#match .chat"), $("#match .chat-input"), $("#match .chat-send"));
         $(".chat-form").submit(function() {
           return false;
+        });
+        mapi.joinChat(self.model.get('playerChat'), function(status) {
+          if(!status.success)
+            alert(status.data);
         });
         
         var defaultOptions = {};
@@ -363,8 +363,6 @@ define(["text!templates/match/match.ejs",
     match.view = new MatchView({
       model : match.model
     });
-
-    game.chat.create(this.model.get('playerChat'), $("#match .chat"), $("#match .chat-input"), $("#match .chat-send"));
     cb();
   };
 
