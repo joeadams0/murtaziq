@@ -61,12 +61,12 @@ define([
 			  'selector': '',
 			  'placement': 'top'
 			});
+			 
+			game.chat.create(this.model.get('lobbyChat'), $("#lobby .chat"), $("#lobby .chat-input"), $("#lobby .chat-send"));
 
 			$("#lobby .chat-form").submit(function() {
 				return false;
 			});
-			 
-			game.chat.create(this.model.get('lobbyChat'), $("#lobby .chat"), $("#lobby .chat-input"), $("#lobby .chat-send"));
 
 			this.render();
 
@@ -107,23 +107,29 @@ define([
 			});
 		},
 
-		disbandMatch : function() {
+		disbandMatch : function(cb) {
 			mapi.disbandMatch({
 				matchId : this.model.get('id')
 			}, function(status) {
 				if(!status.success)
 					alert(status.data);
+				else if(cb)
+					cb();
 			});
 		},
 
-		leaveMatch : function() {
+		leaveMatch : function(cb) {
 			mapi.removePlayer({
 				matchId : this.model.get('id')
 			}, function(status) {
 				if(!status.success)
 					alert(status.data);
-				else
-					game.switchState("mainmenu");
+				else{
+					if(cb)
+						cb()
+					else
+						game.switchState("mainmenu");
+				}
 			});
 		},
 
@@ -214,11 +220,13 @@ define([
 
 	lobby.unloadPage = function(cb) {
 		if(this.model.get('host') == game.state.user.id)
-			this.view.disbandMatch();
+			this.view.disbandMatch(function() {
+				cb();
+			});
 		else
-			this.view.leaveMatch();
-		game.chat.leave(this.model.get("lobbyChat"));
-		cb();
+			this.view.leaveMatch(function() {
+				cb();
+			});
 	};
 
 	return lobby;

@@ -89,8 +89,11 @@ game.recieveMessage = function(message) {
 
 game.unloadPage = function(cb) {
 	game.state.currentState.unloadPage(function() {
-		cb();
+		game.chat.unloadPage(function() {
+			cb();
+		});
 	});
+
 };
 
 /*****************************************************************************
@@ -128,5 +131,6 @@ $(document).ready(function() {
 		 	mapi.deregisterSocket();
 		});
 	};
+
 });
 

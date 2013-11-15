@@ -13,28 +13,7 @@
   <body> 
         <div class="page-container">
             <div class="container">
-                <!-- Nav Bar -->
-                <div class="navbar navbar-default">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="/">Murtaziq</a>
-                    </div>
-                    <div class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav">
-                            <li><a href="/play#mainmenu">Play</a></li>
-                            <li><a href="/static_pages/stats">Statistics</a></li>
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li>
-                            <% if(req.session.user){ %>
-                                <a href="/logout" class='logout-link'>Logout</a> 
-                            <% } else{ %>
-                                <a href="/login">Login</a> 
-                            <% } %>
-                          </li>
-                        </ul>
-                    </div>
-                </div>
-
+                
                 <div class="jumbotron">
                     <%- body %>
                 </div>

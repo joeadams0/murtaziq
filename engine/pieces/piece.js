@@ -106,8 +106,9 @@ function setSchemas(arr){
     this.schemas = _.reduce(arr, function(memo, file) {
         var schema = master.getSchema(file);
 
-        if(self.getTeam() == self.darkTeam)
+        if(self.getTeam() == self.darkTeam){
             schema = moveschema.reflect(schema);
+        }
 
         return _.union(memo, schema);
     },[]);

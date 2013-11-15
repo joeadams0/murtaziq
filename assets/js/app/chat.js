@@ -105,6 +105,12 @@ define([
 			}
 		};
 
+		chatObj.unloadPage = function() {
+			_.each(_.keys(game.chats), function(key) {
+				chatObj.leave(key);
+			});
+		};
+
 		return chatObj;
 	}
 );	

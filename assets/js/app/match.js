@@ -19,7 +19,12 @@ define(["text!templates/match/match.ejs",
       friendly : "friendly",
       enemy : "enemy",
       neutral : "neutral"
-    }
+    };
+
+    mapi.joinChat(this.get('playerChat'), function(status) {
+        if(!status.success)
+          alert(status.data);
+      });
   };
 
   modelFunctions.getUser = function(id, cb) {
@@ -117,8 +122,6 @@ define(["text!templates/match/match.ejs",
     }, function(status) {
       if(!status.success)
         alert(status.data);
-      else
-        self.clearMoveCache();
     });
   };
 
@@ -155,6 +158,13 @@ define(["text!templates/match/match.ejs",
 
         self.$el.appendTo("#"+game.config.container);
         self.$state = $("#match #state");
+
+
+
+        game.chat.create(self.model.get('playerChat'), $("#match .chat"), $("#match .chat-input"), $("#match .chat-send"));
+        $(".chat-form").submit(function() {
+          return false;
+        });
         
         var defaultOptions = {};
         defaultOptions.svg_container = "#board-container";
@@ -353,17 +363,22 @@ define(["text!templates/match/match.ejs",
     match.view = new MatchView({
       model : match.model
     });
+
+    game.chat.create(this.model.get('playerChat'), $("#match .chat"), $("#match .chat-input"), $("#match .chat-send"));
     cb();
   };
 
   // Remove the game
-  match.unload = function() {
+  match.unload = function(cb) {
     this.view.unload();
+    cb();
   };
 
   match.recieveMessage = function(message) {
-    if(message.verb = "update")
+    if(message.verb = "update"){
       match.model.set(message.data);
+      this.model.clearMoveCache();
+    }
   };
 
   match.spaceSelected = function(x,y) {

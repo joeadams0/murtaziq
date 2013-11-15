@@ -136,18 +136,18 @@ define([
 
   sel.setTeam = function(cb){
     if (sel.cost > sel.maxTeamValue)
-      alert("nope. Army too big, buddy.");
+      cb({
+        success:false,
+        data : {
+          message : "nope. Army too big, buddy."
+        }
+      });
     else{
-      console.log(sel.pieces);
       mapi.setPieces({
         matchId: sel.cfg.matchId,
         playerId: sel.cfg.playerId,
         pieces: sel.pieces
-      }, function(res){
-        if(!res.success)
-          alert(res.data);
-        cb();
-      });
+      }, cb);
     }
   };
 
@@ -178,8 +178,13 @@ define([
         var $button = $( cfg.submitId );
         $button.click(function(e){
           $button.button('loading');
-          sel.setTeam(function() {
-            $button.text("Waiting...");
+          sel.setTeam(function(status){
+            if(status.success)
+              $button.text("Waiting...");
+            else{
+              alert(status.data.message);
+              $button.button('reset');
+            }
           });
         });
       };

@@ -34,7 +34,7 @@ function getVector(schema){
 }
 
 function setVector(schema, vec){
-    return create(vec, getMaxSteps(schema), canMove(schema), canAttack(schema));
+    return create(vec, getMaxSteps(schema), canMove(schema), canAttack(schema), getCondition(schema));
 }
 
 function getMaxSteps(schema){

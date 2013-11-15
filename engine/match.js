@@ -130,8 +130,7 @@ function getBoard(match){
  */
 function getMoves(match, vec, filter, returnArray){
     // If there is no filter passed in, filter moves by legality
-    filter = utils.existy(filter) ? filter : legalMovesFilter;  
-
+    filter = utils.existy(filter) ? filter : legalMovesFilter;
     var moves = _.filter(
             // Get all possible moves from piece
             Chessboard.getMoves(getBoard(match), Chessboard.getSpace(getBoard(match), vec)),
