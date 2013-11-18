@@ -394,6 +394,12 @@ function performMove(params, cb){
                     if(status.success){
                         match.match = engine.toJSONObj(status.data);
 
+                        if(status.data.state == "stalemate" || status.data.state == "checkmate"){
+                            match.state = match.getStates()["over"];
+                            if(status.data.state == "checkmate")
+                                match.winner = params.playerId;
+                        }
+
                         match.save(function(err) {
                             if(err)
                                 cb(makeStatus(false, err));
@@ -441,7 +447,9 @@ function surrender(params, cb){
                     otherPlayer = match.darkPlayer;
 
                 match.winner = otherPlayer;
-                match.state = match.getStates()['surrender'];
+                match.state = match.getStates()['over'];
+                match.match.state = "surrender";
+                match.winner = match.lightPlayer == params.playerId ? match.darkPlayer : match.lightPlayer;
 
                 match.save(function(err) {
                     if(err)

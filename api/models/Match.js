@@ -46,9 +46,7 @@ module.exports = {
         lobby : 'lobby',
         pieceSelection : 'pieceSelection',
         playing : 'playing',
-        surrender : 'surrender',
-        checkmate : 'checkmate',
-        stalemate : 'stalemate'
+        over : "matchover"
       }
     },
 

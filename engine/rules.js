@@ -116,5 +116,4 @@ function updateState (match) {
 		{
 		match.state=Match.states.normal;
 		}
-	console.log("State: " +match.state);
 }

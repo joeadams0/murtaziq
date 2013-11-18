@@ -1,0 +1,28 @@
+
+<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h4 class="modal-title">
+				<%if(victory === true){%>
+					Victory
+				<%} else if(victory === false){%>
+					Defeat
+				<%} else {%>
+					Stalemate
+				<%}%>
+			</h4>
+		</div>
+		<div class="modal-body">
+			<p><%if(victory === true){%>
+					You won the match!
+				<%} else if(victory === false){%>
+					You lost the match.
+				<%} else {%>
+					You tied the match.
+				<%}%></p>
+		</div>
+		<div class="modal-footer">
+			<button type="button" id="modal-primary" data-dismiss="modal"  class="btn btn-danger">Main Menu</button>
+		</div>
+	</div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->

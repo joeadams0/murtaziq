@@ -1,6 +1,7 @@
 define(["text!templates/match/match.ejs",
-        "text!templates/match/state.ejs"
-  ], function(matchTemplate, stateTemplate) {
+        "text!templates/match/state.ejs",
+        "text!templates/match/matchover.ejs"
+  ], function(matchTemplate, stateTemplate, matchOverTemplate) {
 
   var match = {};
 
@@ -124,6 +125,15 @@ define(["text!templates/match/match.ejs",
   modelFunctions.clearMoveCache = function() {
     this.cache.moves = [];
   };
+
+  modelFunctions.isMatchOver = function() {
+    return this.get("state") == "matchover";
+  };
+
+  modelFunctions.isPlaying = function() {
+    return this.get("state") == "playing";
+  };
+
   var MatchModel = Backbone.Model.extend(modelFunctions);
 
 /************************************************************************************************/
@@ -249,6 +259,7 @@ define(["text!templates/match/match.ejs",
                         .attr("width", options.dimension)
                         .each("end", function() {
                           self.listenTo(self.model, "change", self.render);
+                          self.listenTo(self.model, "change:state", self.matchOver);
                           self.render();
                         });
         } else {
@@ -258,6 +269,7 @@ define(["text!templates/match/match.ejs",
                         .attr("height", options.dimension)
                         .each("end", function() {
                           self.listenTo(self.model, "change", self.render);
+                          self.listenTo(self.model, "change:state", self.matchOver);
                           self.render();
                         });
         }
@@ -347,8 +359,37 @@ define(["text!templates/match/match.ejs",
         .renderState();
   };
 
-  viewFuns.unload = function() {
+  viewFuns.unload = function(cb) {
     this.$el.remove();
+    if(cb)
+      cb();
+  };
+
+  viewFuns.matchOver = function() {
+    var victory = undefined;
+    if(this.model.get('winner'))
+      victory = this.model.get('winner') == game.state.user.id;
+    this.displayModal(victory, function() {
+      game.switchState("mainmenu");
+    });
+  };
+
+  viewFuns.displayModal = function(victory, buttonListener) {
+    var modal = $("#match .modal");
+    modal.html(new EJS({text: matchOverTemplate}).render({
+      victory : victory
+    }));
+
+    modal.modal({
+      backdrop : "static",
+      keyboard : "false"
+    });
+    $("#match #modal-primary").on("click", function(e) {
+      $("body").removeAttr("style");
+      $("body").removeAttr("class");
+      $(".modal-backdrop").remove();
+      buttonListener(e);
+    });
   };
 
   var MatchView = Backbone.View.extend(viewFuns);
@@ -363,13 +404,13 @@ define(["text!templates/match/match.ejs",
     match.view = new MatchView({
       model : match.model
     });
+
     cb();
   };
 
   // Remove the game
   match.unload = function(cb) {
-    this.view.unload();
-    cb();
+    this.view.unload(cb);
   };
 
   match.recieveMessage = function(message) {
@@ -389,7 +430,8 @@ define(["text!templates/match/match.ejs",
       if(!this.model.locEquality(selectedLoc, {
           x : x,
           y : y
-        })){
+        }) 
+        && this.model.isPlaying()){
         this.model.getMoves(selectedLoc, function(data) {
           _.each(data.moves , function(move) {
             if( (this.model.locEquality(selectedLoc, move.source)) && (this.model.locEquality({x: x, y:y}, move.target))){
