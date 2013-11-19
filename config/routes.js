@@ -55,9 +55,11 @@ module.exports.routes = {
 
   '/deregistersocket' : 'UserController.deregistersocket',
 
-  'match/destroy' : "MatchController.destroy",
+  '/match/destroy' : "MatchController.destroy",
 
-  'get /match' : "MatchController.index",
+  '/play' : "MatchController.index"
+
+
 
   
   /*

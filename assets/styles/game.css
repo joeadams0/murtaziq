@@ -74,10 +74,25 @@
   width: 100px;
 }
 
-#lobby .btn-lg-wrap{
+#lobby .btn-lg-wrap,{
   width: 130px;
   margin: auto;
 }
+#main-menu .btn-wrap, #create-match{
+  font-size: 30px;
+  width: 210px;
+  margin: auto;
+  margin-top: 30px;
+  margin-bottom : 10px;
+ }
+
+ #main-menu #user{
+  margin-bottom: 40px;
+ }
+ #main-menu #joinable-matches{
+  width: 400px;
+  margin: auto;
+ }
 
 .chat{
   height: 300px;
@@ -124,6 +139,9 @@
   font-size: 15px
 }
 
+.container{
+  margin-top: 10px;
+}
 hr{
   border-top-color: #ccc;
 }

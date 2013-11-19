@@ -11,22 +11,41 @@ var UserHelper = require('../helpers/user-helper.js');
 module.exports = {
 
   index : function(req, res) {
-    console.log("here");
     var matchId = req.body.matchId;
-    if(req.param('id'))
-      matchId = req.param('id');
-    matchapi.getMatch(matchId, function(err, match) {
-      if(err)
-        res.json({
-          success: false,
-          data : err,
+    if(req.query.matchId)
+      matchId = req.query.matchId;
+    if(req.wantsJSON){
+      matchapi.getMatch(matchId, function(err, match) {
+        if(err)
+          res.json({
+            success: false,
+            data : err,
+          });
+        else{
+          res.json({
+            success : true,
+            data : match
+          });
+        }
+      });
+    }
+    else{
+      if(!matchId){
+        res.view({
+          layout : 'play-layout',
+          title : 'Play Murtaziq',
+          hasMatchId : false
         });
-      else
-        res.json({
-          success : true,
-          data : match
+      }
+      else{
+        res.view({
+          layout : 'play-layout',
+          title : 'Play Murtaziq',
+          matchId : matchId,
+          hasMatchId : true
         });
-    });
+      }
+    }
   },
 
   /**

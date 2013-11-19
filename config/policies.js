@@ -38,6 +38,10 @@ module.exports.policies = {
         ],
       index : 'authenticated'
     },
+
+    match : {
+    	'*' : 'authenticated'
+    }
     
     
     /*

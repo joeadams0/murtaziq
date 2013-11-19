@@ -34,7 +34,18 @@ game.init = function(cb) {
 					require(_.values(game.config.states), function() {
 						game.states = _.object(_.keys(game.config.states), arguments);
 
-						if(game.config.startingState)
+						if(window.matchId){
+							mapi.joinMatch({
+								matchId : matchId
+							},function(status) {
+								if(status.success){
+									game.loadMatch(status.data);
+								}
+								else
+									alert(status.data);
+							});
+						}
+						else if(game.config.startingState)
 							game.loadState(game.config.startingState, {}, cb);
 						else
 							cb();
@@ -62,7 +73,22 @@ game.switchState = function(stateName, data, cb) {
  * Unloads the current state
  */
 game.unloadCurrentState = function() {
-	game.state.currentState.unload();
+	if(game.state.currentState)
+		game.state.currentState.unload();
+};
+
+game.loadMatch = function(match) {
+	switch(match.state){
+		case "lobby":
+			game.switchState("lobby", match);	
+			break;
+		case "pieceSelection":
+			game.switchState("pieceSelection", match);
+			break;
+		case "playing":
+			game.switchState("match", match);
+			break;
+	}
 };
 
 /**

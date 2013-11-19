@@ -1,7 +1,8 @@
 define([
 	"text!templates/mainmenu/mainmenu.ejs",
-	"text!templates/mainmenu/joinablematches.ejs"
-], function(template, joinableMatchesTemplate) {
+	"text!templates/mainmenu/joinablematches.ejs",
+	"text!templates/mainmenu/user.ejs"
+], function(template, joinableMatchesTemplate, userTemplate) {
 	var mainmenu = {};
 
 
@@ -13,7 +14,15 @@ define([
 		$(".modal-backdrop").remove();
 		mainmenu.state.$el = $(new EJS({text : template}).render(data));
 		mainmenu.state.$el.appendTo("#" + game.config.container);
+		console.log(game.state.user);
+		var html = new EJS({text : userTemplate}).render(game.state.user);
+		$("#main-menu #user").append(html);
 		mainmenu.bind();
+		$("#create-match, .user").tooltip({
+		  'selector': '',
+		  'placement': 'top'
+		});
+
 		mainmenu.showJoinableMatches();
 		cb();
 	};
@@ -33,6 +42,15 @@ define([
 					}));
 					$(".join-match").on("click", mainmenu.joinMatch);
 					$("#main-menu .refresh-matches").on("click", mainmenu.showJoinableMatches);
+					$(".refresh-matches, .join-match, .user").tooltip({
+					  'selector': '',
+					  'placement': 'top'
+					});
+
+					$(".user").on("click", function() {
+						var id = $(this).attr("user-id");
+						window.open("/user/"+id, '_blank');
+					});
 				});
 			}
 			else
@@ -88,18 +106,7 @@ define([
 	    }, function(status) {
 			$(".join-match").button('reset');
 	      if(status.success){
-	      	switch(status.data.state){
-	      		case "lobby":
-	        		game.switchState("lobby", status.data);	
-	        		break;
-	        	case "pieceSelection":
-	        		game.switchState("pieceSelection", status.data);
-	        		break;
-	        	case "playing":
-	        		game.switchState("match", status.data);
-	        		break;
-	      	}
-	      	
+	      	game.loadMatch(status.data);	      	
 	      }
 	      else
 	      	alert(status.data);

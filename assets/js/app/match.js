@@ -175,6 +175,11 @@ define(["text!templates/match/match.ejs",
           if(!status.success)
             alert(status.data);
         });
+
+        $("#match #options").tooltip({
+        'selector': '',
+        'placement': 'top'
+      });
         
         var defaultOptions = {};
         defaultOptions.svg_container = "#board-container";
