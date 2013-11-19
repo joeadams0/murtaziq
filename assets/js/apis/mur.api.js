@@ -22,9 +22,12 @@ window.createMApi = function(socket){
 		 * @param  {Function} cb The callback. Passed the match object
 		 */
 		findOneMatch : function(id, cb) {
-			socket.request('/match/find/'+id, {}, cb);
+			socket.request('/match?matchId='+id, {}, cb);
 		},
 
+		getLobbyMatches : function(cb) {
+			socket.request('/match/getLobbyMatches', {}, cb);
+		},
 		/**
 		 * Creates a match 
 		 * @param  {Object}   params The parameters

@@ -57,6 +57,8 @@ module.exports.routes = {
 
   'match/destroy' : "MatchController.destroy",
 
+  'get /match' : "MatchController.index",
+
   
   /*
   // But what if you want your home page to display

@@ -13,7 +13,9 @@
 			</h4>
 		</div>
 		<div class="modal-body">
-			<p><%if(victory === true){%>
+			<p><% if(surrender){%>
+					Your opponent surrendered!
+				<%} else if(victory === true){%>
 					You won the match!
 				<%} else if(victory === false){%>
 					You lost the match.

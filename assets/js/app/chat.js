@@ -105,10 +105,12 @@ define([
 			}
 		};
 
-		chatObj.unloadPage = function() {
+		chatObj.unloadPage = function(cb) {
 			_.each(_.keys(game.chats), function(key) {
 				chatObj.leave(key);
 			});
+			if(cb)
+				cb();
 		};
 
 		return chatObj;

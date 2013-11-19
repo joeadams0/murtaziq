@@ -1,13 +1,20 @@
-define(["text!templates/mainmenu.ejs"], function(template) {
+define([
+	"text!templates/mainmenu/mainmenu.ejs",
+	"text!templates/mainmenu/joinablematches.ejs"
+], function(template, joinableMatchesTemplate) {
 	var mainmenu = {};
 
 
 	mainmenu.state = {};
 
 	mainmenu.load = function(data, cb) {
+		$("body").removeAttr("style");
+		$("body").removeAttr("class");
+		$(".modal-backdrop").remove();
 		mainmenu.state.$el = $(new EJS({text : template}).render(data));
 		mainmenu.state.$el.appendTo("#" + game.config.container);
 		mainmenu.bind();
+		mainmenu.showJoinableMatches();
 		cb();
 	};
 
@@ -15,13 +22,45 @@ define(["text!templates/mainmenu.ejs"], function(template) {
 		mainmenu.state.$el.remove();
 	};
 
-	mainmenu.render = function(cb) {
+	mainmenu.showJoinableMatches = function() {
+		mapi.getLobbyMatches(function(status) {
+			if(status.success){
+				mainmenu.getMatchHost(status.data, function(matches) {
+					$("#joinable-matches").html(new EJS({
+						text : joinableMatchesTemplate
+					}).render({
+						matches : matches
+					}));
+					$(".join-match").on("click", mainmenu.joinMatch);
+					$("#main-menu .refresh-matches").on("click", mainmenu.showJoinableMatches);
+				});
+			}
+			else
+				alert(status.data);
+		});
+	};
 
+	mainmenu.getMatchHost = function(matches, cb){
+		if(!matches || _.size(matches) == 0)
+			cb([]);
+		else if(_.isArray(matches)){
+			mainmenu.getMatchHost(_.last(matches), function(match) {
+				mainmenu.getMatchHost(_.initial(matches), function(matches) {
+					matches.push(match);
+					cb(matches);
+				});
+			});
+		}
+		else{
+			mapi.getUser(matches.host, function(user) {
+				matches.host = user;
+				cb(matches);
+			});
+		}
 	};
 
 	mainmenu.bind = function() {
 		$("#create-match").on("click", mainmenu.createMatch);
-		$("#join-match").on("click", mainmenu.joinMatch);
 	};
 
 	mainmenu.createMatch = function() {
@@ -41,14 +80,13 @@ define(["text!templates/mainmenu.ejs"], function(template) {
 	};
 
 	mainmenu.joinMatch = function(){
-		$("#join-match").button('loading');
-	    var matchId = $("#match-id").val();
+		$(".join-match").button('loading');
+	    var matchId = $(this).attr('match-id');
 
 	    window.mapi.joinMatch({
-	      playerId : game.state.user.id,
 	      matchId : Number(matchId)
 	    }, function(status) {
-			$("#join-match").button('reset');
+			$(".join-match").button('reset');
 	      if(status.success){
 	      	switch(status.data.state){
 	      		case "lobby":

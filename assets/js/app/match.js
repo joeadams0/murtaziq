@@ -357,6 +357,7 @@ define(["text!templates/match/match.ejs",
   viewFuns.render = function() {
     this.renderMatch()
         .renderState();
+    $("#surrender").on("click", this.surrender);  
   };
 
   viewFuns.unload = function(cb) {
@@ -369,15 +370,35 @@ define(["text!templates/match/match.ejs",
     var victory = undefined;
     if(this.model.get('winner'))
       victory = this.model.get('winner') == game.state.user.id;
-    this.displayModal(victory, function() {
-      game.switchState("mainmenu");
+    if(this.model.get('match').state == "surrender"){
+      if(victory)
+        this.displayModal(victory, function() {
+          game.switchState("mainmenu");
+        }, true);   
+    }
+    else{
+      this.displayModal(victory, function() {
+        game.switchState("mainmenu");
+      });
+    }
+  };
+
+  viewFuns.surrender = function() {
+    mapi.surrender({
+      matchId : match.model.get('id')
+    }, function(status) {
+      if(status.success)
+        game.switchState('mainmenu');
+      else
+        alert(status.data);
     });
   };
 
-  viewFuns.displayModal = function(victory, buttonListener) {
+  viewFuns.displayModal = function(victory, buttonListener, surrender) {
     var modal = $("#match .modal");
     modal.html(new EJS({text: matchOverTemplate}).render({
-      victory : victory
+      victory : victory,
+      surrender : surrender
     }));
 
     modal.modal({
@@ -385,13 +406,9 @@ define(["text!templates/match/match.ejs",
       keyboard : "false"
     });
     $("#match #modal-primary").on("click", function(e) {
-      $("body").removeAttr("style");
-      $("body").removeAttr("class");
-      $(".modal-backdrop").remove();
       buttonListener(e);
     });
   };
-
   var MatchView = Backbone.View.extend(viewFuns);
 
 /*********************************************************************************************************************/

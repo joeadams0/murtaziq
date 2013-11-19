@@ -19,6 +19,7 @@ var userhelper = require("./user-helper.js");
  	performMove : performMove,
  	surrender : surrender,
  	getMatch : getMatch,
+    getMatches : getMatches,
  	getMaxTeamValue : getMaxTeamValue,
  	getAllPieces : getAllPieces,
     getMatch : getMatch,
@@ -44,8 +45,12 @@ function create (params, cb) {
                 cb(makeStatus(false, err));
             else{
                 if(utils.existy(params.playerId))
-                    addPlayerHelper(match, params.playerId, cb);
-                cb(makeStatus(true, match.toJSON()));            }
+                    addPlayerHelper(match, params.playerId, function(status) {
+                        cb(status);
+                    });    
+                else
+                    cb(makeStatus(true, match));  
+            }
         });
 }
 
@@ -87,10 +92,52 @@ function getMatch (matchId, cb) {
             if(!utils.existy(match))
                 cb("Match does not exist.", match);
             else
-                cb(undefined, match);
+                cb(err, match);
         }
 
     });
+}
+
+function getMatches (params, cb) {
+    Match.find(params).done(cb);
+}
+
+function getUsersForMatches (matches, cb) { 
+    if(!matches || _.size(matches) == 0)
+        cb(undefined, []);
+    else if(_.isArray(matches)){
+        getUsersForMatches(_.last(matches), function(err, match) {
+            if(err)
+                cb(err,matches);
+            else
+                getUsersForMatches(_.initial(matches), function(err, matches) {
+                    matches.push(match);
+                    cb(err, matches);
+                });
+        });
+    }
+    else{
+        console.log(matches);
+        userhelper.getUser(matches.lightPlayer, function(err, lightPlayer) {
+            if(err)
+                cb(err, matches);
+            else{
+                userhelper.getUser(matches.darkPlayer, function(err, darkPlayer) {
+                    if(err)
+                        cb(err, matches);
+                    else{
+                        if(lightPlayer.id == matches.host)
+                            matches.host = lightPlayer;
+                        else if(darkPlayer.id == matches.host)
+                            matches.host = darkPlayer;
+                        matches.lightPlayer = lightPlayer;
+                        matches.darkPlayer = darkPlayer;
+                        cb(err, matches);
+                    }
+                });
+            }
+        });
+    }
 }
 
 function addPlayer (params, cb) {

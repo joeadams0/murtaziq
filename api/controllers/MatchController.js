@@ -10,6 +10,24 @@ var UserHelper = require('../helpers/user-helper.js');
 
 module.exports = {
 
+  index : function(req, res) {
+    console.log("here");
+    var matchId = req.body.matchId;
+    if(req.param('id'))
+      matchId = req.param('id');
+    matchapi.getMatch(matchId, function(err, match) {
+      if(err)
+        res.json({
+          success: false,
+          data : err,
+        });
+      else
+        res.json({
+          success : true,
+          data : match
+        });
+    });
+  },
 
   /**
    * /match/create
@@ -137,6 +155,26 @@ module.exports = {
     req.body.playerId = UserHelper.getSession(req).id;
     matchapi.getMoves(req.body, function(status) {
       res.json(status);
+    });
+  },
+
+  getLobbyMatches : function(req, res) {
+    matchapi.getMatches({
+      where : {
+        state : "lobby"
+      },
+      limit : 10
+    }, function(err, matches) {
+      if(err)
+        res.json({
+          success : false,
+          data : err
+        });
+      else
+        res.json({
+          success : true,
+          data : matches
+        });
     });
   },
 
