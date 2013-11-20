@@ -1,0 +1,41 @@
+Non-royals
+
+Amazon		120
+Automaton	5
+Balloon		16
+Banshee		83
+Bishop		33
+Boy Scout	47
+Camel		26
+Champion	52
+Dragon		70
+Dragon Horse	56
+Dummy		0
+Elephant	12
+Fairy		11
+Ferz		15
+Giant		30
+Knight		32
+Man		40	*non-royal King.
+Nightrider	46
+Pawn		10
+Queen		88
+Quintessence	65	*can only be placed as a Knight or Rook substitute.
+Raven		101
+Rook		51
+Sidewinder	72
+Vizier		12
+War Machine	12
+Wizard		44
+Zombie		8
+
+
+Royals (King substitutes)
+
+Figurehead	0	*royal Dummy.
+Grand Master	150	*royal Knight.
+Grand Vizier	50	*royal Vizier.
+King		100
+Pope		200	*royal Bishop.
+
+If the King is the only allowed royal piece, its value can be 0 because it must be chosen, so its value doesn't matter.

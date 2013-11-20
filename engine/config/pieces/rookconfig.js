@@ -3,5 +3,5 @@ module.exports = {
     //file : 'rook.js',
     abbr : 'r',
     schemas : ['rookschema.js'],
-    value : 50
+    value : 51
 };
