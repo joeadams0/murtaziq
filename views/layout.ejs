@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <%res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');%>
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/styles/site.css" rel="stylesheet">
   </head>
 
   <body class="container">
@@ -37,20 +38,31 @@
         </div>
 
         <!-- A few key dependencies, linked in order -->
-        
+
+        <script type="text/javascript" src="/js/libs/jquery-1.10.2.min.js"></script>
+                
         <!-- Bring in the socket.io client -->
         <script type="text/javascript" src="/js/libs/socket.io.js"></script>
+
+        
+        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        
+        <script src="/js/libs/ejs_production.js"></script>
         
         <!-- then beef it up with some convenience logic for talking to Sails.js -->
         <script type="text/javascript" src="/js/libs/sails.io.js"></script>
-
-        <script type="text/javascript" src="/js/libs/jquery-1.10.2.min.js"></script>
         
-        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/js/libs/underscore-min.js"></script>
         
         <script type="text/javascript" src="/js/misc/user.js"></script>
         
         <script type="text/javascript" src="/js/apis/mur.api.js"></script>
         
+        <script src="/js/libs/require.js"></script>
+        
+        <% if (locals.script){%>
+			<script type="text/javascript" src=<%=script%>></script>
+		<%}%>
+		
     </body>
 </html>

@@ -232,6 +232,18 @@ window.createMApi = function(socket){
 		postChat : function(id, message, cb) {
 			socket.request("/chat/post", {chatId : id, message : message}, cb);
 		},
+
+		getWins : function(userId, cb) {
+			socket.request("/getwins", {userId: userId}, cb);
+		},
+
+		getLosses : function(userId, cb) {
+			socket.request("/getLosses", {userId: userId}, cb);
+		},
+
+		getStalemates : function(userId, cb) {
+			socket.request("/getStalemates", {userId: userId}, cb);
+		},
 	};
 }
 
