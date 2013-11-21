@@ -7,22 +7,35 @@
 
 var UserHelper = require("../helpers/user-helper.js");
 var utils = require("../../engine/utils.js");
+var matchapi = require('../helpers/matchapi.js');
 
 module.exports = {
     
     index : function(req, res){
-    	var user_id = req.param("id") ? req.param("id") : UserHelper.getSession(req).id;
-    	var request = {id : user_id};
-        UserHelper.getUser(request, function(err, user){
-            if(err)
-                res.send(err, 500);
-            else if(req.wantsJSON){
-                res.json(user);
-            }
-            else
-                res.view('user/profile', {currentUser : user});
-
-        });
+    	var user_id = req.param("id");
+    	if(!user_id && UserHelper.getSession(req)){
+    		user_id = UserHelper.getSession(req).id;
+    	}
+    	if(!user_id){
+    		res.json("No User Id Specified.");
+    	}
+    	else{
+	    	var request = {id : user_id};
+	        UserHelper.getUser(request, function(err, user){
+	            if(err)
+	                res.send(err, 500);
+	            else if(req.wantsJSON){
+	                res.json(user);
+	            }
+	            else {
+	                res.view('user/profile', {
+	                    currentUser : user,
+	                    script : "/js/misc/profile.js",
+	                });
+	            }
+	
+	        });
+	     }
     },
   
     login : function(req, res){
@@ -48,7 +61,7 @@ module.exports = {
             
     },
     
-    create : function(req, res){
+    create : function(req, res){      
         var username = req.param("username");
         var password = req.param("password");
          
@@ -60,7 +73,7 @@ module.exports = {
                         res.json(error, 500);
                     } else {
                     	UserHelper.setOnline(req, user.username, function(){
-                            UserHelper.getUser(req, function(err, user) {
+                            UserHelper.getUser({username : user.username}, function(err, user) {
                                 res.json("Ok", 200);
                             });
                     	});
@@ -117,4 +130,67 @@ module.exports = {
           res.json(status);
         });
     },
+
+    getwins : function(req, res) {
+        var userId = req.body.userId;
+        if(req.query && req.query.userId)
+        	userId = req.query.userId;
+        matchapi.getMatches({
+            where :{
+                winner : userId
+            }
+        }, function(err, matches) {
+            if(err)
+        		res.json(err);
+        	else
+            	res.json(_.size(matches));
+        });
+    },
+
+    getlosses : function(req, res) {
+        var userId = req.body.userId;
+        if(req.query && req.query.userId)
+        	userId = req.query.userId;
+        matchapi.getMatches({
+            where :{
+                or : [
+                    {lightPlayer : userId},
+                    {darkPlayer : userId}
+                ],
+                winner : {
+                    "!" : userId
+                },
+                state : "matchover"
+            }
+        }, function(err, matches) {
+            if(err)
+        		res.json(err);
+        	else
+            	res.json(_.size(matches));
+        });
+    },
+
+    getstalemates : function(req, res) {
+        var userId = req.body.userId;
+        if(req.query && req.query.userId)
+        	userId = req.query.userId;
+        matchapi.getMatches({
+            where :{
+                or : {
+                    lightPlayer : userId,
+                    darkPlayer : userId
+                },
+                state : "matchover",
+                winner : {
+                    '<' : 0
+                }
+            }
+        }, function(err, matches) {
+        	if(err)
+        		res.json(err);
+        	else
+            	res.json(_.size(matches));
+        });
+    },
 };
+

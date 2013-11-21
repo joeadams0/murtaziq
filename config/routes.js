@@ -48,6 +48,12 @@ module.exports.routes = {
   '/user/:id' : 'UserController.index',
 
   '/userlist' : 'UserController.userlist',
+  
+  '/getwins' : 'UserController.getwins',
+  
+  '/getlosses' : 'UserController.getlosses',
+  
+  '/getstalemates' : 'UserController.getstalemates',
 
   '/matchmaking' : 'MatchmakingController.index',
 
@@ -55,7 +61,11 @@ module.exports.routes = {
 
   '/deregistersocket' : 'UserController.deregistersocket',
 
-  'match/destroy' : "MatchController.destroy",
+  '/match/destroy' : "MatchController.destroy",
+
+  '/play' : "MatchController.index"
+
+
 
   
   /*

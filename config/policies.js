@@ -16,28 +16,28 @@ module.exports.policies = {
     // (`true` allows public access) 
     '*': true,
     user : {
-        '*' : [
-            'authenticated',
-            'devrole'
-        ],
+    	'*' : true,
         registersocket : 'authenticated',
         deregistersocket : 'authenticated',
 		userlist : 'authenticated',
-        index : 'authenticated',
         logout : 'authenticated',
         update : 'authenticated',
         login : 'notauthenticated',
         create : 'notauthenticated',
-        find : true
+        find : true,
+        getwins : true,
+        getlosses : true,
+        getstalemates : true
     },
   
     play : {
-      '*' : [
-          'authenticated',
-          'devrole'
-        ],
       index : 'authenticated'
     },
+
+    match : {
+    	'*' : 'authenticated',
+    	find : true,
+    }
     
     
     /*

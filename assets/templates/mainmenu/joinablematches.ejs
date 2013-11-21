@@ -1,0 +1,34 @@
+<%if(matches.length <1){%>
+	<h3 class="text-center">
+		No matches to join.
+		
+		<button class="btn btn-sm btn-default refresh-matches" data-toggle="tooltip" title="Refresh Matches">
+			<i class="glyphicon glyphicon-refresh"></i>
+		</button>
+	</h3>
+<%} else{%>
+	<h2 class="text-center"> 
+		Joinable Matches
+		<button class="btn btn-sm btn-default refresh-matches" data-toggle="tooltip" title="Refresh Matches">
+			<i class="glyphicon glyphicon-refresh"></i>
+		</button>
+	</h2>
+	<table class="table table-hover">
+		<tr>
+			<td><strong>Host</strong></td>
+			<td><strong>Join</strong></td>
+		</tr>
+		<%for(var i = 0; i<matches.length; i++){%>
+			<tr>
+				<td>
+					<a href="#">
+						<span class="host user" data-toggle="tooltip" title="View Profile" user-id=<%=matches[i].host.id%> ><%=matches[i].host.username%></span>
+					</a>
+				</td>
+				<td>
+					<button class="btn btn-large btn-success join-match" match-id=<%=matches[i].id%> data-loading-text="Loading..." data-toggle="tooltip" title="Join this Match">Join Match</button> 
+				</td>
+			</tr>
+		<%}%>
+	</table>
+<%}%>

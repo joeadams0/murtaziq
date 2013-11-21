@@ -16,6 +16,7 @@
                 
                 <div class="jumbotron">
                     <%- body %>
+                    <div id="game"></div>
                 </div>
                 
                 <!-- A few key dependencies, linked in order -->
@@ -36,6 +37,13 @@
                 <script src="/js/libs/backbone-min.js"></script>
                 <!-- Our Own Code-->
                 <script src="/js/app/game.js"></script>
+
+                <%if(hasMatchId){%>
+                    <script type="text/javascript">
+                        window.matchId = <%=matchId%>;
+                    </script>
+                <%}%>
+
             </div>
         </div>
     </body>

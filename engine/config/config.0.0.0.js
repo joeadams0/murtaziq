@@ -14,6 +14,6 @@ module.exports = {
         'normal' : 'move.js',
         'castle' : 'castle.js'
     },
-    maxTeamValue : 400,
+    maxTeamValue : 440,
     pieceSelectionTimer : 120,
 };

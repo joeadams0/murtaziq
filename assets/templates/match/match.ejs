@@ -16,6 +16,14 @@
 			<div class="text-center" id="state"></div>
 			<hr/>
 			<strong>Chat</strong>
+			<div class="pull-right btn-group">
+				<button class="btn btn-default dropdown-toggle" id="options" rel="tooltip" title="Options" data-toggle="dropdown">
+					<i class="glyphicon glyphicon-cog"/>
+				</button>
+				<ul class="dropdown-menu" role="menu" id="options-menu">
+					<li><a href="#" data-toggle="modal" data-target="#surrender-modal"><strong>Surrender</strong></a></li>
+				</ul>
+			</div>
 			<div class="chat panel panel-default">
 			</div>
 			<form class="form-inline chat-form">
@@ -27,4 +35,21 @@
 		</div>
 	</div>
 	<div class="modal fade" id="modal"></div>
+	<div class="modal fade" id="surrender-modal">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	        <h4 class="modal-title">Surrender</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>Are you sure you want to surrender?</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-danger" id="surrender">Surrender</button>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 </div>
