@@ -29,7 +29,11 @@ module.exports.policies = {
         getlosses : true,
         getstalemates : true
     },
-  
+
+    invite : {
+        '*' : 'authenticated'
+    },
+
     play : {
       index : 'authenticated'
     },
