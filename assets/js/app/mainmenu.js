@@ -101,7 +101,7 @@ define([
 	    var matchId = $(this).attr('match-id');
 
 	    window.mapi.joinMatch({
-	      matchId : Number(matchId)
+	      matchId : matchId
 	    }, function(status) {
 			$(".join-match").button('reset');
 	      if(status.success){
