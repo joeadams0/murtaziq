@@ -13,21 +13,17 @@ module.exports = {
   attributes: {
   	
     lightPlayer : {
-      type : 'integer',
       defaultsTo : -1
     },
     darkPlayer : {
-      type : 'integer',
       defaultsTo : -1
     },
 
     winner : {
-      type : 'integer',
       defaultsTo : -1
     },
 
     host : {
-      type : 'integer',
       defaultsTo : -1
     },
 

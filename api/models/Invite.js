@@ -13,12 +13,10 @@ module.exports = {
     attributes: {
       
         senderID : {
-            type : 'integer',
             defaultsTo : -1
         },
         
         recieverID : {
-            type : 'integer',
             defaultsTo : -1
         },
 
