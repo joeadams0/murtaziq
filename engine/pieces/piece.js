@@ -31,7 +31,7 @@ module.exports = {
  */
 function constructorGenerator(pieceConfigs){
     
-    return function(team, position){
+    return function(team, position, royalty){
         master = require('../master.js');
 
         var configs = master.getConfigs();
@@ -49,6 +49,7 @@ function constructorGenerator(pieceConfigs){
         this.position = position;
         this.team = team;
         this.moveCount = 0;
+        this.royalty = utils.existy(royalty) ? royalty : false;
         this.lightTeam = lightTeam;
         this.darkTeam = darkTeam;
 		this.getPosition=getPosition;
@@ -106,9 +107,8 @@ function setSchemas(arr){
     this.schemas = _.reduce(arr, function(memo, file) {
         var schema = master.getSchema(file);
 
-        if(self.getTeam() == self.darkTeam){
+        if(self.getTeam() == self.darkTeam)
             schema = moveschema.reflect(schema);
-        }
 
         return _.union(memo, schema);
     },[]);
@@ -123,7 +123,7 @@ function getMoveCount(){
 }
 
 function isRoyal(){
-    return this.getPosition() == "royal";
+    return this.royalty;
 }
 
 function incrMoveCount(){
@@ -137,7 +137,7 @@ function decrMoveCount(){
 function setMoveCount(num){
     this.moveCount = num;
 }
-//WORKING ON
+//
 function getMoves(board, space){
 	//if (getPosition === "pawn")
 	//	return _.union(leaperMoves.bind(this)(board, Space.getLoc(space), this.getSchemas((Space.getPiece(space)))), );
@@ -158,7 +158,6 @@ function leaperMoves(board, loc, schema){
             schema
         );
 }
-
 
 //pulled from rook.js
 function getCastleMove(board, space, moves){
@@ -294,13 +293,12 @@ function toJSONObj () {
         moveCount : this.getMoveCount(),
         royalty : this.isRoyal(),
         schemas : this.schemaFiles,
-        position : this.getPosition(),
     }
 }
 
 function loadJSONObj(JSONObj, configs){
     var piece = constructorGenerator(JSONObj);
-    piece = new piece(JSONObj.team, JSONObj.position);
+    piece = new piece(JSONObj.team, JSONObj.royalty);
     piece.setMoveCount(JSONObj.moveCount);
     return piece;
 }
@@ -312,6 +310,6 @@ function toClientJSONObj () {
         abbr : this.getAbbr(),
         team : this.getTeam(),
         moveCount : this.getMoveCount(),
-        postition : this.getPosition(),
+        royalty : this.isRoyal(),
     }
 }
