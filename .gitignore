@@ -48,3 +48,5 @@ config/adapters.js
 # istanbul
 ########################
 coverage/
+
+murtiziq.pem

@@ -12,7 +12,7 @@ module.exports = [
             else
                 return false;
         }
-    )
+    ),
     schema.create(vector.create(1, 1), 2, true, false,
         function(board, loc, piece){
             if(piece.getMoveCount() === 0)

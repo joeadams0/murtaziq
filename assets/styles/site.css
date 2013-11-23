@@ -5,3 +5,9 @@
 #profile #username{
 	margin-bottom: 40px;
 }
+
+.user-form{
+	width : 350px;
+	margin-left: auto;
+	margin-right: auto;
+}

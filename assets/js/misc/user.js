@@ -1,31 +1,20 @@
-$("#login-button").click(function(){
-        var username = $("#login-username").val();
-        var password = $("#login-password").val();
-        var send = senderGen('/login', username, password);
-        if (send) {
-            send();
-        } else {
-            message("A username and password is required");
-        }
-    });
+$("#login-button").click(login);
 
-$("#register-button").click(function(e){
-    e.stopPropagation();
-    
-    var username = $("#register-username").val();
-    var password = $("#register-password").val();
-    var confirmPassword = $("#register-confirm-password").val();
-    if (password === confirmPassword) {
-        var send = senderGen('/register', username, password);
-        if(send){
-            send();
-        } else {
-            message("A username and a password is required");
-        }   
-    } else {
-        message("Passwords don't match");
-    }  
-}); 
+$("#register-button").click(register); 
+
+$("#login-username, #login-password").keypress(function(e) {
+    if ( e.which == 13 ) {
+        e.preventDefault();
+        login(e);
+    }
+});
+
+$("#register-username, #register-password").keypress(function(e) {
+    if ( e.which == 13 ) {
+        e.preventDefault();
+        register(e);
+    }
+});
 
 $('.logout-link').click(function(event){
     event.preventDefault();
@@ -40,6 +29,35 @@ $('.logout-link').click(function(event){
         }
     });
 });
+
+function login () {
+    var username = $("#login-username").val();
+    var password = $("#login-password").val();
+    var send = senderGen('/login', username, password);
+    if (send) {
+        send();
+    } else {
+        message("A username and password is required");
+    }    
+ };
+
+ function register (e) {
+     e.stopPropagation();
+    
+    var username = $("#register-username").val();
+    var password = $("#register-password").val();
+    var confirmPassword = $("#register-confirm-password").val();
+    if (password === confirmPassword) {
+        var send = senderGen('/register', username, password);
+        if(send){
+            send();
+        } else {
+            message("A username and a password is required");
+        }   
+    } else {
+        message("Passwords don't match");
+    }  
+  };
 
 function senderGen(url, username, password){
     if(username && password && url){
