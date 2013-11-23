@@ -14,7 +14,6 @@ define([
 		$(".modal-backdrop").remove();
 		mainmenu.state.$el = $(new EJS({text : template}).render(data));
 		mainmenu.state.$el.appendTo("#" + game.config.container);
-		console.log(game.state.user);
 		var html = new EJS({text : userTemplate}).render(game.state.user);
 		$("#main-menu #user").append(html);
 		mainmenu.bind();

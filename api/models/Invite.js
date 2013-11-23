@@ -7,7 +7,6 @@
  */
 
 var UserHelper = require("../helpers/user-helper.js");
-var InviteHelper = require("../helpers/invite-helper.js");
 
 module.exports = {
 

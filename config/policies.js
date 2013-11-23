@@ -31,7 +31,7 @@ module.exports.policies = {
     },
 
     invite : {
-        '*' : 'authenticated'
+        '*' : ['authenticated', 'isonline']
     },
 
     play : {
