@@ -171,25 +171,24 @@ module.exports = {
     },
 
     getstalemates : function(req, res) {
-        var userId = req.body.userId;
-        if(req.query && req.query.userId)
-        	userId = req.query.userId;
+        var userId = req.param("userId");
         matchapi.getMatches({
             where :{
-                or : {
-                    lightPlayer : userId,
-                    darkPlayer : userId
-                },
-                state : "matchover",
+                or : [
+                    {lightPlayer : userId},
+                    {darkPlayer : userId}
+                ],
                 winner : {
-                    '<' : 0
-                }
+                    "<" : 0
+                },
+                state : "matchover"
             }
         }, function(err, matches) {
         	if(err)
         		res.json(err);
-        	else
+        	else{ 
             	res.json(_.size(matches));
+            }
         });
     },
 };
