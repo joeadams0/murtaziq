@@ -31,6 +31,10 @@ module.exports = {
             });	
 	     }
     }
-  
+
+    accept : function(req, res){
+        // find the invite and update it to accepted, then create the match
+        // var invite = Invite.
+    }
 };
 
