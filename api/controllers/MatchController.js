@@ -27,8 +27,7 @@ module.exports = {
         }
       });
     }
-    else{
-      console.log(matchId);
+    else{      
       if(!matchId){
         res.view({
           layout : 'play-layout',
