@@ -41,8 +41,11 @@ module.exports.policies = {
     match : {
     	'*' : 'authenticated',
     	find : true,
-    }
+    },
     
+	matchmaking : {
+		'*' : 'authenticated'
+	}
     
     /*
 	// Here's an example of adding some policies to a controller
