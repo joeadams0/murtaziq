@@ -11,7 +11,7 @@ var utils = require("./utils.js");
 var Vector = require("./vector.js");
 var _ = require("underscore");
 var pieces = require("./pieces.js");
-
+var Piece = require("./pieces/piece.js")
 var states = {
     normal : "normal",
     check : "check",
@@ -175,6 +175,7 @@ function getPiece(match, loc){
  */
 function move(match, loc1, loc2, team){
     var Rules = require("./rules.js");
+    var Piece = require("./pieces/piece.js");
 
     var board = getBoard(match);
 
@@ -201,11 +202,34 @@ function move(match, loc1, loc2, team){
         // If a move exists, then make the move
         if(utils.existy(m) && m.getTeam() === team){
             m.perform(board);
+            //If piece being moved is pawn
+            if (Chessboard.getPiece(getBoard(match), loc2).getPosition() == "pawn"){       
+                //If move end location is along the far or near edge
+                //( <0,0>, <0, 1>, <0, 2>, <0, 3>, <0, 4>, <0, 5>, <0, 5>, <0, 6>, <0, 7>)
+                //( <7,0>, <7, 1>, <7, 2>, <7, 7>, <7, 4>, <7, 5>, <7, 5>, <7, 6>, <7, 7>)
+                var piecePromotion = false;
+                if (Vector.isEqual(loc2, Vector.create(0,0)) || Vector.isEqual(loc2, Vector.create(1,0)) || Vector.isEqual(loc2, Vector.create(2,0)) || Vector.isEqual(loc2, Vector.create(3,0)) ||
+                    Vector.isEqual(loc2, Vector.create(4,0)) || Vector.isEqual(loc2, Vector.create(5,0)) || Vector.isEqual(loc2, Vector.create(6,0)) || Vector.isEqual(loc2, Vector.create(7,0)) ||
+                        Vector.isEqual(loc2, Vector.create(0,7)) || Vector.isEqual(loc2, Vector.create(1,7)) || Vector.isEqual(loc2, Vector.create(2,7)) || Vector.isEqual(loc2, Vector.create(3,7)) ||
+                        Vector.isEqual(loc2, Vector.create(4,7)) || Vector.isEqual(loc2, Vector.create(5,7)) || Vector.isEqual(loc2, Vector.create(6,7)) || Vector.isEqual(loc2, Vector.create(7,7))){
+                    piecePromotion = true;
+                }
+                //remove piece that was just moved
+                if (piecePromotion == true){
+                Chessboard.removePiece(getBoard(match), loc2);
+                //replace piece with queen
+                board = Chessboard.setPiece(
+                    getBoard(match), 
+                    loc2, 
+                    (new (pieces.getConstructor("queen"))(team, loc2, false)));
+                }
+            }
             switchTurn(match);
             // Adds move to history
             addMove(match, m);
             // Updates match state
             Rules.updateState(match);
+            
             success = true;
 
             data = match;
