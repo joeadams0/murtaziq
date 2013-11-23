@@ -203,6 +203,7 @@ function move(match, loc1, loc2, team){
         if(utils.existy(m) && m.getTeam() === team){
             m.perform(board);
             //If piece being moved is pawn
+        if (Chessboard.getPiece(getBoard(match), loc2)){
             if (Chessboard.getPiece(getBoard(match), loc2).getPosition() == "pawn"){       
                 //If move end location is along the far or near edge
                 //( <0,0>, <0, 1>, <0, 2>, <0, 3>, <0, 4>, <0, 5>, <0, 5>, <0, 6>, <0, 7>)
@@ -224,6 +225,7 @@ function move(match, loc1, loc2, team){
                     (new (pieces.getConstructor("queen"))(team, loc2, false)));
                 }
             }
+        }
             switchTurn(match);
             // Adds move to history
             addMove(match, m);

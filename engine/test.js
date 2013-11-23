@@ -16,7 +16,7 @@ module.exports = {
 match = Match.create();
 
 //Test for promotion
-/*
+
 move(4,1,4,3);
 move(5,6,5,4);
 move(4,3,5,4);
@@ -39,8 +39,9 @@ move(1,3,1,4);
 move(4,1,4,0);//pawn should be promoted
 move(2,1,2,2);
 getMoves(4,0);//get moves for piece in pawn position
-*/
-//  test for castle 
+
+
+/*  test for castle 
 move(4,1,4,3);
 move(5,6,5,4);
 move(4,3,5,4);
@@ -51,8 +52,9 @@ move(1,1,1,2);
 move(5,7,4,6);
 move(2,1,2,2);
 move(6,7,5,5);
-move(7,7,4, 7);
-
+move(3,1,3,2);
+move(7,7,4,7);
+*/
 
 
 
@@ -63,11 +65,12 @@ move(4,3,5,4);
 move(6,6,6,4);
 move(0,1,0,3);
 move(4,6,4,4);
-move(3,0,7,4);
-move(4,7,4,6);
 move(1,1,1,2);
-move(7, 6,7,5);
+move(5,7,4,6);
 move(2,1,2,2);
+move(6,7,5,5);
+move(3,1,3,2);
+//move(7,7,4,7);
 getMoves(7,7);
 */
 
