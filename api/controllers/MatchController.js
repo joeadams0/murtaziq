@@ -11,9 +11,7 @@ var UserHelper = require('../helpers/user-helper.js');
 module.exports = {
 
   index : function(req, res) {
-    var matchId = req.body.matchId;
-    if(req.query.matchId)
-      matchId = req.query.matchId;
+    var matchId = req.param("matchId");
     if(req.wantsJSON){
       matchapi.getMatch(matchId, function(err, match) {
         if(err)
@@ -30,6 +28,7 @@ module.exports = {
       });
     }
     else{
+      console.log(matchId);
       if(!matchId){
         res.view({
           layout : 'play-layout',

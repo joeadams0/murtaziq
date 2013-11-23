@@ -33,7 +33,7 @@
   <ul class="pieceList connector">
     <% for(var i = 0; i < pieceList.length; i++){ %>
       <li class="piece" data-name="<%= pieceList[i].name %>">
-        <img class="pieceImage" src="/images/pieces/<%= pieceList[i].name %> 1.png" height="100"/>
+        <img class="pieceImage" src="<%=path%>/images/pieces/<%= pieceList[i].name %> 1.png" height="100"/>
         <!-- Hidden until mouseover -->
         <div class="pieceInfo popover">
           <h3 class="popover-title">The <%= pieceList[i].name %></h3>

@@ -67,7 +67,11 @@ module.exports.routes = {
 
   '/match/destroy' : "MatchController.destroy",
 
-  '/play' : "MatchController.index"
+  '/play/:matchId' : "MatchController.index",
+
+  '/play' : "MatchController.index",
+
+  '/match' : "MatchController.index",
 
 
 

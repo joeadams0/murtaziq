@@ -20,7 +20,8 @@ define([
           sel.$template = $(new EJS({text : template}).render({
             pieceList: sel.pieceVals, 
             lightPlayer : lightPlayer.username,
-            darkPlayer : darkPlayer.username
+            darkPlayer : darkPlayer.username,
+            path : window.location.origin
           }));
           sel.$template.appendTo("#" + game.config.container);
           sel.readyStateTemplate = readyStateTemplate;

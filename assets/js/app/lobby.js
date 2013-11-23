@@ -168,7 +168,7 @@ define([
 				isHost : this.model.get('host') == game.state.user.id,
 			}));
 
-			if(this.model.get('host') !== game.state.user.id)
+			if(this.model.get('host') != game.state.user.id)
 				$(".host-feature").hide();
 			else{
 				$(".host-feature").show();

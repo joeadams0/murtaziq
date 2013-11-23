@@ -90,14 +90,14 @@ define(["text!templates/match/match.ejs",
 
     _.each(data.moves, function(move) {
       // Friendly moves
-      if((move.isLightTeam && game.state.user.id === this.get('lightPlayer'))||
-          (!move.isLightTeam && game.state.user.id === this.get('darkPlayer'))){
+      if((move.isLightTeam && game.state.user.id == this.get('lightPlayer'))||
+          (!move.isLightTeam && game.state.user.id == this.get('darkPlayer'))){
 
         this.getSpace(move.target.x, move.target.y).highlight = this.highlights.friendly;
       }
       // Enemy Moves
-      else if((move.isLightTeam && game.state.user.id === this.get('darkPlayer'))||
-          (!move.isLightTeam && game.state.user.id === this.get('lightPlayer'))){
+      else if((move.isLightTeam && game.state.user.id == this.get('darkPlayer'))||
+          (!move.isLightTeam && game.state.user.id == this.get('lightPlayer'))){
 
         this.getSpace(move.target.x, move.target.y).highlight = this.highlights.enemy;
       }
@@ -151,7 +151,7 @@ define(["text!templates/match/match.ejs",
     this.matchTemplate = matchTemplate;
     this.stateTemplate = stateTemplate;
 
-    this.piecePath = "./images/pieces/";
+    this.piecePath = window.location.origin + "/images/pieces/";
 
     this.model.getUser(this.model.get("lightPlayer"), function(lightPlayer) {
       self.model.getUser(self.model.get("darkPlayer"),function(darkPlayer) {

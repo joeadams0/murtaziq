@@ -136,7 +136,9 @@ game.unloadPage = function(cb) {
 $(document).ready(function() {
 
 	require.config({
-	    urlArgs: "bust=" + (new Date()).getTime()
+	    urlArgs: "bust=" + (new Date()).getTime(),
+
+    	baseUrl: window.location.origin,
 	});
 
 	var host = window.location.origin;
