@@ -164,6 +164,8 @@ define([
       cfg.teamListClass = ".myTeamView";
       cfg.connectorClass = ".connector";
       cfg.submitId = "#setAsTeam";
+      cfg.searchBar = ".search";
+      cfg.searchForm = ".search-form";
       // variables for internal use
       cfg.enterTimer = 0;
       cfg.info = {};
@@ -241,6 +243,7 @@ define([
       act.things = function(){
         act.handleShowingInfo();
         act.allowDragging();
+        act.handleSearchBar();
       };
       
       //helper method
@@ -319,6 +322,38 @@ define([
         });
       };
 
+      // Sets up jQuery listeners to make the search bar functional
+      act.handleSearchBar = function(){
+        var searchFn = function(){
+          var searchTerm = $( cfg.searchBar ).val().trim();
+          $( cfg.pieceContainerClass ).each(function(index, elem){
+            if ( $(this).data("name").indexOf(searchTerm) == -1 ){ // searchTerm is NOT in the name of the piece
+              $(this).hide();
+            } else {
+              $(this).show();
+            }
+          });
+        };
+
+
+        // prevent the form from refreshing the page
+        $( cfg.searchForm ).submit( function(e){
+          e.preventDefault();
+        });
+
+
+        // listen to the user typing in the search bar
+        $(cfg.searchBar).keyup(function(e){
+          var searchTerm = $(this).val().trim().toLowerCase();
+          $( cfg.pieceContainerClass ).each(function(index, elem){
+            if ( $(this).data("name").toLowerCase().indexOf(searchTerm) == -1 ){ // searchTerm is NOT in the name of the piece
+              $(this).hide();
+            } else {
+              $(this).show();
+            }
+          });
+        });
+      };
 
       // Actually do things
       act.listenToSubmit();

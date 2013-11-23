@@ -145,3 +145,7 @@
 hr{
   border-top-color: #ccc;
 }
+input.search{
+  max-width: 80%;
+  margin-left: 9%;
+}
