@@ -33,7 +33,7 @@ define([
 
 	mainmenu.showJoinableMatches = function() {
 		mapi.getLobbyMatches(function(status) {
-			if(status.success){
+			if(status.success && status.data){
 				mainmenu.getMatchHost(status.data, function(matches) {
 					$("#joinable-matches").html(new EJS({
 						text : joinableMatchesTemplate
