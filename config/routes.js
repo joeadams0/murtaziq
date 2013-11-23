@@ -47,7 +47,9 @@ module.exports.routes = {
 
   '/user/:id' : 'UserController.index',
 
-  '/invite/:user_id' : 'InviteController.send',
+  '/invite/send/:user_id' : 'InviteController.send',
+
+  '/invite/accept/:user_id' : 'InviteController.send',
 
   '/userlist' : 'UserController.userlist',
   

@@ -17,13 +17,18 @@ game.init = function(cb) {
 		cb = function() {};
 
 	require([
-		"/js/app/chat.js"
+		"/js/app/chat.js",
+		"/js/app/invite.js"
 		],
-		function(chat) {
+		function(chat, invite) {
 			game.chat = chat;
+			game.invite = invite;
+			
 			game.chats = {};
 
 			game.socket.on("chat", game.chat.recieveMessage);
+			game.socket.on('invite', game.invite.recieveInvite);
+
 			mapi.getCurrentUser(function(user) {
 				game.state.user = user;
 				
