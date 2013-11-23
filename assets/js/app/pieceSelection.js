@@ -68,7 +68,7 @@ define([
 
   sel.pieceVals = [];
 
-  sel.maxTeamValue = 400;
+  sel.maxTeamValue = 440;
 
   ///////////////
   // FUNCTIONS //
@@ -325,33 +325,42 @@ define([
       // Sets up jQuery listeners to make the search bar functional
       act.handleSearchBar = function(){
         var searchFn = function(){
-          var searchTerm = $( cfg.searchBar ).val().trim();
+          var searchTerm = $( cfg.searchBar ).val().trim().toLowerCase(),
+              $toShow = [],
+              indexOfs = [];
           $( cfg.pieceContainerClass ).each(function(index, elem){
-            if ( $(this).data("name").indexOf(searchTerm) == -1 ){ // searchTerm is NOT in the name of the piece
+            var indexOf1 = $(this).data("name").toLowerCase().indexOf(searchTerm);
+            if ( indexOf1 == -1 ){ // searchTerm is NOT in the name of the piece
               $(this).hide();
             } else {
               $(this).show();
+              indexOfs.push(indexOf1);
+              $toShow.push($(this).remove());
             }
           });
-        };
 
+          var $newShow = _.sortBy($toShow, function(item, index){
+            var name = item.data("name").trim().toLowerCase();
+            return indexOfs[index];
+          });
+
+          for (var i = 0; i < $newShow.length; i++){
+            $( cfg.pieceListClass ).append($newShow[i]);
+          }
+
+          act.handleShowingInfo();
+          act.allowDragging();
+        };
 
         // prevent the form from refreshing the page
         $( cfg.searchForm ).submit( function(e){
           e.preventDefault();
+          searchFn();
         });
-
 
         // listen to the user typing in the search bar
         $(cfg.searchBar).keyup(function(e){
-          var searchTerm = $(this).val().trim().toLowerCase();
-          $( cfg.pieceContainerClass ).each(function(index, elem){
-            if ( $(this).data("name").toLowerCase().indexOf(searchTerm) == -1 ){ // searchTerm is NOT in the name of the piece
-              $(this).hide();
-            } else {
-              $(this).show();
-            }
-          });
+          searchFn();
         });
       };
 
