@@ -18,7 +18,7 @@ USERS:
 	This Is You
 	<% } %> 
 </td>
-<td align='center'><%= el.state %></td>
+<td align='center'><% if(el.online()){%>Online!<%}else{%>Offline<%}%></td>
 <td align='center'><%= el.id %></td>
 </tr>
 

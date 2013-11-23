@@ -36,6 +36,14 @@ module.exports = {
             var obj = this.toObject();
             delete obj.password;
             return obj;
+        },
+        online: function(){
+            if(UserHelper.getSocket(this.id)){
+                return true;
+            }
+            else{
+                return false;
+            }
         }
     },
     
