@@ -115,7 +115,7 @@ profile.render = function(data, $el, cb) {
 
 $(document).ready(function(){
 	
-	var host = 'http://localhost:1337';
+	var host = window.location.origin;
 
 	var socket = io.connect(host);
 

@@ -134,7 +134,7 @@ $(document).ready(function() {
 	    urlArgs: "bust=" + (new Date()).getTime()
 	});
 
-	var host = 'http://localhost:1337';
+	var host = window.location.origin;
 
 	var socket = io.connect(host);
 

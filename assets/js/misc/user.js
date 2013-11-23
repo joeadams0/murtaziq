@@ -9,7 +9,7 @@ $("#login-username, #login-password").keypress(function(e) {
     }
 });
 
-$("#register-username, #register-password").keypress(function(e) {
+$("#register-username, #register-password, #register-confirm-password").keypress(function(e) {
     if ( e.which == 13 ) {
         e.preventDefault();
         register(e);
