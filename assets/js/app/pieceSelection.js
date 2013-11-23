@@ -267,10 +267,10 @@ define([
 
 
             if ($me.find("*").length > 0 ){
-              $("*[data-name="+name+"]").remove();
+              $("*[data-name='"+name+"']").remove();
               $( cfg.pieceListClass ).append($him);
-              $("*[data-name="+name+"]").removeClass("ui-draggable-dragging");
-              $("*[data-name="+name+"]").attr("style", "");
+              $("*[data-name='"+name+"']").removeClass("ui-draggable-dragging");
+              $("*[data-name='"+name+"']").attr("style", "");
               act.things();
               // remove the piece from it's old spot in the army
               act.removeFromArmy( name );
@@ -278,10 +278,10 @@ define([
             }
 
             // Make the document look right
-            $("*[data-name="+name+"]").remove();
-            $("*[data-pos="+pos+"]").append($him);
-            $("*[data-name="+name+"]").removeClass("ui-draggable-dragging");
-            $("*[data-name="+name+"]").attr("style", "");
+            $("*[data-name='"+name+"']").remove();
+            $("*[data-pos='"+pos+"']").append($him);
+            $("*[data-name='"+name+"']").removeClass("ui-draggable-dragging");
+            $("*[data-name='"+name+"']").attr("style", "");
 
             // Enable showingInfo and dragging
             act.things();
@@ -303,11 +303,11 @@ define([
             var $me = $(this);
             var $him = ui.draggable;
             var name = $him.data("name");
-            $("*[data-name="+name+"]").remove();
+            $("*[data-name='"+name+"']").remove();
 
             $me.append($him);
-            $("*[data-name="+name+"]").removeClass("ui-draggable-dragging");
-            $("*[data-name="+name+"]").attr("style", "");
+            $("*[data-name='"+name+"']").removeClass("ui-draggable-dragging");
+            $("*[data-name='"+name+"']").attr("style", "");
 
             act.things();
             

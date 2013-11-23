@@ -20,6 +20,16 @@
       <div class="dark-player-state"/>
     </div>
   </div>
+  
+  <div>
+			<form class="form-inline">
+				<input type="text" class="search form-control" placeholder="Type here..."/>
+				<button class="btn btn-success" type="button">
+					<i class="glyphicon glyphicon-share-alt"></i>
+				</button> 
+			</form>
+  </div>
+
   <ul class="pieceList connector">
     <% for(var i = 0; i < pieceList.length; i++){ %>
       <li class="piece" data-name="<%= pieceList[i].name %>">
