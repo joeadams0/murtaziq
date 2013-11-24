@@ -43,11 +43,7 @@ module.exports = {
                 } else {
                     if (user) {
                         if (hasher.verify(pass, user.password)) {
-                            if(!sockets[user.id]){
-                                done();
-                            }
-                            else
-                                done("User is already logged on");    
+                            done(); 
                         } else {
                             done("Wrong Username or Password");
                         }
