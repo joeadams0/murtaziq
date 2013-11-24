@@ -9,3 +9,11 @@
 	</li>
 <% } %>
 </ul>
+
+<script type="text/javascript">
+window.onload = function () {
+	$(window).unload(function(){
+		  $.get("/matchmaking/leave",{});
+	});
+}
+</script>

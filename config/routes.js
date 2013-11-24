@@ -60,6 +60,8 @@ module.exports.routes = {
   '/getstalemates' : 'UserController.getstalemates',
 
   '/matchmaking' : 'MatchmakingController.index',
+  
+  '/matchmaking/leave' : 'MatchmakingController.leave',
 
   '/registersocket' : 'UserController.registersocket',
 
