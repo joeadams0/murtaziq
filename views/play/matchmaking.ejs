@@ -10,10 +10,10 @@
 <% } %>
 </ul>
 
+<script src="/node_modules/socket.io/libsocket.io.js"></script>
 <script type="text/javascript">
 window.onload = function () {
-	$(window).unload(function(){
-		  $.get("/matchmaking/leave",{});
-	});
+	var socket = io.connect('http://' + window.location.hostname + ':1337');
 }
+setTimeout('location.reload(false)', 10000); //HACK
 </script>
