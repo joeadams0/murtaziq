@@ -1,8 +1,11 @@
 <h2>Matchmaking</h2>
-<h3><%= currentUser %></h3>
-<p>Searching for available players...</p>
+<h3>Welcome, <%= currentUser %>.</h3>
+<p>Players in matchmaking:</p>
 
 <ul>
+<% if (users.length == 0) { %>
+<li>There are no users in matchmaking.  Please wait...</li>
+<% } %>
 <% for(var i=0; i<users.length; i++) { %>
 	<li>
 		<%= users[i].username %> <a name="iButton<%= users[i].id %>" id="iButton<%= users[i].id %>" href="javascript:void(0)" onclick="$.ajax({url: '/invite/<%= users[i].id %>'}); $('#iButton<%= users[i].id %>').attr('disabled', true);" class="btn btn-lg btn-primary">Invite</a>
