@@ -75,8 +75,15 @@ module.exports = {
 			allUsers.forEach(function(user) {
 				InMatchQueue.findOne({playerId: user.id}).done(function(err, imq){
 					if (imq != null && imq.inQueue == true)
-					{
-						usersInQueue.push(user);
+					{	
+						var wins = 0;
+						Match.find({winner: user.id}).done(function(err, matches) {
+							if(!err)
+							{
+								wins = matches.length;
+							}
+						});
+						usersInQueue.push({"username": user.username, "numberOfWins": wins});
 					}
 				});
 			});

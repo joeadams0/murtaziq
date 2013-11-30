@@ -8,7 +8,7 @@
 <% } %>
 <% for(var i=0; i<users.length; i++) { %>
 	<li>
-		<%= users[i].username %> <a name="iButton<%= users[i].id %>" id="iButton<%= users[i].id %>" href="javascript:void(0)" onclick="$.ajax({url: '/invite/<%= users[i].id %>'}); $('#iButton<%= users[i].id %>').attr('disabled', true);" class="btn btn-lg btn-primary">Invite</a>
+		<%= users[i].username %> has won <%= users[i].numberOfWins %> games <a name="iButton<%= users[i].id %>" id="iButton<%= users[i].id %>" href="javascript:void(0)" onclick="$.ajax({url: '/invite/<%= users[i].id %>'}); $('#iButton<%= users[i].id %>').attr('disabled', true);" class="btn btn-lg btn-primary">Invite to play</a>
 	</li>
 <% } %>
 </ul>
