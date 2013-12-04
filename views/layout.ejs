@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%- title %></title>
+      <title><%if( title !="Sails" ){%><%- title %><%}else{%>Murtaziq<%}%></title>
 
     <!-- Viewport mobile tag for sensible mobile support -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
@@ -19,6 +19,7 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         <li><a href="/play">Play</a></li>
+						<li><a href="/matchmaking">Matchmaking</a></li>
                         <li><a href="/static_pages/stats">Statistics</a></li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">

@@ -15,7 +15,10 @@
     "mocha": "*",
     "istanbul": "*",
     "superagent": "*",
-    "expect.js": "*"
+    "expect.js": "*",
+	"socket.io": "0.9.16",
+	"express": "3.4.4",
+	"winston": "0.7.2"
   },
   "scripts": {
     "start": "node app.js",
