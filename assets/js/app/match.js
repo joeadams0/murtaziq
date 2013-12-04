@@ -294,9 +294,6 @@ define(["text!templates/match/match.ejs",
       .selectAll("rect")
       .data(function(d) { return d})
       .attr("class", function(d) {  
-        if(d.piece && d.piece.royalty){
-          return "royal";
-        }
         if(d.highlight){
          
           switch(d.highlight){
@@ -312,8 +309,13 @@ define(["text!templates/match/match.ejs",
               return matchState.boardOptions.neutralHighlight;
           }
         }
-        else
-          return d3.select(this).attr("tile-color");
+        else{
+          if(d.piece && d.piece.royalty){
+            return "royal";
+          }
+          else
+            return d3.select(this).attr("tile-color");
+        }
       });
 
     if (d3.select("#pieces").node() == null) {
