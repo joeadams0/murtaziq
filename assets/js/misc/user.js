@@ -48,7 +48,9 @@ function login () {
     var password = $("#register-password").val();
     var confirmPassword = $("#register-confirm-password").val();
     if (password === confirmPassword) {
-        var send = senderGen('/register', username, password);
+        var send = senderGen('/register', username, password, undefined, function(res) {
+            alert("Invalid Username or Password.\nUsernames must be at least 2 characters and passwords must be atleast 4 characters.");
+        });
         if(send){
             send();
         } else {
@@ -59,19 +61,24 @@ function login () {
     }  
   };
 
-function senderGen(url, username, password){
+function senderGen(url, username, password, success, error){
+    if(!success)
+        success = function (data, textStatus, jqXHR) {
+            window.location.reload();
+        };
+
+    if(!error)
+        error = function(res){
+            message("Error: " + res.responseText);
+        };
     if(username && password && url){
         return function(){
             $.ajax({
                 type : 'POST',
                 url : url,
                 data : {username: username, password:password},
-                success : function (data, textStatus, jqXHR) {
-                    window.location.reload();
-                },
-                error : function(res){
-                    message("Error: " + res.responseText);
-                }
+                success : success,
+                error : error 
             });
         }
     }

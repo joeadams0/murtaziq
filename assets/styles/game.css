@@ -149,3 +149,8 @@ input.search{
   max-width: 80%;
   margin-left: 9%;
 }
+
+.royal {
+  background-color: #B34BFD;
+  fill: #B34BFD;
+}

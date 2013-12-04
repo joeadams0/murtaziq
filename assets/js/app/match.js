@@ -289,6 +289,33 @@ define(["text!templates/match/match.ejs",
 
     var matchState = this.model.attributes;
 
+    this.board.selectAll("g")
+      .data(matchState.match.board)
+      .selectAll("rect")
+      .data(function(d) { return d})
+      .attr("class", function(d) {  
+        if(d.piece && d.piece.royalty){
+          return "royal";
+        }
+        if(d.highlight){
+         
+          switch(d.highlight){
+            case self.model.highlights.friendly:
+              return matchState.boardOptions.friendlyHighlight;
+              break;
+
+            case self.model.highlights.enemy:
+              return matchState.boardOptions.enemyHighlight;
+              break;
+
+            default:
+              return matchState.boardOptions.neutralHighlight;
+          }
+        }
+        else
+          return d3.select(this).attr("tile-color");
+      });
+
     if (d3.select("#pieces").node() == null) {
       this.pieces = this.svg.append("g").attr("id", matchState.boardOptions.piecesId);
       this.piecesRows = this.pieces.selectAll("g");
@@ -303,31 +330,9 @@ define(["text!templates/match/match.ejs",
                        .attr("x", function(d, i) {return (i % 8)*(boardDimension/8);})
                        .attr("y", function(d, i, j) {return j*(boardDimension/8);})
                        .transition().duration(500).style("opacity", 1); // fade in
+
     } else {
       var imgs = this.pieces.selectAll("g").data(matchState.match.board).selectAll("image").data(function(d) {return d;});
-
-      this.board.selectAll("g")
-          .data(matchState.match.board)
-          .selectAll("rect")
-          .data(function(d) { return d})
-          .attr("class", function(d) { 
-            if(d.highlight){
-              switch(d.highlight){
-                case self.model.highlights.friendly:
-                  return matchState.boardOptions.friendlyHighlight;
-                  break;
-
-                case self.model.highlights.enemy:
-                  return matchState.boardOptions.enemyHighlight;
-                  break;
-
-                default:
-                  return matchState.boardOptions.neutralHighlight;
-              }
-            }
-            else
-              return d3.select(this).attr("tile-color");
-          });
 
       // enter the new images, then update old images+new ones
       imgs.enter().append("image")
